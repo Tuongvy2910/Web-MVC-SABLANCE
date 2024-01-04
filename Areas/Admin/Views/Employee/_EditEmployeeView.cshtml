@@ -1,0 +1,275 @@
+﻿@model SABLANCE.Areas.Admin.Models.EmployeeCreateModel
+@{
+    var dataCate = ViewBag.dataCate as List<SABLANCE.Models.CategoriesEmployee>;
+    var data = ViewBag.EditEmployee as SABLANCE.Models.Employee;
+}
+<link href="~/Content/employee.css" rel="stylesheet" />
+<div class="modal-body" id="EditViewModalContent">
+    <div class="col-lg-12" style="border-bottom:0.2px solid; margin-bottom: 10px;">
+        <div class="row">
+
+            <div class="col-lg-4 image-group">
+                <div class="uploadpreview image-upload">
+                    @if (!string.IsNullOrEmpty(data.Image))
+                    {
+                        <img src="~/Image/User/@data.Image" class="img-em" id="img-Employee" />
+                        <input type="text" value="@data.Image" id="img-none" style="display: none;"/>
+                    }
+                    else
+                    {
+                        <img src="~/Image/User/image-employee.jpg" class="img-em" id="img-Employee" />
+                    }
+                </div>
+                <div class="col-md-10" style="width: 100%; margin-top:10px; margin-bottom:15px;">
+                    <input title="Vui lòng chọn hình ảnh" type="file" name="Image" class="form-control" id="image-upload" />
+                    <div id="ImageError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Mã định danh</label>
+                    <input id="codeEm" disabled="disabled" value="@data.Code" name="Code" type="text" class="form-control" />
+                    <div id="CodeError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>CCCD/CMND</label>
+                    @if (!string.IsNullOrEmpty(data.CCCD))
+                    {
+                        <input id="cccd" name="CCCD" type="text" value="@data.CCCD" class="form-control" />
+                    }
+                    else
+                    {
+                        <input id="cccd" name="CCCD" type="text" value="" class="form-control" placeholder="CCCD trống" />
+                    }
+                    <div id="cccdError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Họ Nhân viên</label>
+                    @if (!string.IsNullOrEmpty(data.LastName))
+                    {
+                        <input id="LastName" name="LastName" type="text" value="@data.LastName" class="form-control" />
+                    }
+                    else
+                    {
+                        <input id="LastName" name="LastName" type="text" value="" class="form-control" placeholder="Họ nhân viên trống"/>
+                    }
+                    <div id="lastNameError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Tên Nhân viên</label>
+                    <input id="FirstName" name="FirstName" type="text" value="@data.FirstName" class="form-control" />
+                    <div id="firstNameError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Giới tính</label>
+                    <select id="Gender" name="Gender" class="form-control">
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Ngày sinh</label>
+                        <input id="DateOfBirth" name="DateOfBirth" value="@((data.DateOfBirth.HasValue ? data.DateOfBirth.Value.ToString("yyyy-MM-dd") : ""))" type="date" class="form-control" />
+                    <div id="dateOfBirthError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input id="Phone" name="Phone" type="text" value="@data.Phone" maxlength="12" class="form-control" />
+                    <div id="phoneError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Email</label>
+                    @if (!string.IsNullOrEmpty(data.Email))
+                    {
+                        <input id="Email" name="Email" type="text" value="@data.Email" class="form-control" />
+                    }
+                    else
+                    {
+                        <input id="Email" name="Email" type="text" value="" class="form-control" placeholder="Email nhân viên trống"/>
+                    }
+                    <div id="emailError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Vị trí làm việc</label>
+                        <select id="CategoriesEmployeeID" name="CategoriesEmployeeID" class="form-control">
+                            @foreach (var item in dataCate)
+                            {
+                                <option value="@item.ID">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+            <div class="col-lg-8">
+                <div class="form-group">
+                    <label>Địa chỉ</label>
+                    <textarea id="Address" class="form-control col-lg-12" style="float: none !important;"> @data.Address</textarea>
+                    <div id="addressError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Mã tài khoản</label>
+                    <input id="accountId" name="AccountID" type="text" value="@data.AccountID" class="form-control" readonly />
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Tên tài khoản</label>
+                    <input id="AccountType" name="AccountType" value="@data.Account.AccountType" type="text" class="form-control" readonly />
+
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Ngày đăng ký/Ngày vào làm</label>
+                    <input id="AccountType" name="AccountType" value="@data.Account.RegistrationDate.ToString("dd/MM/yyyy")" type="text" class="form-control" readonly />
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="button" id="edit-employee" class="btn btn-primary">Cập nhật</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" defer></script>
+    <script src="~/Scripts/employee.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            let imageData; // Biến để lưu dữ liệu hình ảnh
+            var genderValue = "@data.Gender"; // Giả sử bạn lấy giá trị giới tính từ model
+            var categoriesEmployeeIDValue = "@data.CategoriesEmployeeID";
+            // Sử dụng jQuery để chọn tùy chọn có giá trị là genderValue
+            $("#Gender").val(genderValue);
+            // Sử dụng jQuery để chọn tùy chọn có giá trị là categoriesEmployeeIDValue
+            $("#CategoriesEmployeeID").val(categoriesEmployeeIDValue);
+            $('.image-group input[type=file]').change(function () {
+                var input = event.target;
+                var preview = document.getElementById('img-Employee');
+                var image = document.getElementById('image-upload');
+                var id = $(this).attr("id");
+                var newimage = new FileReader();
+
+
+                newimage.onload = function (e) {
+                    preview.src = e.target.result;
+                    image.src = e.target.result;
+                }
+
+                if (this.files && this.files[0]) {
+                    newimage.readAsDataURL(this.files[0]);
+                    imageData = this.files[0]
+
+                }
+                else {
+                    ModelStateAddError("Image", "Chưa tải được hình ảnh. Vui lòng chọn lại hình ảnh.");
+                }
+            });
+
+            function editAction(employeeID) {
+                if (checkEditEmployee()) {
+                    var Code = $('#codeEm').val();
+                    var FirstName = $('#FirstName').val();
+                    var LastName = $('#LastName').val();
+                    var Gender = $('#Gender').val();
+                    var DateOfBirth = $('#DateOfBirth').val();
+                    var Phone = $('#Phone').val();
+                    var Email = $('#Email').val();
+                    var CCCD = $('#cccd').val();
+                    var CategoriesEmployeeID = $('#CategoriesEmployeeID').val();
+                    var AccountType = $('#AccountType').val();
+                    var Password = $('#Password').val();
+                    var Address = $('#Address').val();
+                    var Image = $('#img-none').val();
+
+                    var formData = new FormData();
+                    if (imageData) {
+                        formData.append("ImageData", imageData);
+                    }
+                    else {
+                        formData.append("Image", Image);
+                    }
+                    formData.append("ID", employeeID); // Truyền ID vào FormData
+                    formData.append("Code", Code);
+                    formData.append("FirstName", FirstName);
+                    formData.append("LastName", LastName);
+                    formData.append("Gender", Gender);
+                    formData.append("DateOfBirth", DateOfBirth);
+                    formData.append("Phone", Phone);
+                    formData.append("Address", Address);
+                    formData.append("Email", Email);
+                    formData.append("CCCD", CCCD);
+                    formData.append("CategoriesEmployeeID", CategoriesEmployeeID);
+                    formData.append("AccountType", AccountType);
+                    formData.append("Password", Password);
+
+                    $.ajax({
+                        url: '@Url.Action("EditEmployee")',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            console.log(data);
+                            if (data.status == 1) {
+                                window.location.href = '@Url.Action("ListEmployee", "Employee")';
+                                alert(data.text);
+                            } else {
+                                alert(data.text);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert('Đã có lỗi xảy ra thêm thông tin nhân viên.');
+                        }
+                    });
+                }
+            }
+            $('#edit-employee').on('click', function (event) {
+                var employeeID = "@data.ID"/* Lấy giá trị ID từ đâu đó */;
+                editAction(employeeID);
+            });
+        });
+
+/*     Gọi hàm createAction() khi nhấn nút "Thêm nhân viên"*/
+
+
+
+    </script>

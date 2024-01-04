@@ -1,0 +1,136 @@
+﻿@model SABLANCE.Models.Customer
+@{
+    var data = ViewBag.Customer as SABLANCE.Models.Customer;
+}
+<link href="~/Content/customeadmin.css" rel="stylesheet" />
+
+
+<div class="modal-body" id="customerDetailContent">
+    <div class="col-lg-12" style="border-bottom:0.2px solid; margin-bottom: 10px;">
+        <div class="row">
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Mã định danh</label>
+                    <input id="Code" name="Code" value="@data.Code" type="text" class="form-control" readonly />
+
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Họ Khách hàng</label>
+                    @if (!string.IsNullOrEmpty(data.LastName))
+                    {
+                        <input id="LastName" name="LastName" value="@data.LastName" type="text" class="form-control" readonly />
+                    }
+                    else
+                    {
+                        <input id="LastName" name="LastName" value="Họ khách hàng trống" type="text" style="font-style:italic; font-size:11px; color: red;" class="form-control" readonly />
+                    }
+
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Tên Khách hàng</label>
+                    <input id="FirstName" name="FirstName" value="@data.FirstName" type="text" class="form-control" readonly />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Giới tính</label>
+                    
+                    @if (!string.IsNullOrEmpty(data.Gender))
+                    {
+                        <input id="gender" name="Gender" value="@data.Gender" type="text" class="form-control" readonly />
+                    }
+                    else
+                    {
+                <input id="gender" name="Gender" placeholder="Giới tính trống" type="text" class="form-control" readonly />
+                    }
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Ngày sinh</label>
+                    @if (data.DateOfBirth.HasValue)
+                    {
+                        <input id="DateOfBirth" name="DateOfBirth" value="@data.DateOfBirth.Value.ToString("dd/MM/yyyy")" type="text" class="form-control" readonly />
+                    }
+                    else
+                    {
+                <input id="DateOfBirth" name="DateOfBirth"  type="date" class="form-control" readonly />
+                    }
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Hạng thành viên: </label>
+                    <input type="text" name="MemberCustomer" value="@data.MemberRating.Name" id="memberCus" class="form-control" readonly />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input id="Phone" name="Phone" type="text" value="@data.Phone" class="form-control" readonly />
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Email</label>
+                    @if (!string.IsNullOrEmpty(data.Email))
+                    {
+                        <input id="Email" name="Email" value="@data.Email" size="30" type="text" class="form-control" readonly />
+                    }
+                    else
+                    {
+                        <input id="Email" name="Email" value="Email trống" type="text" style="font-style:italic; font-size:11px; color: red;" class="form-control" readonly />
+                    }
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Địa chỉ</label>
+                    <textarea id="Address" name="Address" class="form-control col-lg-12" style="float: none !important;" disabled>@(data != null ? data.Address : string.Empty)</textarea>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Mã tài khoản</label>
+                    <input id="accountId" name="AccountID" type="text" value="@data.AccountID" class="form-control" readonly />
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Tên tài khoản</label>
+                    <input id="AccountType" name="AccountType" value="@data.Account.AccountType" type="text" class="form-control" readonly />
+
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Ngày đăng ký</label>
+                    <input id="AccountType" name="AccountType" value="@data.Account.RegistrationDate.ToString("dd/MM/yyyy")" type="text" class="form-control" readonly />
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" style="float: right; " class="btn btn-primary">Chỉnh sửa</button>
+        </div>
+    </div>
+</div>

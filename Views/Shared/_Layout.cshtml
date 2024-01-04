@@ -1,0 +1,351 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" type="image/png" href="~/Image/fav_icon.png" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Sablanca - Phong cách thời trang theo xu hướng quốc tế</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/Content/toastr.css">
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+
+<body style="padding:0; margin:0;">
+    @{
+        var user = Session["Account"] as SABLANCE.Models.Account;
+        var CountCart = (int)(Session["CountCart"] ?? 0);
+        var toastScript = TempData["ToastScript"] as string;
+    }
+
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" title="more options">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="@Url.Action("Home", "Home")" class="navbar-brand">
+                    <img src="~/Image/logo_sab.png" class="logo" />
+                </a>
+                @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @class = "navbar-form navbar-left" }))
+                {
+                    <div class="hSearch">
+                        <div class="hd_search">
+                            <input type="search" id="search-font" value="@ViewBag.Keyword" name="strSearch" placeholder="Bạn cần tìm gì?" />
+                            <button type="submit" class="btn_search"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                }
+                <ul class="hd-content">
+                    <li id="hPhone">
+                        <a href="tel:1800 6050">
+                            <img src="~/Image/icon_phone.png" class="icon" />
+                            <div class="header-font">1800 6050</div>
+                        </a>
+                    </li>
+                    <li id="hOrder">
+                        <a href="@Url.Action("SearchOrder", "Home")">
+                            <img src="~/Image/icon_order.png" class="icon" />
+                            <div class="header-font">Đơn Hàng</div>
+                        </a>
+                    </li>
+                    <li id="hLogin">
+                        @{ if (user == null)
+                            {
+                                <a href="@Url.Action("Login", "Login")">
+                                    <img src="~/Image/icon_user.png" class="icon" />
+                                    <div class="header-font">Đăng Nhập</div>
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("ProfileCustomer", "Login", new { Id = user.CustomerID })">
+                                    <img src="~/Image/icon_user.png" class="icon" />
+                                    <div class="header-font">@user.Customer.LastName @user.Customer.FirstName </div>
+                                </a>
+                            }
+                        }
+                    </li>
+                    <li id="hCart" onclick="OnClickCart()">
+                        <span class="numSumProduct munber-card" id="numSumProduct">@CountCart</span>
+                        <a href="">
+                            <img src="~/Image/icon_cart.png" class="icon" />
+                            <div class="header-font">Giỏ Hàng</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a href="@Url.Action("ShoeDepartment", "Product")" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">GIÀY DÉP </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="@Url.Action("ShoeDepartment", "Product", new {CategoriesProductID = 1})">Giày cao gót</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ShoeDepartment", "Product", new {CategoriesProductID = 2})">Giày Sandal</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ShoeDepartment", "Product", new {CategoriesProductID = 5})">Giày búp bê</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ShoeDepartment", "Product", new {CategoriesProductID = 6})">Giày mọi</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ShoeDepartment", "Product", new {CategoriesProductID = 7})">Giày bata</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ShoeDepartment", "Product", new {CategoriesProductID = 8})">Giày Sneaker</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ShoeDepartment", "Product", new {CategoriesProductID = 9})">Dép xẹp</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ShoeDepartment", "Product", new {CategoriesProductID = 4})">Guốc nhọn</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="@Url.Action("HandBag", "Product")" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">TÚI XÁCH</a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="@Url.Action("HandBag", "Product", new {CategoriesProductID = 10})">Túi xách tay</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("HandBag", "Product", new {CategoriesProductID = 11})">Túi đeo chéo</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("HandBag", "Product", new {CategoriesProductID = 12})">Túi Tote</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>@Html.ActionLink("BALO", "Balo", "Product")</li>
+                    <li>@Html.ActionLink("VÍ BÓP", "Wallet", "Product")</li>
+                    <li class="dropdown">
+                        <a href="@Url.Action("bosuutap", "Product")" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">BỘ SƯU TẬP</a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="@Url.Action("Sablanca", "Product")" runat="server" style="font-weight: bold; color: #db8f70;">SABLANCA</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Jeremy", "Product")" runat="server" style="font-weight: bold; color: #db8f70;">JEREMY</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="@Url.Action("Promotion", "Home")" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">THÔNG TIN</a>
+                        <ul class="dropdown-menu" style="margin-left: -50px;">
+                            <li>
+                                <a href="@Url.Action("Introduce", "Home")" runat="server">Giới thiệu cửa hàng</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Promotion", "Home")" runat="server">Khuyến mãi</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="@Url.Action("Policy", "Home")" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">CHÍNH SÁCH HỖ TRỢ</a>
+                        <ul class="dropdown-menu" style="margin-left: -50px;">
+                            <li>
+                                <a href="@Url.Action("Warranty", "Policy")" runat="server">Chính sách bảo hành</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Lookupwarranty", "Policy")" runat="server">Tra cứu bảo hành</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Exchange", "Policy")" runat="server">Chính sách đổi hàng</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Delivery", "Policy")" runat="server">Chính sách vận chuyển</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("GiftCard", "Policy")" runat="server">Quy định sử dụng GiffCard</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+    <footer class="site-footer">
+        <div class="footer-cover">
+            <div class="width15">
+                <div class="title-footer">NHÓM SẢN PHẨM <span>&#x25BE;</span> </div>
+                <div class="footer-collapse-1 ">
+                    <div><a href="@Url.Action("ShoeDepartment", "Product", new {CategoriesProductID = 1})" style="color: #fff; font-size: 14px;">Giày cao gót</a></div>
+                    <div><a href="@Url.Action("ShoeDepartment", "Product", new {CategoriesProductID = 2})" style="color: #fff; font-size: 14px;">Sandal</a></div>
+                    <div><a href="@Url.Action("ShoeDepartment", "Product")" style="color: #fff; font-size: 14px;">Giày nữ</a></div>
+                    <div><a href="@Url.Action("HandBag", "Product")" style="color: #fff; font-size: 14px;">Túi xách</a></div>
+                    <div><a href="@Url.Action("Wallet", "Product")" style="color: #fff; font-size: 14px;">Ví bóp</a></div>
+                    <div><a href="@Url.Action("Glasses", "Product")" style="color: #fff; font-size: 14px;">Mắt kính</a></div>
+                </div>
+            </div>
+            <div class="width15">
+                <div class="title-footer">THÔNG TIN <span>&#x25BE;</span> </div>
+                <div class="footer-collapse-2">
+                    <div><a href="@Url.Action("Introduce", "Home")" style="color: #fff; font-size: 14px;">Giới thiệu</a></div>
+                    <div><a href="tel:1800 6050" style="color: #fff; font-size: 14px;">Liên hệ</a></div>
+
+                </div>
+            </div>
+            <div class="width15">
+                <div class="title-footer">CHÍNH SÁCH <span>&#x25BE;</span> </div>
+                <div class="footer-collapse-3">
+                    <div><a href="@Url.Action("Policy", "Home")" style="color: #fff; font-size: 14px;"><span>Khách hàng thân thiết</span></a></div>
+                    <div><a href="@Url.Action("GiftCard", "Policy")" style="color: #fff; font-size: 14px;"><span>Điều khoản sử dụng</span></a></div>
+                    <div><a href="@Url.Action("Delivery", "Policy")" style="color: #fff; font-size: 14px;"><span>Thanh toán - vận chuyển</span></a></div>
+                    <div><a href="@Url.Action("Warranty", "Policy")" style="color: #fff; font-size: 14px;"><span>Bảo hành trọn đời</span></a></div>
+                    <div><a href="@Url.Action("Exchange", "Policy")" style="color: #fff; font-size: 14px;"><span>Chính sách đổi sản phẩm</span></a></div>
+                </div>
+            </div>
+            <div class="width15">
+                <div class="title-footer">HƯỚNG DẪN <span>&#x25BE;</span></div>
+                <div class="footer-collapse-4 ">
+                    <div><a href="@Url.Action("InstructShopping", "Home")" style="color: #fff; font-size: 14px;"><span>Hướng dẫn mua hàng</span></a></div>
+                    <div><a href="@Url.Action("InstructChooseSIze", "Home")" style="color: #fff; font-size: 14px;"><span>Hướng dẫn chọn size</span></a></div>
+                </div>
+            </div>
+            <div class="width15-v5">
+                <div class="title-footer-payment">PHƯƠNG THỨC THANH TOÁN</div>
+                <div class="img-payment">
+                    <div class="payment">
+                        <div>
+                            <img class="icon-footer" src="~/Image/visa-icon_v2.png" title="Thanh toán bằng thẻ Visa" />
+                        </div>
+                        <div>
+                            <img class="icon-footer" src="~/Image/master-icon_v2.png" title="Thanh toán bằng thẻ ghi nợ Master Card" />
+                        </div>
+                        <div>
+                            <img class="icon-footer" src="~/Image/atm-pay-icon_v2.png" title="Thanh toán bằng ngân hàng điện tử " />
+                        </div>
+                        <div>
+                            <img class="icon-footer" src="~/Image/zalo-pay-icon_v2.png" title="Thanh toán bằng ứng dụng ZaloPay" />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="v2-footer-info">
+                    <div>
+                        Bản quyền thuộc Công ty TNHH SX TM DV SABLANCA
+                    </div>
+                    <div>
+                        Trụ sở chính: 248C Phan Đình Phùng, P1, Q.Phú Nhuận, HCM
+                    </div>
+                    <div>
+                        Mã số thuế: 0313863910
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <script src="~/Scripts/toastr.min.js"></script>
+    <script src="~/Content/TeamCode.js"></script>
+    <!-- Thư viện Toastify -->
+
+    <!-- jQuery (nếu bạn chưa có) -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</body>
+</html>
+<script>
+    @Html.Raw(toastScript)
+        $(document).ready(function () {
+            // Hàm xử lý hiệu ứng hover
+            function handleHoverEffect() {
+                if ($(window).width() > 768) { // Nếu kích thước cửa sổ lớn hơn 768px (vd: desktop)
+                    $('ul.nav li.dropdown').hover(function () {
+                        $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn(500);
+                    }, function () {
+                        $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut(500);
+                    });
+                    // Xử lý sự kiện khi nhấp vào thẻ "a" trong menu thả xuống
+                    $('ul.nav li.dropdown > a').click(function () {
+                        var link = $(this).attr('href');
+                        if (link && link !== '#') {
+                            window.location.href = link;
+                        }
+                    });
+                } else { // Nếu kích thước cửa sổ nhỏ hơn hoặc bằng 768px (vd: điện thoại)
+                    $('ul.nav li.dropdown').off('mouseenter mouseleave');
+                    $('.dropdown-menu').css('margin-left', '0');// Gỡ bỏ hiệu ứng hover
+                }
+            }
+
+            // Gọi hàm handleHoverEffect khi tải trang
+            handleHoverEffect();
+
+        // Xử lý sự kiện resize cửa sổ trình duyệt
+        $(window).on('resize', function () {
+            handleHoverEffect();
+            });
+
+        });
+    $(document).ready(function () {
+        // Kiểm tra kích thước màn hình khi trang web tải lên
+        checkWindowSize();
+
+        // Kiểm tra kích thước màn hình khi cửa sổ thay đổi kích thước
+        $(window).resize(function () {
+            checkWindowSize();
+        });
+
+        // Xử lý sự kiện click vào span
+        $(".title-footer span").click(function () {
+            // Toggle hiển thị/ẩn của footer-collapse-1
+            $(".footer-collapse-1").toggleClass("show");
+        });
+    });
+
+    function checkWindowSize() {
+        // Kiểm tra kích thước màn hình và ẩn/hiển thị footer-collapse-1 và span tùy thuộc vào điều kiện
+        if ($(window).width() >= 768) {
+            $(".footer-collapse-1").removeClass("show");
+            $(".title-footer span").hide(); // Ẩn nút span
+        } else {
+            $(".footer-collapse-1").addClass("show");
+            $(".title-footer span").show(); // Hiển thị nút span
+        }
+    }
+    function OnClickCart() {
+         $.ajax({
+            type: "GET",
+            url: '@Url.Action("OnClickCartCheckUser", "Cart")',
+            success: function (response) {
+                if (response.status == "-2") {
+                    console.log(response);
+                    window.location.href = '/Cart/Cart';
+
+                }
+                else if (response.status == "-1") {
+                    alert(response.text);
+                }
+                else {
+                    window.location.href = '/Cart/Cart';
+                }
+            },
+            error: function(error) {
+                console.error("Lỗi: ", error);
+            }
+        });
+    }
+
+</script>

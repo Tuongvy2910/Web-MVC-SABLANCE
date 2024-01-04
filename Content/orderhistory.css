@@ -1,0 +1,42 @@
+﻿
+.color {
+    display: inline-block;
+    width: 30px; /* Điều chỉnh kích thước theo ý muốn */
+    height: 30px; /* Điều chỉnh kích thước theo ý muốn */
+    border-radius: 50%; /* Làm cho phần tử trở thành hình tròn */
+    margin-right: 5px; /* Tăng giảm khoảng cách giữa các phần tử */
+    border: 1px solid #ddd; /* Thêm đường viền nếu cần */
+}
+
+.color-dot {
+    display: inline-block;
+    width: 20px; /* Điều chỉnh kích thước theo ý muốn */
+    height: 20px; /* Điều chỉnh kích thước theo ý muốn */
+    border-radius: 50%; /* Làm cho phần tử trở thành hình tròn */
+
+    border: 1px solid #ddd; /* Thêm đường viền nếu cần */
+    vertical-align: middle; /* Căn giữa theo chiều dọc */
+}
+
+.color-name {
+    display: none; /* Ẩn chú thích màu, bạn có thể hiển thị nếu muốn */
+    text-align: center;
+    line-height: 30px; /* Căn giữa theo chiều dọc */
+    color: #fff; /* Màu chữ */
+}
+
+.list-add {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 20px 10px 5px;
+}
+
+.img-em {
+    width: 100% !important;
+    border: 0.3px solid !important;
+    margin-left: 15px;
+}
+
+.uploadpreview {
+    width: 70% !important;
+}

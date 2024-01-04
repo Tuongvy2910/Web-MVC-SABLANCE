@@ -1,0 +1,46 @@
+﻿@model List<SABLANCE.Models.Customer>
+
+<div class="modal-body" id="CustomerViewModalContent">
+    <div class="col-lg-12" style="border-top: 0.2px solid #000; border-bottom: none !important;">
+        <div class="row" id="showcus">
+            <table id="customer-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+                <thead>
+                    <tr>
+
+                        <th>ID </th>
+                        <th>Họ</th>
+                        <th>Tên</th>
+                        <th>Ngày sinh</th>
+                        <th>Số điện thoại</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody id="cusMem">
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td id="cusID">@item.ID</td>
+                            <td id="cusLastName">@item.LastName</td>
+                            <td id="cusFirstName">@item.FirstName</td>
+                            <td id="cusDateOfBirth">
+                                @if (item.DateOfBirth.HasValue)
+                                {
+                                    @item.DateOfBirth.Value.ToString("dd/MM/yyyy")
+                                }
+                                else
+                                {
+                                    <a>N/A</a>
+                                }
+                            </td>
+                            <td id="cusPhone">@item.Phone</td>
+                            <td id="cusEmail">@item.Email</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,463 @@
+﻿@model SABLANCE.Models.Customer
+@{
+    ViewBag.Title = "ProfileCustomer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/profilecustomer.css" rel="stylesheet" />
+
+<div class="modal fade bd-example-modal-lg" id="OrderDetailModal" tabindex="-1" role="dialog" aria-labelledby="OrderDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="OrderDetailModalLabel" style="font-weight: bold; font-size: 18px;">THÔNG TIN CHI TIẾT ĐƠN ĐẶT HÀNG</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="OrderDetailContent">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="successModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/Image/logo_sab.png" class="modal-title" style="width: 30%;" />
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: bold; font-size: 20px;">Đổi mật khẩu thành công.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="errorModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/Image/logo_sab.png" class="modal-title" style="width: 30%;" />
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: bold; font-size: 20px;">Đổi mật khẩu không thành công. Vui lòng kiểm tra lại.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="container-detail">
+        <div class="row form-group" id="profile-user">
+            <div class="col-lg-3" id="nav-profile">
+                <div class="user-tab-avata">
+                    <div style="background-image: url(../../Image/BACKGROUND_AVATA.png);">
+
+                        <img class="user-avata" src="~/Image/avatauser.png">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <span class="vip-inname" style=" width: 30%; margin: 5px 90px;">Free</span>
+                        <span class="name-user" style=" width: 80%; margin: 5px 26px;">@Model.LastName @Model.FirstName</span>
+                    </div>
+                    <div style="margin: 30px 0px 0px 0px;padding-bottom: 20px;">
+                        <div><a class="menu-user active-menu-user" style="cursor: pointer" onclick="showProfileCustomer();">Thông tin tài khoản</a></div>
+
+
+                        <hr class="line-user">
+                        <div>
+                        <a class="menu-user" style="cursor: pointer" id="btn-history">Lịch sử giao dịch</a>
+                        </div>
+                        <hr class="line-user">
+                        <div class="mt-5">
+                            <a class="btn-user-model" onclick="showChangePasswordForm();">Đổi mật khẩu</a>
+                        </div>
+                        <div class="mt-5">
+                            <a class="btn-user-model" href="@Url.Action("Logout", "Login")"> Đăng xuất</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="nav-profile">
+                    <ul>
+                        <li class="bnt-step" id="btn-infoprofile">THÔNG TIN KHÁCH HÀNG</li>
+                        <li id="btn-levelprofile">CHƯƠNG TRÌNH CASHBACK</li>
+                        <li id="btn-condition" class="">QUY CHẾ LÊN HẠNG</li>
+                    </ul>
+                </div>
+                <div id="infoprofile" style="color: rgb(108, 117, 125);">
+                    <div class="backgroud-color-white" id="customerprofile">
+                        <div class="magin-coverpoint pt-3">
+                            <div>THÔNG TIN CHUNG</div>
+                            <hr>
+                        </div>
+                        <div class="user-inforprifile-cover">
+                            <div class="container">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-8">
+                                        <div class="row form-group">
+                                            <div class="col-md-3 align-self-center">Họ tên</div>
+                                            <input class="form-control" id="proId" value="SAB100070189" hidden="">
+                                            <div class="col-md-9"><input class="form-control" placeholder="Nhập tên của bạn" maxlength="50" id="proName" value="@Model.LastName @Model.FirstName"></div>
+
+                                            <div style="display: none;" id="cusID">@Model.ID</div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="col-md-3 align-self-center">Số điện thoại</div>
+                                            <div class="col-md-9"><input class="form-control" placeholder="09999999999" maxlength="20" id="proPhone" value="@Model.Phone" disabled=""></div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="col-md-3 align-self-center">Email</div>
+                                            <div class="col-md-9"><input class="form-control" placeholder="Nhập email của bạn" maxlength="30" id="proEmail" value="@Model.Email"></div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="col-md-3 align-self-center">Giới tính</div>
+                                            <div class="col-md-9">
+                                                @{ if (Model.Gender == "Nam")
+                                                    {
+                                                        <input type="radio" id="male" value="male" name="gender" checked="checked" class="user-gender"><span style="margin-right:40px">&nbsp; Nam</span>
+                                                        <input type="radio" id="female" name="gender" class="user-gender" value="female"><span>&nbsp; Nữ</span>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <input type="radio" id="male" value="male" name="gender" class="user-gender"><span style="margin-right:40px">&nbsp; Nam</span>
+                                                        <input type="radio" id="female" name="gender" checked="checked" class="user-gender" value="female"><span>&nbsp; Nữ</span>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="col-md-3 align-self-center">Ngày sinh</div>
+                                            <div class="col-md-9" style="display: flex;">
+                                                <input class="form-control" id="datetimepicker1" type="text" placeholder="Ngày / Tháng / Năm" value="@Model.DateOfBirth.Value.ToString("dd/MM/yyyy") " disabled="">
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="col-md-9 offset-3">
+                                                <span class="btn-user-model" id="edit-user-profile">Cập nhật</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="backgroud-color-white">
+                        <div class="row user-level-cover-point">
+                            <div class="col-6 user-boder-line-vip">
+                                <div class="user-line-card-point">
+                                    <div class="magin-coverpoint">
+                                        <div class="user-text-level">ĐIỂM CỦA BẠN</div>
+                                        <div class="user-text-point">@ViewBag.Point </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 user-boder-line-vip">
+                                <div class="user-line-card-vip">
+                                    <div class="magin-coverpoint">
+                                        <div class="user-text-level main-orange-color">HẠNG CỦA BẠN</div>
+                                        <div class="user-text-vip">@Model.MemberRating.Name</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @using (Html.BeginForm("ChangePasswords", "Login", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input value="@Model.ID" id="idCus" style="display: none;" />
+                        <input value="@Model.AccountID" id="idAcc"  style="display: none;"/>
+                        <input value="@Model.Account.Password" id="passAcc" style="display: none;"/>
+                        <div class="backgroud-color-white" id="changePassword" style="display: none;">
+                            <div class="magin-coverpoint pt-3">
+                                <div style="font-weight: bold;">ĐỔI MẬT KHẨU</div>
+                                <hr>
+                            </div>
+                            <div class="user-inforprifile-cover">
+                                <div class="container">
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-8">
+                                            <div class="row form-group">
+                                                <div class="col-md-4 align-self-center">Mật khẩu cũ</div>
+                                                <div style="width:50%;">
+                                                    <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
+                                                    <div id="oldPasswordError" class="error-message" style="color: red; font-size: 11px;"></div>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col-md-4 align-self-center">Mật khẩu mới</div>
+                                                <div style="width:50%;">
+                                                    <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                                    <div id="newPasswordError" class="error-message" style="color: red; font-size: 11px;"></div>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col-md-4 align-self-center">Xác Nhận Mật Khẩu Mới</div>
+                                                <div style="width:50%;">
+                                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                                    <div id="confirmPasswordError" class="error-message" style="color: red; font-size: 11px;"></div>
+                                                </div>
+                                            </div>
+                                                <div class="row form-group">
+                                                    <div class="col-md-9 offset-3">
+                                                        <span class="btn-user-model" id="forget">Đổi mật khẩu</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="history-order" id="history" style="display: none;">
+                    <div class="row">
+                        <div class="title">
+                            <h3>LỊCH SỬ ĐƠN HÀNG CỦA BẠN</h3>
+                        </div>
+                        <table class=" col-lg-12 table table-bordered table-responsives table-striped" id="orderdetail">
+                            <thead >
+                                <tr >
+
+                                    <th style="text-align: center;">Mã đơn hàng </th>
+                                    <th style="text-align: center;">Ngày đặt hàng</th>
+                                    <th style="text-align: center;">Số lượng sản phẩm</th>
+                                    <th style="text-align: center;">Tổng tiền đơn hàng</th>
+                                    <th style="text-align: center;">Tình trạng đơn hàng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ViewBag.HistoryOrder)
+                                {
+                                    <tr>
+                                        <td style="text-align: center; cursor: pointer;" onclick="showOrderDetail(@item.OrderID)" class="hover-emdetail">
+                                            <a data-toggle="modal" data-target="#OrderDetailModal" data-id="@item.OrderID"> @item.OrderNo</a>
+                                        </td>
+                                        <td style="text-align: center;">@item.OrderDate.ToString("dd/MM/yyyy")</td>
+                                        <td style="text-align: center;">@item.TotalQuantity</td>
+                                        <td style="text-align: center;">@item.TotalAmount.ToString("0,0")</td>
+                                        <td style="text-align: center;">@item.LatestOrderStatus</td>
+                                    </tr>
+                                }
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="levelprofile" style="display: none;">
+                    <div class="bg-white rounded px-5 py-2">
+                        <div class="cb-header rounded px-5 py-2">
+                            <div class="user-text-level text-uppercase text-center mb-2">link giới thiệu của bạn</div>
+                            <div class="bg-white d-flex" style="border-radius: 0.25rem !important;">
+                                <div class="w-100 reference-link d-flex align-items-center p-1">
+                                    <p></p>
+                                </div>
+                                <div class="w-100">
+                                    <a href="javascript:" onclick="copyTextToClipBoard('',this)" class="btn btn-orange btn-block text-capitalize">nhấn để copy</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="my-4 px-4 font-italic">
+                            <p>* Khách hàng Gold Member &amp; Platinum Member của Sablanca sẽ nhận được môt mã FRIENDLY để giới thiệu sản phẩm đến bạn bè, người thân mình.</p>
+                            <p>* Mã FRIENDLY được cung cấp ngẫu nhiên và riêng biệt cho từng khách hàng</p>
+                            <p>* Khi bạn bè, người thân mua hàng thành công từ mã FRIENDLY giới thiệu, Gold Member &amp; Platinum Member được cashback lại theo % chi tiết trong bảng</p>
+                        </div>
+                        <div class="rounded bg-gray px-2 py-4">
+                            <div class="user-text-level text-uppercase text-center mb-2">khách hàng giới thiệu</div>
+                            <div class="bg-white rounded">
+                                <div class="container">
+                                    <div class="row rounded bg-orange text-white text-center py-2">
+                                        <div class="col-6 border-right">Quyền lợi</div>
+                                        <div class="col-3 border-right">Gold</div>
+                                        <div class="col-3">Platinum</div>
+                                    </div>
+                                    <div class="row border-bottom rounded bg-white py-2  text-center">
+                                        <div class="col-6 border-right">Ưu đãi khi mua hàng</div>
+                                        <div class="col-3 border-right aqua-green">10%</div>
+                                        <div class="col-3 aqua-green">15%</div>
+                                    </div>
+                                    <div class="row rounded border-bottom bg-white py-2  text-center">
+                                        <div class="col-6 border-right">Được cấp mã "FRIENDLY"</div>
+                                        <div class="col-3 border-right aqua-green"><i class="fa fa-check fa-lg"></i></div>
+                                        <div class="col-3 aqua-green"><i class="fa fa-check fa-lg"></i></div>
+                                    </div>
+                                    <div class="row rounded border-bottom bg-white py-2  text-center">
+                                        <div class="col-6 border-right">Được tặng mã "FRIENDLY" cho bạn bè</div>
+                                        <div class="col-3 border-right aqua-green"><i class="fa fa-check fa-lg"></i></div>
+                                        <div class="col-3 aqua-green"><i class="fa fa-check fa-lg"></i></div>
+                                    </div>
+                                    <div class="row rounded border-bottom bg-white py-2  text-center">
+                                        <div class="col-6 border-right">Ưu đãi Cashback khi bạn bè mua hàng thành công</div>
+                                        <div class="col-3 border-right aqua-green">10%</div>
+                                        <div class="col-3 aqua-green">15%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="font-italic mt-5">
+                                <p class="text-capitalize">Điều kiện áp dụng</p>
+                                <p>- Cashback khi bạn bè mua hàng thành công và giới thiệu cho khách hàng khác và giao dịch đó thanh toán thành công, không hoàn trả hàng thì sẽ được cashback theo mực ưu đãi của chủ tài khoản</p>
+                                <p>- Tiền tích lũy sau khi được cashback sẽ được cộng dồn vào tài khoản của chủ thẻ</p>
+                                <p>- Tiền tích lũy được sử dụng như tiền mặt trong gian hàng của SABLANCA (Online và Offline)</p>
+                                <p>- Tiền tích lũy không được quy đổi thành tiền mặt</p>
+                                <p>- Tiền tích lũy có thể chuyển đổi thành Voucher và tặng cho người khác</p>
+                                <p>- Tiền tích lũy có giới hạn 12 tháng , tính từ giao dịch cashback cuối cùng trong năm </p>
+                            </div>
+                        </div>
+                        <div class="rounded bg-gray px-2 py-4 mt-5">
+                            <div class="user-text-level text-uppercase text-center mb-2">khách hàng được giới thiệu</div>
+                            <div class="bg-white rounded">
+                                <div class="container">
+                                    <div class="row rounded bg-orange text-white text-center align-items-center py-2">
+                                        <div class="col-6 border-right">Quyền lợi</div>
+                                        <div class="col-3 border-right">Được giới thiệu từ Gold Member</div>
+                                        <div class="col-3">Được giới thiệu từ Platinum Member</div>
+                                    </div>
+                                    <div class="row border-bottom rounded bg-white py-2  text-center">
+                                        <div class="col-6 border-right">Ưu đãi khi mua hàng</div>
+                                        <div class="col-3 border-right aqua-green">10%</div>
+                                        <div class="col-3 aqua-green">15%</div>
+                                    </div>
+                                    <div class="row rounded border-bottom bg-white py-2  text-center">
+                                        <div class="col-6 border-right">Được cấp mã "FRIENDLY"</div>
+                                        <div class="col-3 border-right aqua-green"><i class="fa fa-check fa-lg"></i></div>
+                                        <div class="col-3 aqua-green"><i class="fa fa-check fa-lg"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="font-italic mt-5">
+                                <p class="text-capitalize">Điều kiện áp dụng</p>
+                                <p>- Mỗi khách hàng được giới thiệu chỉ được sử dụng mã “FRIENDLY” 01 lần duy nhất trong suốt thời gian diễn ra chương trình </p>
+                                <p>- Áp dụng cho toàn bộ khách hàng là bạn bè, người thân của chủ thẻ.</p>
+                                <p>- Không áp dụng kèm chương trình khuyến mãi khác </p>
+                                <p>- Không áp dụng kèm thẻ VIP của SABLANCA</p>
+                                <p>- Không áp dụng kèm chương trình sinh nhật, phiếu quà tặng khác.</p>
+                                <p>- Sản phẩm mua trong chương trình được đổi và bảo hành theo chính sách của SABLANCA </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="condition" style="display: none;">
+                    <img src="~/Image/quyche.png">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <!-- Đặt Popper.js trước Bootstrap.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+
+    <script src="~/Scripts/changepass.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var btnProfile = document.getElementById('btn-infoprofile');
+            var btnHistory = document.getElementById('btn-history');
+            var btnCondition = document.getElementById('btn-condition');
+            var btnLevelProfile = document.getElementById('btn-levelprofile');
+
+            var infoProfile = document.getElementById('infoprofile');
+            var historySection = document.getElementById('history');
+            var conditionSection = document.getElementById('condition');
+            var levelProfileSection = document.getElementById('levelprofile');
+
+            // Hàm để ẩn tất cả các phần tử ngoại trừ phần tử được chọn
+            function showSection(selectedSection) {
+                // Ẩn tất cả
+                infoProfile.style.display = 'none';
+                historySection.style.display = 'none';
+                conditionSection.style.display = 'none';
+                levelProfileSection.style.display = 'none';
+
+                // Hiển thị phần tử được chọn
+                selectedSection.style.display = 'block';
+            }
+            btnProfile.addEventListener('click', function () {
+                showSection(infoProfile);
+            });
+            // Bắt sự kiện khi nhấn vào nút "Lịch sử giao dịch"
+            btnHistory.addEventListener('click', function () {
+                showSection(historySection);
+            });
+
+            // Bắt sự kiện khi nhấn vào nút "Điều kiện"
+            btnCondition.addEventListener('click', function () {
+                showSection(conditionSection);
+            });
+
+            // Bắt sự kiện khi nhấn vào nút "Hồ sơ cấp bậc"
+            btnLevelProfile.addEventListener('click', function () {
+                showSection(levelProfileSection);
+            });
+        });
+        function showOrderDetail(orderId) {
+        // Thực hiện Ajax để lấy thông tin chi tiết nhân viên từ server
+        console.log(orderId)
+        $.ajax({
+            url: '@Url.Action("OrderDetailView")',
+            type: 'POST',
+            data: {
+                Id: orderId
+            },
+            success: function (data) {
+                console.log(data);
+                $('#OrderDetailContent').html(data);
+                $('#OrderDetailModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra khi lấy thông tin chi tiết khách hàng.');
+            }
+        });
+    }
+        $(document).ready(function () {
+
+        function Password() {
+            if (validateForm()) {
+                // Lấy giá trị từ các trường input
+                var ID = $('#idAcc').val();
+                var oldPassword = $('#oldPassword').val();
+                var newPassword = $('#newPassword').val();
+                var confirmPassword = $('#confirmPassword').val();
+                $.ajax({
+                    url: '/Login/ChangePasswords', // Đường dẫn đến Action xử lý đổi mật khẩu
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8', // Set content type to JSON
+                    dataType: 'json', // Expect JSON data in response
+                    data: JSON.stringify({
+                        Id: ID,
+                        oldPassword: oldPassword,
+                        newPassword: newPassword,
+                    }),
+                    cache: false,
+                    processData: false,
+                    success: function (data) {
+                        console.log(data);
+                        if (data.status === 1) {
+                            $('#successModal').modal('show');
+                        }
+                        else if (data.status === -1) {
+                            $('#errorModal').modal('show');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                        alert('Đã có lỗi xảy ra.');
+                    }
+                });
+            }
+        }
+
+        // Sử dụng event listener
+        $('#forget').on('click', function (event) {
+            Password();
+        });
+    });
+    </script>
+
+

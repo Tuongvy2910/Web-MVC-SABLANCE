@@ -1,0 +1,280 @@
+﻿@model IPagedList<SABLANCE.Models.Color>
+
+@{
+    ViewBag.Title = "Danh sách màu sắc";
+    Layout = "~/Areas/Admin/Views/Shared/_Admin.cshtml";
+
+}
+@using PagedList.Mvc;
+@using PagedList;
+<link href="~/Content/customeadmin.css" rel="stylesheet" />
+<div class="list-add">
+    <div>
+        <h2>DANH SÁCH MÀU SẮC SẢN PHẨM</h2>
+    </div>
+    <button class="Btn" id="addColorBtn" data-toggle="modal" data-target="#addColorModal">
+
+        <div class="sign">
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 72 72">
+                <path d="M36,12c13.255,0,24,10.745,24,24c0,13.255-10.745,24-24,24S12,49.255,12,36C12,22.745,22.745,12,36,12z M44,39	c1.657,0,3-1.343,3-3c0-1.657-1.343-3-3-3c-0.329,0-2.426,0-5,0c0-2.574,0-4.672,0-5c0-1.657-1.343-3-3-3c-1.657,0-3,1.343-3,3	c0,0.328,0,2.426,0,5c-2.574,0-4.671,0-5,0c-1.657,0-3,1.343-3,3c0,1.657,1.343,3,3,3c0.329,0,2.426,0,5,0c0,2.574,0,4.672,0,5	c0,1.657,1.343,3,3,3c1.657,0,3-1.343,3-3c0-0.328,0-2.426,0-5C41.574,39,43.671,39,44,39z"></path>
+            </svg>
+        </div>
+        <div class="text">Thêm màu sắc</div>
+    </button>
+</div>
+
+<div class="modal" id="successModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/Image/logo_sab.png" class="modal-title" style="width: 30%;" />
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: bold; font-size: 20px;">Xóa thành công.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="questionModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/Image/logo_sab.png" class="modal-title" style="width: 30%;" />
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: bold; font-size: 20px;">Bạn có chắc muốn màu sắc này ? </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button type="button" class="btn btn-primary" id="confirmDelete">Có</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*thêm danh mục màu sắc*@
+<div class="modal fade bd-example-modal-lg" id="addColorModal" tabindex="-1" role="dialog" aria-labelledby="addColorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CreateViewModalLabel" style="font-weight: bold; font-size: 18px;">THÊM MÀU SẮC</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="CreateViewModalContent">
+
+            </div>
+        </div>
+    </div>
+</div>
+@* sửa loại thành viên *@
+<div class="modal fade bd-example-modal-lg" id="editMemberModal" tabindex="-1" role="dialog" aria-labelledby="editMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditViewModalLabel" style="font-weight: bold; font-size: 18px;">CHỈNH SỬA THÔNG TIN MÀU SẮC</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="EditViewModalContent">
+
+            </div>
+        </div>
+    </div>
+</div>
+@* hiện thị chi tiết màu sắc *@
+<div class="modal fade bd-example-modal-lg" id="ColorProductModal" tabindex="-1" role="dialog" aria-labelledby="ColorProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ColorProductViewModalLabel" style="font-weight: bold; font-size: 18px;">DANH SÁCH SẢN PHẨM</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="ColorProductViewModalContent">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<table id="customer-table" class="table table-bordered table-responsives table-striped">
+
+    <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Mã màu
+            </th>
+            <th>
+                Tên màu sắc
+            </th>
+            <th>
+                Số lượng mặt hàng
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+
+    @if (Model != null && Model.Count() > 0)
+    {
+
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.ID.ToString("0")
+                    </td>
+                    <td>
+                        <a> @item.Code</a>
+                    </td>
+                    <td onclick="showColorMemberView(@item.ID)" class="hover-emdetail">
+                        <a data-toggle="modal" data-target="#ColorProductModal" data-id="@item.ID"> @item.Name</a>
+                    </td>
+                    <td style="text-align: center; cursor: pointer" onclick="showColorMemberView(@item.ID)" class="hover-emdetail">
+                        <a data-toggle="modal" data-target="#ColorProductModal" data-id="@item.ID">  
+                        @(ViewBag.ProductCountsByColorID.ContainsKey(item.ID) ? ViewBag.ProductCountsByColorID[item.ID] : 0)
+                        </a>
+                       
+                    </td>
+                    <td style="text-align: center;">
+                        <a onclick="showEditMemberView(@item.ID);">
+                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,255.99603,255.99603">
+                                <g fill="#000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-size="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M18,2l-2.41406,2.41406l4,4l2.41406,-2.41406zM14.07617,5.92383l-11.07617,11.07617v4h4l11.07617,-11.07617z"></path></g></g>
+                            </svg>
+                        </a>
+                    </td>
+                    <td style="text-align: center;">
+                        <a onclick="showModal(@item.ID);">
+                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,255.99603,255.99603">
+                                <g fill="#000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-size="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M10,2l-1,1h-6v2h18v-2h-6l-1,-1zM4.36523,7l1.70313,15h11.86328l1.70313,-15z"></path></g></g>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+
+</table>
+
+
+
+@Html.PagedListPager(Model, page => Url.Action("ListColor",
+    new { page, pageSize = 10 }))
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- Đặt Popper.js trước Bootstrap.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#addColorBtn").click(function () {
+            showCreateMemberView();
+        });
+    });
+    function showCreateMemberView() {
+        // Thực hiện Ajax để lấy thông tin chi tiết nhân viên từ server
+        console.log("leeb")
+        $.ajax({
+            url: '@Url.Action("CreateColorView")',
+            type: 'GET',
+            data: {
+            },
+            success: function (data) {
+                $('#CreateViewModalContent').html(data),
+                $('#addColorModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra khi thêm xếp loại thành viên.');
+            }
+        });
+    }
+
+    function showColorMemberView(colorId) {
+        // Thực hiện Ajax để lấy thông tin chi tiết nhân viên từ server
+        console.log("leeb")
+        $.ajax({
+            url: '@Url.Action("GetColorDetailView")',
+            type: 'POST',
+            data: {
+                Id: colorId
+            },
+            success: function (data) {
+                $('#ColorProductViewModalContent').html(data),
+                $('#ColorMemberModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra khi lấy thông tin chi tiết màu sắc.');
+            }
+        });
+    }
+    function showEditMemberView(colorId) {
+
+        $.ajax({
+            url: '@Url.Action("EditColorView")',
+            type: 'GET',
+            data: {
+                Id: colorId
+            },
+            success: function (data) {
+                $('#EditViewModalContent').html(data),
+                $('#editMemberModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+                alert('Đã có lỗi xảy ra khi lấy thông tin chi tiết màu sắc.');
+            }
+        });
+    }
+    function DeleteColor (colorId) {
+
+        $.ajax({
+            url: '@Url.Action("DeleteColor", "ProductAd")',
+            type: 'POST',
+            data: {
+                Id: colorId
+            },
+            success: function (data) {
+                if (data.status === 1) {
+                    $('#successModal').modal('show');
+                } else {
+                    alert('Xóa màu sắc không thành công')
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                alert('Đã có lỗi xảy ra khi xóa màu sắc');
+            }
+        });
+    }
+    $(document).ready(function () {
+        // Ẩn modal khi nhấn nút "OK"
+        $('#successModal').on('hidden.bs.modal', function () {
+            window.location.href = "@Url.Action("ListColor", "ProductAd")";
+        });
+    });
+
+    function showModal(colorId) {
+        $('#confirmDelete').data('colorId', colorId);
+        $('#questionModal').modal('show');
+    }
+    $(document).on('click', '#confirmDelete', function () {
+        var ID = $(this).data('colorId');
+        // Gọi hàm xóa nhân viên tại đây
+        DeleteColor(ID);
+        // Đóng modal sau khi thực hiện xóa
+        $('#questionModal').modal('hide');
+    });
+
+</script>

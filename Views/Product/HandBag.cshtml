@@ -1,0 +1,574 @@
+﻿@model IEnumerable<SABLANCE.Models.ProductDetail>
+@{
+    ViewBag.Title = "Túi xách SABLANCA";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var data = ViewBag.data as List<SABLANCE.Models.Product>;
+    var db = new SABLANCE.Models.DataSablancaShopEntities();
+    int i = 0;
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/freeps2/a7rarpress@main/swiper-bundle.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+<link href="~/Content/Home_Buyer.css" rel="stylesheet" />
+<link href="~/Content/products.css" rel="stylesheet" />
+<link href="~/Content/product.css" rel="stylesheet" />
+<div class="container-fluid">
+    <div class="d-flex nav-cata-web">
+        <div class="title-nav-detail w90">
+            <a class="txt-color" href="@Url.Action("Home", "Home")">Trang chủ</a> &gt;
+            <a class="txt-color" href="@Url.Action("HandBag", "Product")">TÚI XÁCH</a>
+        </div>
+        <div class="bl-backgroud d-flex">
+            <span class="lb-margin" style="width: 80px;">BỘ LỌC</span>
+            <span class="font-family-roboto">|</span>
+            <ul class="filer-ul">
+
+                <li class="nav-item product-content news-content">
+                    <div class="lb-margin btn-filter">Giá</div>
+                    <ul class="sublist-news onClickFilter" style="">
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="gia-ban-duoi-300k" data-value="duoi-300k" data-filterfieldid="gia-ban" data-id="54" value="120">
+                            <div>
+                                <input style="pointer-events: none;" id="gia-ban-duoi-300k" class="input-checkbox-filter" name="color" type="checkbox" data-value="duoi-300k" data-filterfieldid="gia-ban" data-id="54" value="120">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: 299999 "></span>
+                            <div class="ml-2 content-filter">Dưới 300k</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="gia-ban-300k-500k" data-value="300k-500k" data-filterfieldid="gia-ban" data-id="54" value="121">
+                            <div>
+                                <input style="pointer-events: none;" id="gia-ban-300k-500k" class="input-checkbox-filter" name="color" type="checkbox" data-value="300k-500k" data-filterfieldid="gia-ban" data-id="54" value="121">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: 499999 "></span>
+                            <div class="ml-2 content-filter">300 - 500k</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="gia-ban-500k-800k" data-value="500k-800k" data-filterfieldid="gia-ban" data-id="54" value="125">
+                            <div>
+                                <input style="pointer-events: none;" id="gia-ban-500k-800k" class="input-checkbox-filter" name="color" type="checkbox" data-value="500k-800k" data-filterfieldid="gia-ban" data-id="54" value="125">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: #799999 "></span>
+                            <div class="ml-2 content-filter">500K - 800K</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="gia-ban-tren-800k" data-value="tren-800k" data-filterfieldid="gia-ban" data-id="54" value="126">
+                            <div>
+                                <input style="pointer-events: none;" id="gia-ban-tren-800k" class="input-checkbox-filter" name="color" type="checkbox" data-value="tren-800k" data-filterfieldid="gia-ban" data-id="54" value="126">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: #500000 "></span>
+                            <div class="ml-2 content-filter">Trên 800k</div>
+                        </li>
+
+                    </ul>
+                </li>
+                <li class="nav-item product-content news-content">
+                    <div class="lb-margin btn-filter">Màu sắc</div>
+                    <ul class="sublist-news onClickFilter" style="">
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-be" data-value="be" data-filterfieldid="mau-sac" data-id="38" value="80">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-be" class="input-checkbox-filter" name="color" type="checkbox" data-value="be" data-filterfieldid="mau-sac" data-id="38" value="80">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #f5f5dc "></span>
+                            <div class="ml-2 content-filter">Be</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-cam" data-value="cam" data-filterfieldid="mau-sac" data-id="38" value="157">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-cam" class="input-checkbox-filter" name="color" type="checkbox" data-value="cam" data-filterfieldid="mau-sac" data-id="38" value="157">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #ffa500 "></span>
+                            <div class="ml-2 content-filter">Cam</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-den" data-value="den" data-filterfieldid="mau-sac" data-id="38" value="71">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-den" class="input-checkbox-filter" name="color" type="checkbox" data-value="den" data-filterfieldid="mau-sac" data-id="38" value="71">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #000000 "></span>
+                            <div class="ml-2 content-filter">Đen</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-do" data-value="do" data-filterfieldid="mau-sac" data-id="38" value="78">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-do" class="input-checkbox-filter" name="color" type="checkbox" data-value="do" data-filterfieldid="mau-sac" data-id="38" value="78">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #FF0000 "></span>
+                            <div class="ml-2 content-filter">Đỏ</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-hoa-tiet" data-value="hoa-tiet" data-filterfieldid="mau-sac" data-id="38" value="159">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-hoa-tiet" class="input-checkbox-filter" name="color" type="checkbox" data-value="hoa-tiet" data-filterfieldid="mau-sac" data-id="38" value="159">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #2c3e50 "></span>
+                            <div class="ml-2 content-filter">Họa tiết</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-hong" data-value="hong" data-filterfieldid="mau-sac" data-id="38" value="154">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-hong" class="input-checkbox-filter" name="color" type="checkbox" data-value="hong" data-filterfieldid="mau-sac" data-id="38" value="154">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #ffc0cb "></span>
+                            <div class="ml-2 content-filter">Hồng</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-nau" data-value="nau" data-filterfieldid="mau-sac" data-id="38" value="158">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-nau" class="input-checkbox-filter" name="color" type="checkbox" data-value="nau" data-filterfieldid="mau-sac" data-id="38" value="158">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #8b4513 "></span>
+                            <div class="ml-2 content-filter">Nâu</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-nude" data-value="nude" data-filterfieldid="mau-sac" data-id="38" value="127">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-nude" class="input-checkbox-filter" name="color" type="checkbox" data-value="nude" data-filterfieldid="mau-sac" data-id="38" value="127">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #e3bc9a "></span>
+                            <div class="ml-2 content-filter">Nude</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-tim" data-value="tim" data-filterfieldid="mau-sac" data-id="38" value="156">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-tim" class="input-checkbox-filter" name="color" type="checkbox" data-value="tim" data-filterfieldid="mau-sac" data-id="38" value="156">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #ee82ee "></span>
+                            <div class="ml-2 content-filter">Tím</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-trang" data-value="trang" data-filterfieldid="mau-sac" data-id="38" value="77">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-trang" class="input-checkbox-filter" name="color" type="checkbox" data-value="trang" data-filterfieldid="mau-sac" data-id="38" value="77">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #FFFFFF "></span>
+                            <div class="ml-2 content-filter">Trắng/Kem</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-vang" data-value="vang" data-filterfieldid="mau-sac" data-id="38" value="155">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-vang" class="input-checkbox-filter" name="color" type="checkbox" data-value="vang" data-filterfieldid="mau-sac" data-id="38" value="155">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #FFFF00 "></span>
+                            <div class="ml-2 content-filter">Vàng</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-xam" data-value="xam" data-filterfieldid="mau-sac" data-id="38" value="79">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-xam" class="input-checkbox-filter" name="color" type="checkbox" data-value="xam" data-filterfieldid="mau-sac" data-id="38" value="79">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #808080 "></span>
+                            <div class="ml-2 content-filter">Xám</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-xanh-duong" data-value="xanh-duong" data-filterfieldid="mau-sac" data-id="38" value="152">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-xanh-duong" class="input-checkbox-filter" name="color" type="checkbox" data-value="xanh-duong" data-filterfieldid="mau-sac" data-id="38" value="152">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #0000FF "></span>
+                            <div class="ml-2 content-filter">Xanh dương</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="mau-sac-xanh-la" data-value="xanh-la" data-filterfieldid="mau-sac" data-id="38" value="153">
+                            <div>
+                                <input style="pointer-events: none;" id="mau-sac-xanh-la" class="input-checkbox-filter" name="color" type="checkbox" data-value="xanh-la" data-filterfieldid="mau-sac" data-id="38" value="153">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 " style="background-color: #008000 "></span>
+                            <div class="ml-2 content-filter">Xanh lá</div>
+                        </li>
+
+                    </ul>
+                </li>
+                <li class="nav-item product-content news-content">
+                    <div class="lb-margin btn-filter">Loại dây đeo</div>
+                    <ul class="sublist-news onClickFilter" style="">
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="loai-day-deo-vat-tu-cung-loai" data-value="vat-tu-cung-loai" data-filterfieldid="loai-day-deo" data-id="42" value="1">
+                            <div>
+                                <input style="pointer-events: none;" id="loai-day-deo-vat-tu-cung-loai" class="input-checkbox-filter" name="color" type="checkbox" data-value="vat-tu-cung-loai" data-filterfieldid="loai-day-deo" data-id="42" value="1">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: "></span>
+                            <div class="ml-2 content-filter">Vật tư cùng loại</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="loai-day-deo-kim-loai" data-value="kim-loai" data-filterfieldid="loai-day-deo" data-id="42" value="2">
+                            <div>
+                                <input style="pointer-events: none;" id="loai-day-deo-kim-loai" class="input-checkbox-filter" name="color" type="checkbox" data-value="kim-loai" data-filterfieldid="loai-day-deo" data-id="42" value="2">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: "></span>
+                            <div class="ml-2 content-filter">Kim Loại</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="loai-day-deo-day-du" data-value="day-du" data-filterfieldid="loai-day-deo" data-id="42" value="3">
+                            <div>
+                                <input style="pointer-events: none;" id="loai-day-deo-day-du" class="input-checkbox-filter" name="color" type="checkbox" data-value="day-du" data-filterfieldid="loai-day-deo" data-id="42" value="3">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: "></span>
+                            <div class="ml-2 content-filter">Dây dù</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="loai-day-deo-day-bo" data-value="day-bo" data-filterfieldid="loai-day-deo" data-id="42" value="4">
+                            <div>
+                                <input style="pointer-events: none;" id="loai-day-deo-day-bo" class="input-checkbox-filter" name="color" type="checkbox" data-value="day-bo" data-filterfieldid="loai-day-deo" data-id="42" value="4">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: "></span>
+                            <div class="ml-2 content-filter">Dây bố</div>
+                        </li>
+
+                    </ul>
+                </li>
+                <li class="nav-item product-content news-content">
+                    <div class="lb-margin btn-filter">Kích cỡ</div>
+                    <ul class="sublist-news onClickFilter" style="">
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="kich-co-lon" data-value="lon" data-filterfieldid="kich-co" data-id="56" value="3">
+                            <div>
+                                <input style="pointer-events: none;" id="kich-co-lon" class="input-checkbox-filter" name="color" type="checkbox" data-value="lon" data-filterfieldid="kich-co" data-id="56" value="3">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: "></span>
+                            <div class="ml-2 content-filter">Lớn</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="kich-co-nho" data-value="nho" data-filterfieldid="kich-co" data-id="56" value="1">
+                            <div>
+                                <input style="pointer-events: none;" id="kich-co-nho" class="input-checkbox-filter" name="color" type="checkbox" data-value="nho" data-filterfieldid="kich-co" data-id="56" value="1">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: "></span>
+                            <div class="ml-2 content-filter">Nhỏ</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="kich-co-trung-binh" data-value="trung-binh" data-filterfieldid="kich-co" data-id="56" value="2">
+                            <div>
+                                <input style="pointer-events: none;" id="kich-co-trung-binh" class="input-checkbox-filter" name="color" type="checkbox" data-value="trung-binh" data-filterfieldid="kich-co" data-id="56" value="2">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: "></span>
+                            <div class="ml-2 content-filter">Trung bình</div>
+                        </li>
+
+                    </ul>
+                </li>
+                <li class="nav-item product-content news-content">
+                    <div class="lb-margin btn-filter">Kiểu khóa</div>
+                    <ul class="sublist-news onClickFilter" style="right: 0;">
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="kieu-khoa-khoa-bam" data-value="khoa-bam" data-filterfieldid="kieu-khoa" data-id="47" value="3">
+                            <div>
+                                <input style="pointer-events: none;" id="kieu-khoa-khoa-bam" class="input-checkbox-filter" name="color" type="checkbox" data-value="khoa-bam" data-filterfieldid="kieu-khoa" data-id="47" value="3">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: "></span>
+                            <div class="ml-2 content-filter">Khóa bấm</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="kieu-khoa-khoa-cai" data-value="khoa-cai" data-filterfieldid="kieu-khoa" data-id="47" value="2">
+                            <div>
+                                <input style="pointer-events: none;" id="kieu-khoa-khoa-cai" class="input-checkbox-filter" name="color" type="checkbox" data-value="khoa-cai" data-filterfieldid="kieu-khoa" data-id="47" value="2">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: "></span>
+                            <div class="ml-2 content-filter">Khóa cài</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="kieu-khoa-khoa-keo" data-value="khoa-keo" data-filterfieldid="kieu-khoa" data-id="47" value="1">
+                            <div>
+                                <input style="pointer-events: none;" id="kieu-khoa-khoa-keo" class="input-checkbox-filter" name="color" type="checkbox" data-value="khoa-keo" data-filterfieldid="kieu-khoa" data-id="47" value="1">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: "></span>
+                            <div class="ml-2 content-filter">Khóa kéo</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="kieu-khoa-day-rut" data-value="day-rut" data-filterfieldid="kieu-khoa" data-id="47" value="4">
+                            <div>
+                                <input style="pointer-events: none;" id="kieu-khoa-day-rut" class="input-checkbox-filter" name="color" type="checkbox" data-value="day-rut" data-filterfieldid="kieu-khoa" data-id="47" value="4">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: "></span>
+                            <div class="ml-2 content-filter">Dây rút</div>
+                        </li>
+                        <li style="cursor: pointer;" class="d-flex m-2 align-items-center color2" data-key="kieu-khoa-kieu-khoa-khac" data-value="kieu-khoa-khac" data-filterfieldid="kieu-khoa" data-id="47" value="5">
+                            <div>
+                                <input style="pointer-events: none;" id="kieu-khoa-kieu-khoa-khac" class="input-checkbox-filter" name="color" type="checkbox" data-value="kieu-khoa-khac" data-filterfieldid="kieu-khoa" data-id="47" value="5">
+                            </div>
+                            <span class="color-checkbox-filter ml-2 d-none" style="background-color: "></span>
+                            <div class="ml-2 content-filter">Kiểu khóa khác</div>
+                        </li>
+
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div style="display: block">
+        <div style="background-color: #f4f4f4">
+            <div class="col-sale-owl-carousel">
+                <div class="row">
+                    @{
+                        var index = 0;
+                        foreach (var item in data)
+                        {
+                            var detail = db.ProductDetails.Where(a => a.ProductID == item.ID).ToList();
+                            <div class="cover-new-carousel col-6 col-sm-4 col-md-3 col-lg-3" style="margin-top: 10px">
+                                <div class="card">
+                                    <div class="image-container">
+                                        @if (detail.Count > 0)
+                                        {
+                                            var firstImage = detail.FirstOrDefault().Image;
+                                            <img src="~/Image/Product/@firstImage" id="ShoeImage_@index" class="img-item-home detailImage">
+                                        }
+
+                                        <div class="price">@detail[i].Prices.ToString("0,0 VNĐ")</div>
+                                    </div>
+                                    <label class="favorite">
+                                        <input checked="" type="checkbox">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000">
+                                            <path d="M12 20a1 1 0 0 1-.437-.1C11.214 19.73 3 15.671 3 9a5 5 0 0 1 8.535-3.536l.465.465.465-.465A5 5 0 0 1 21 9c0 6.646-8.212 10.728-8.562 10.9A1 1 0 0 1 12 20z"></path>
+                                        </svg>
+                                    </label>
+                                    <input id="ProductID_@item.ID" value="" style="display: none;" />
+                                    <input id="ColorID_@item.ID" value="" style="display: none;" />
+                                    @if (detail.Count > 0)
+                                    {
+                                        var colors = (from a in db.ProductDetails
+                                                      join b in db.Colors on a.ColorID equals b.ID
+                                                      where a.ProductID == item.ID
+                                                      group b by new { b.ID, b.Name, b.Code } into g
+                                                      select new
+                                                      {
+                                                          ID = g.Key.ID,
+                                                          Name = g.Key.Name,
+                                                          Code = g.Key.Code
+                                                      }).ToList();
+                                        var sizes = (from a in db.ProductDetails
+                                                     join b in db.Sizes on a.SizeID equals b.ID
+                                                     where a.ProductID == item.ID
+                                                     group b by new { b.ID, b.Name, b.Code } into g
+                                                     select new
+                                                     {
+                                                         ID = g.Key.ID,
+                                                         Name = g.Key.Name,
+                                                         Code = g.Key.Code
+                                                     }).ToList();
+                                        //var details = db.ProductDetails.Where(a => a.ProductID == item.ID).ToList();
+                                        <div class="content">
+                                            <div class="product-name">
+                                                <a class="product-name" href="@Url.Action("ProductDetail", "Product" , new {Id = item.ID})">
+                                                    @item.Name
+                                                </a>
+                                            </div>
+                                            <div class="color-size-container">
+                                                <div class="colors">
+                                                    Màu sắc
+                                                    <ul class="colors-container">
+                                                        @foreach (var color in colors)
+                                                        {
+
+                                                            <li class="color">
+                                                                <a onclick="ColorOnImage(@color.ID, @item.ID, 'ShoeImage_@index')" style="background-color: @color.Code"></a>
+                                                                <span class="color-name">@color.Name</span>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                                @if (sizes.Count > 0)
+                                                {
+                                                    <input id="SizeID_@item.ID" value="" style="display: none;" />
+                                                    <div class="sizes">
+                                                        Kích thước
+                                                        <ul class="size-container">
+                                                            @foreach (var size in sizes)
+                                                            {
+                                                                <li class="size">
+                                                                    <label class="size-radio">
+                                                                        <input name="size" value="@size.ID" onclick="getColorSizeOnImage(@size.ID, @item.ID)" type="radio">
+                                                                        <span class="name">@size.Name</span>
+                                                                    </label>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <input id="SizeID_@item.ID" value="0" style="display: none;" />
+                                                    <div class="sizes" style="display: none;"></div>
+                                                }
+
+                                            </div>
+
+                                        </div>
+                                        <div class="button-container">
+                                            <button class="buy-button button" onclick="AddToCart(@item.ID)">
+                                                <i class="fas fa-shopping-cart"></i>
+                                                Thêm vào giỏ hàng
+                                            </button>
+                                        </div>
+
+                                    }
+
+                                </div>
+                            </div>
+                            index++;
+                        }
+                    }
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- Đặt Popper.js trước Bootstrap.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+
+<script>
+
+    function ColorOnImage(color, id, idImg) {
+    console.log(idImg);
+    $.ajax({
+        type: "POST",
+        url: '@Url.Action("ColorOnImage")',
+        data: { color: color, id: id },
+        success: function (response) {
+            var a = '/Image/Product/' + response.obj.Image;
+            console.log('ket qua a:', a);
+            $(`#${idImg}`).attr('src', a);
+            console.log(response.obj.IDDetail);
+            $(`#ProductID_${id}`).val(response.obj.IDDetail);
+            $(`#ColorID_${id}`).val(response.obj.ColorID);
+        },
+        error: function (error) {
+            console.error("Lỗi: ", error);
+        }
+    });
+}
+
+function getColorSizeOnImage(size, id) {
+    // Your implementation here
+    console.log("Size: " + size + ", ID: " + id);
+    var color = $(`#ColorID_${id}`).val();
+    if (color !== "") {
+        $.ajax({
+            url: '@Url.Action("ColorSizeOnImage")',
+            type: "POST",
+            data: {
+                color: color,
+                size: size,
+                id: id
+            },
+            success: function (response) {
+                if (response.status === 1) {
+                    // Process the data here
+                    var data = response.obj;
+                    if (data !== null) {
+                        // Use data.ProductID, data.ColorID, data.SizeID, etc.
+                        $(`#ProductID_${id}`).val(data.IDDetail);
+                        $(`#ColorID_${id}`).val(response.obj.ColorID);
+                        $(`#SizeID_${id}`).val(response.obj.SizeID);
+                        console.log(data.IDDetail);
+                    } else {
+                        alert("Màu này hết size: " + size + ". Vui lòng chọn size khác");
+                    }
+                } else {
+                    // Handle error if needed
+                    console.error(response.text);
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle AJAX error if needed
+                console.error(error);
+            }
+        });
+    } else {
+        alert("Bạn vui lòng chọn màu sắc trước");
+    }
+}
+
+function AddToCart(IdProduct)
+    {
+        var size = $(`#SizeID_${IdProduct}`).val();
+        console.log(size);
+        var IdDetailProduct = $(`#ProductID_${IdProduct}`).val();
+        if (size === "0" || size === undefined || size === null) {
+
+            console.log(IdDetailProduct);
+            if (IdDetailProduct == "" || IdDetailProduct == null || IdDetailProduct == undefined) {
+                alert("Vui lòng chọn màu sản phẩm");
+            }
+            else {
+                 $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddToCart", "Cart")',
+            data: { Id: IdDetailProduct },
+            success: function (response) {
+                if (response.status == "-2") {
+                    console.log(response);
+                    window.location.href = '/Login/Login';
+                    alert("Bạn vui lòng đăng nhập/đăng ký để có thể mua sắm")
+
+                }
+                else if (response.status == "-1") {
+                    alert(response.text);
+                }
+                else {
+                    alert(response.text);
+                    var countCartValue = parseInt('@HttpContext.Current.Session["CountCart"]');
+                    console.log('Session CountCart:', '@HttpContext.Current.Session["CountCart"]');
+if (!isNaN(countCartValue)) {
+    // Lưu giá trị CountCart vào LocalStorage
+    localStorage.setItem('CountCart', countCartValue);
+
+    // Cập nhật giá trị từ LocalStorage
+    $('#numSumProduct').text(localStorage.getItem('CountCart'));
+} else {
+    console.error("Giá trị CountCart không hợp lệ:", '@HttpContext.Current.Session["CountCart"]');
+}
+                }
+            },
+            error: function(error) {
+                console.error("Lỗi: ", error);
+            }
+        });
+            }
+
+        }
+        else {
+            if (IdDetailProduct == "" || IdDetailProduct == null || IdDetailProduct == undefined) {
+                alert("Vui lòng chọn màu sản phẩm");
+            }
+            else if (size === "") { alert("Vui lòng chọn kích thước sản phẩm"); }
+            else {
+                 $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddToCart", "Cart")',
+            data: { Id: IdDetailProduct },
+            success: function (response) {
+                if (response.status == "-2") {
+                    console.log(response);
+                    window.location.href = '/Login/Login';
+                    alert("Bạn vui lòng đăng nhập/đăng ký để có thể mua sắm")
+
+                }
+                else if (response.status == "-1") {
+                    alert(response.text);
+                }
+                else {
+                    alert(response.text);
+                }
+            },
+            error: function(error) {
+                console.error("Lỗi: ", error);
+            }
+        });
+            }
+
+        }
+
+
+    }
+    $('input[name="size"]').change(function () {
+        var selectedProductDetailId = $(this).closest('.card').data('productid');
+        console.log("Selected ProductDetail ID: " + selectedProductDetailId);
+    });
+
+    // Sự kiện khi click vào một màu sắc
+    $('.color a').click(function () {
+        var selectedProductDetailId = $(this).closest('.card').data('productid');
+        console.log("Selected ProductDetail ID: " + selectedProductDetailId);
+    });
+    function ProductDetails(productId) {
+        // Thực hiện Ajax để lấy thông tin chi tiết nhân viên từ server
+            // Gọi controller sử dụng Ajax
+            $.ajax({
+                 // Hoặc 'GET' tùy thuộc vào phương thức của controller
+                url: '@Url.Action("ProductDetail", "Product")',
+                type: 'POST',// Đường dẫn đến controller và action
+                data: {
+                    Id: productId
+                },
+                success: function (result) {
+                    window.location.href = '/Product/ProductDetail/' + productId;
+                },
+                error: function (error) {
+                    // Xử lý lỗi nếu cần
+                    console.log(error);
+                }
+            });
+    }
+
+
+
+</script>
+

@@ -1,0 +1,47 @@
+﻿@model List<SABLANCE.Models.Promotion>
+@{
+    ViewBag.Title = "Promotion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var data = ViewBag.Promotion as List<SABLANCE.Models.Promotion>;
+}
+<link href="~/Content/promotion-customer.css" rel="stylesheet" />
+<div class="container">
+    @foreach (var item in data)
+    {
+        <div class="voucher">
+            <div class="voucher-wrapper">
+                <div class="voucher-pict" style="width: 50%;">
+                    @if (!string.IsNullOrEmpty(item.Image))
+                    {
+                        <img src="~/Image/Promotion/@item.Image" style="width: 100%;"/>
+                    }
+                    else
+                    {
+                        <img src="~/Image/Promotion/promotion.jpg" style="width: 100%;"/>
+                    }
+
+                </div>
+                <div class="voucher-desc"style="width: 50%;" >
+                    <h3 style="font-weight: bold;">@item.Title</h3>
+                    <div class="promotion-name">
+                        <a class="promotion-name">@item.Detail</a>
+                    </div>
+                    <p class="mb-1">Ngày bắt đầu: @item.StartTime</p>
+                    <p class="mb-1">Ngày kết thúc: @item.EndTime</p>
+                    <div class="voucher-redeem">
+                        <button class="learn-more">
+                            <span class="circle" aria-hidden="true">
+                                <span class="icon arrow"></span>
+                            </span>
+                            <span class="button-text">Xem thêm</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="voucher-mobile"></div>
+        </div>
+    }
+
+
+</div>
+

@@ -1,0 +1,622 @@
+﻿@model List<SABLANCE.Areas.Admin.Models.RevenueOrder>
+@{
+    ViewBag.Title = "Báo cáo thống kê doanh thu";
+    Layout = "~/Areas/Admin/Views/Shared/_Admin.cshtml";
+    var SttRevenue = ViewBag.Status as List<SABLANCE.Areas.Admin.Models.RevenueInStatus>;
+    var SORevenue = ViewBag.Issuse as List<SABLANCE.Areas.Admin.Models.RevenueIssuse>;
+    var EmRevenue = ViewBag.Employee as List<SABLANCE.Areas.Admin.Models.EmployeeRevenue>;
+    double revnueem = 0;
+
+}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.js"></script>
+<link href="~/Content/customeadmin.css" rel="stylesheet" />
+<div class="tile" id="tile-1" style="width:100% !important; margin: 0;">
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#order" role="tab" aria-controls="order" aria-selected="true"><i class="fas fa-shopping-cart"></i> Đơn đặt hàng</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#issue" role="tab" aria-controls="issue" aria-selected="false"><i class="fas fa-truck"></i> Phiếu xuất kho</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#employee" role="tab" aria-controls="employee" aria-selected="false"><i class="fas fa-user"></i> Nhân viên</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="setting-tab" data-toggle="tab" href="#product" role="tab" aria-controls="product" aria-selected="false"><i class="fas fa-box"></i> Sản phẩm</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="setting-tab" data-toggle="tab" href="#customer" role="tab" aria-controls="customer" aria-selected="false"><i class="fas fa-user-friends"></i> Khách hàng</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="order" role="tabpanel" aria-labelledby="home-tab">
+            <div class="list-add">
+                <div>
+                    <h2>BÁO CÁO THỐNG KÊ DOANH THU THEO ĐƠN ĐẶT HÀNG</h2>
+                </div>
+            </div>
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row" style="margin-top: 20px; justify-content: space-between;">
+                        <div style="width: 45%;">
+                            <canvas id="myChart"></canvas>
+                            <div class="col-lg-12" style="text-align:center; font-size: 15px; font-weight: bold;">BIỂU ĐỒ CỘT BIỂU DIỄN DOANH THU CỦA ĐƠN ĐẶT HÀNG HẰNG THÁNG</div>
+                        </div>
+                        <div style="width: 45%;">
+                            <canvas id="sttChart"></canvas>
+                            <div class="col-lg-12" style="text-align:center; font-size: 15px; font-weight: bold;">BIỂU ĐỒ CỘT BIỂU DIỄN DOANH THU THEO TÌNH TRẠNG ĐƠN HÀNG QUA HẰNG THÁNG</div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+            <div class="row" style="margin-top: 20px; justify-content: space-between;">
+                <div style="width: 45%; text-align: center;">
+                    <h5>BÁO CÁO THỐNG KÊ DOANH THU THEO ĐƠN ĐẶT HÀNG</h5>
+                    <table id="example" style="width: fit-content !important; margin: 10px 50px;" class="table table-bordered table-responsive table-striped">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>Thời gian</th>
+                                <th>Số lượng đơn hàng thành công</th>
+                                <th>Tổng doanh thu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryData">
+                            @foreach (var item in Model)
+                            {
+                                <tr style="text-align: center; font-size: 15px;">
+                                    <td>@item.Month/@item.Year</td>
+                                    <td>@item.QuantityOrder</td>
+                                    <td>@item.TotalRevenue.ToString("0,0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="input-group-append" style="float: right; margin-right:50px;">
+                        <a type="button" id="exportBtn" class="btn btn-success" href="@Url.Action("ExportExcelRevenueOrder","Statistic")">
+                            <i class="fas fa-file-excel"></i> Xuất Excel
+                        </a>
+                    </div>
+                </div>
+                <div style="width: 45%; text-align: center;">
+                    <h5>BÁO CÁO THỐNG KÊ DOANH THU THEO TÌNH TRẠNG ĐƠN HÀNG</h5>
+                    <table id="example" style="width: fit-content !important; margin: 10px 50px;" class="table table-bordered table-responsive table-striped">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>Loại tình trạng đơn hàng</th>
+                                <th>Số lượng đơn hàng</th>
+                                <th>Tổng doanh thu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryData">
+                            @foreach (var item in SttRevenue)
+                            {
+                                <tr style="text-align: center; font-size: 15px;">
+                                    <td>@item.Name</td>
+                                    <td>@item.QuantityOrder</td>
+                                    <td>@item.TotalOrder.ToString("0,0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="input-group-append" style="float: right; margin-right:50px;">
+                        <a type="button" id="exportBtn" class="btn btn-success" href="@Url.Action("ExportExcelRevenueStatus","Statistic")">
+                            <i class="fas fa-file-excel"></i> Xuất Excel
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="tab-pane fade" id="issue" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="list-add">
+                <div>
+                    <h2>BÁO CÁO THỐNG KÊ DOANH THU THEO PHIẾU XUẤT KHO</h2>
+                </div>
+            </div>
+            <section class="content">
+                <div class="container-fluid">
+                    <div style="width: 100%;">
+                        <canvas id="Chartissue"></canvas>
+                        <div class="col-lg-12" style="text-align:center; font-size: 15px; font-weight: bold;">BIỂU ĐỒ CỘT BIỂU DIỄN DOANH THU CỦA PHIẾU XUẤT KHO HẰNG THÁNG</div>
+                    </div>
+                </div>
+            </section>
+            <div class="row" style="margin-top: 20px; justify-content: space-between;">
+                <div style="text-align: center; width: 100%;">
+                    <h5>BÁO CÁO THỐNG KÊ DOANH THU THEO PHIẾU XUẤT KHO</h5>
+                    <div class="input-group-append" style="float: right; margin-right:50px; margin-bottom: 10px">
+                        <a type="button" id="exportBtn" class="btn btn-success" href="@Url.Action("ExportExcelRevenueSO","Statistic")">
+                            <i class="fas fa-file-excel"></i> Xuất Excel
+                        </a>
+                    </div>
+                    <table id="example" class="table table-bordered table-striped">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>Thời gian</th>
+                                <th>Số lượng xuất kho</th>
+                                <th>Số lượng sản phẩm xuất kho</th>
+                                <th>Tổng doanh thu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryData">
+                            @foreach (var item in SORevenue)
+                            {
+                                <tr style="text-align: center; font-size: 15px;">
+                                    <td>@item.Month/@item.Year</td>
+                                    <td>@item.QuantitySO</td>
+                                    <td>@item.QuantityProduct</td>
+                                    <td>@item.TotalIssue.ToString("0,0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="employee" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="list-add">
+                <div>
+                    <h2>BÁO CÁO THỐNG KÊ DOANH THU THEO NHÂN VIÊN</h2>
+                </div>
+            </div>
+            <section class="content">
+                <div class="container-fluid">
+                    <div style="width: 100%;">
+                        <canvas id="ChartEmployee"></canvas>
+                        <div class="col-lg-12" style="text-align:center; font-size: 15px; font-weight: bold;">BIỂU ĐỒ CỘT BIỂU DIỄN DOANH THU CỦA TỪNG NHÂN VIÊN</div>
+                    </div>
+                </div>
+            </section>
+            <div class="row" style="margin-top: 20px; justify-content: space-between;">
+                <div style="text-align: center; width: 100%;">
+                    <h5>BÁO CÁO THỐNG KÊ DOANH THU THEO NHÂN VIÊN</h5>
+                    <div class="input-group" style="justify-content: space-between;">
+                        <div class="input-group-append" style="width: 80%; ">
+                            <div class="input-group-append" style="margin-right: 15px;">
+                                <label>Từ ngày</label>
+                                <div class="row" style="margin-left: 10px;">
+                                    <input type="text" id="datepicker-start" class="form-control" placeholder="Chọn ngày bắt đầu...">
+                                    <div id="StartError" class="error-message mt-2" style="color: red; font-size: 11px;"></div>
+                                </div>
+
+                            </div>
+                            <div class="input-group-append" style="margin-right: 15px;">
+                                <label>Đến ngày</label>
+                                <div class="row" style="margin-left: 10px;">
+                                    <input type="text" id="datepicker-end" class="form-control" placeholder="Chọn ngày kết thúc...">
+                                    <div id="EndError" class="error-message mt-2" style="color: red; font-size: 11px;"></div>
+                                </div>
+                            </div>
+                            <div class="input-group-append" style="margin-bottom: 10px;">
+                                <button type="button" id="searchbtn" class="btn btn-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="input-group-append" style="float: right; margin-right:10px; margin-bottom: 10px;">
+                            <a type="button" id="exportBtn" class="btn btn-success" href="@Url.Action("ExportExcelRevenueEmployee","Statistic")">
+                                <i class="fas fa-file-excel"></i> Xuất Excel
+                            </a>
+                        </div>
+                    </div>
+
+                    <table id="example" class="table table-bordered table-striped">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>ID</th>
+                                <th>Họ và tên </th>
+                                <th>Số lượng đơn đặt hàng</th>
+                                <th>Số lượng phiếu xuất kho</th>
+                                <th>Tổng doanh thu </th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryData-Employee">
+                            @foreach (var item in EmRevenue)
+                            {
+                                <tr style="text-align: center; font-size: 15px;">
+                                    <td>@item.ID</td>
+                                    <td style="text-align:left ;">@item.LastName @item.FistName</td>
+                                    <td>@item.QuantityOrder</td>
+                                    <td>@item.QuantitySO</td>
+                                    @{ revnueem = item.RevenueOrder + item.RevenueSO;}
+                                    <td>@revnueem.ToString("0,0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="product" role="tabpanel" aria-labelledby="setting-tab">
+            <div class="list-add">
+                <div>
+                    <h2>BÁO CÁO THỐNG KÊ DOANH THU THEO SẢN PHẨM</h2>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="customer" role="tabpanel" aria-labelledby="setting-tab">
+            <div class="list-add">
+                <div>
+                    <h2>BÁO CÁO THỐNG KÊ DOANH THU THEO KHÁCH HÀNG</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- Đặt Popper.js trước Bootstrap.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+<script>
+    function ModelStateAddError(fieldName, errorMessage) {
+        // Hiển thị thông báo lỗi của trường
+        $("#" + fieldName + "Error").text(errorMessage).show();
+    }
+
+    function ModelStateRemoveError(fieldName) {
+        // Xóa thông báo lỗi của trường
+        $("#" + fieldName + "Error").text("");
+    }
+    function showSearchResult() {
+    var start = document.getElementById('datepicker-start').value;
+    var end = document.getElementById('datepicker-end').value;
+
+    if (start.trim() === "" && end.trim() !== "") {
+        ModelStateAddError("Start", "Vui lòng nhập ngày bắt đầu cần tìm kiếm.");
+    } else {
+        ModelStateRemoveError("Start");
+    }
+
+    if (start.trim() !== "" && end.trim() === "") {
+        ModelStateAddError("End", "Vui lòng nhập ngày kết thúc cần tìm kiếm.");
+    }
+    else {
+        ModelStateRemoveError("End");
+
+    }
+
+    var startDate = moment(start, 'DD/MM/YYYY');
+    var endDate = moment(end, 'DD/MM/YYYY');
+
+        if (startDate.isAfter(endDate)) {
+            // Display an error message or perform the desired action
+            ModelStateAddError("End", "Ngày kết thúc phải lớn hơn ngày bắt đầu.");
+        } else {
+            // Remove the error message if the dates are valid
+            ModelStateRemoveError("End");
+        }
+
+    if ($('#EndError').text() !== "" || $('#StartError').text() !== "") {
+        return false;
+    }
+
+    return true;
+    }
+    $('#datepicker-end').on('click', function () {
+        ModelStateRemoveError("End");
+    });
+    $('#datepicker-start').on('click', function () {
+        ModelStateRemoveError("Start");
+    });
+    $(document).ready(function () {
+        function searchDate() {
+            if (showSearchResult()) {
+                var startday = $("#datepicker-start").val();
+                var endday = $("#datepicker-end").val();
+
+                // Format the date using Moment.js
+                var formattedDate = moment(startday, 'DD/MM/YYYY').format('YYYY-MM-DD');
+                var formattedEnd = moment(endday, 'DD/MM/YYYY').format('YYYY-MM-DD');
+
+                // Send the formatted date to the server and perform data filtering
+                $.ajax({
+                    url: '@Url.Action("RevenueEmployeeWithDateTime")',
+                    type: 'GET',
+                    data: {
+                        datestart: formattedDate,
+                        dateend: formattedEnd
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                        if (jqXHR.status === 200) {
+                            // Check the 'status' property in the returned data
+                            if (data.status === 1) {
+                                displayFilteredData(data);
+                                console.log("Thành công: ", data);
+                            } else {
+                                console.error("Lỗi: ", data.message);
+                            }
+                        } else {
+                            console.error("Lỗi không xác định: ", data);
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Lỗi AJAX:", textStatus, errorThrown);
+                    }
+                });
+            }
+        }
+        function displayFilteredData(response) {
+            var tableBody = document.getElementById('inventoryData-Employee');
+            // Xóa dữ liệu cũ trong bảng
+            tableBody.innerHTML = '';
+
+            // Kiểm tra xem response có thuộc tính "data" và "data" có phải là mảng không
+            if (response && response.data && Array.isArray(response.data)) {
+                // Thêm dữ liệu mới vào bảng
+                response.data.forEach(function (item) {
+                    var row = '<tr style="text-align: center; font-size: 15px;">';
+                    row += '<td>' + item.ID + '</td>';
+                    row += '<td>' + item.LastName + " " + item.FistName + '</td>';
+                    row += '<td>' + item.QuantityOrder + '</td>';
+                    row += '<td>' + item.QuantitySO + '</td>';
+                    row += '<td>' + (item.RevenueOrder + item.RevenueSO).toLocaleString() + '</td>'; // Nếu có thuộc tính QuantitySO
+                    row += '</tr>';
+                    tableBody.innerHTML += row;
+                });
+            } else {
+                console.error('Dữ liệu không phải là mảng hoặc không có thuộc tính "data" trong response.');
+            }
+        }
+
+        $('#searchbtn').on('click', function (event) {
+            searchDate();
+        });
+    });
+
+
+
+
+
+
+    $(function () {
+        var searchKeyword = "";
+        var selectedDate = "";
+
+        $("#datepicker-start").datepicker({
+            dateFormat: "dd/mm/yy",
+            showButtonPanel: true,
+            changeMonth: true,
+            changeYear: true
+        });
+        $("#datepicker-end").datepicker({
+            dateFormat: "dd/mm/yy",
+            showButtonPanel: true,
+            changeMonth: true,
+            changeYear: true
+        });
+
+
+        function performSearch() {
+            console.log("Search Keyword: " + searchKeyword);
+            console.log("Selected Date: " + selectedDate);
+            // Gọi hàm tìm kiếm hoặc xử lý dữ liệu tại đây
+            // Bạn có thể sử dụng giá trị searchKeyword và selectedDate để gửi yêu cầu tìm kiếm lên server
+        }
+    });
+    const ctx = document.getElementById('myChart');
+    var chartData = @Html.Raw(Json.Encode(ViewBag.ChartDataCombined));
+
+    var months = [];
+    var orderRevenueData = [];
+
+    for (var i = 0; i < chartData.length; i++) {
+        months.push(chartData[i].Month + '/' + chartData[i].Year);
+        orderRevenueData.push(chartData[i].Revenue);
+    }
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [
+                {
+                    label: 'Doanh thu từ đơn đặt hàng',
+                    data: orderRevenueData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+            ]
+        },
+        options: {
+            scales: {
+                x: {
+                    barPercentage: 0.8, // Điều chỉnh khoảng cách giữa các cột
+                    categoryPercentage: 0.9 // Điều chỉnh khoảng cách giữa các nhóm cột
+                },
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    color: 'black',
+                    font: {
+                        weight: 'bold',
+                        size: 9
+                    },
+                    formatter: function (value, context) {
+                        return value.toLocaleString(); // Định dạng số với dấu phẩy
+                    }
+                }
+            }
+        }
+    });
+
+
+    const stt = document.getElementById('sttChart');
+    var chartDatastt = @Html.Raw(Json.Encode(ViewBag.OrderStatus));
+    var sttid = [];
+    var orderCountData = [];
+    var sttName = [];
+
+    for (var i = 0; i < chartDatastt.length; i++) {
+        sttName.push(chartDatastt[i].LatestStatusName); // Sửa đổi ở đây để sử dụng LatestStatusName
+        orderCountData.push(chartDatastt[i].OrderCount);
+    }
+
+    new Chart(stt, {
+        type: 'bar',
+        data: {
+            labels: ["Chờ xác nhận", "Đã giao hàng","Đang chuẩn bị" ,"Đang giao hàng", "Bị hủy"],
+            datasets: [
+                {
+                    label: 'Số lượng đơn hàng',
+                    data: orderCountData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    color: 'black',
+                    font: {
+                        weight: 'bold'
+                    },
+                    formatter: function (value, context) {
+                        return value.toLocaleString(); // Định dạng số với dấu phẩy
+                    }
+                }
+            }
+        }
+    });
+
+    const ise = document.getElementById('Chartissue');
+    var chartDataIssue = @Html.Raw(Json.Encode(ViewBag.Issuse));
+
+    var monthisues = [];
+    var issueRevenueData = [];
+
+    for (var i = 0; i < chartDataIssue.length; i++) {
+        monthisues.push(chartDataIssue[i].Month + '/' + chartDataIssue[i].Year);
+        issueRevenueData.push(chartDataIssue[i].TotalIssue);
+    }
+
+    new Chart(ise, {
+        type: 'bar',
+        data: {
+            labels: monthisues,
+            datasets: [
+                {
+                    label: 'Doanh thu từ phiếu xuất kho',
+                    data: issueRevenueData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    color: 'black',
+                    font: {
+                        weight: 'bold'
+                    },
+                    formatter: function (value, context) {
+                        return value.toLocaleString(); // Định dạng số với dấu phẩy
+                    }
+                }
+            }
+        }
+    });
+
+
+
+
+
+
+
+    const em = document.getElementById('ChartEmployee');
+    var chartDataem = @Html.Raw(Json.Encode(ViewBag.Employee));
+
+    var emname = [];
+    var EmRevenueData = [];
+
+    for (var i = 0; i < chartDataem.length; i++) {
+        emname.push(chartDataem[i].LastName + ' ' + chartDataem[i].FistName);
+        EmRevenueData.push(chartDataem[i].RevenueOrder + chartDataem[i].RevenueSO);
+    }
+
+    new Chart(em, {
+        type: 'bar',
+        data: {
+            labels: emname,
+            datasets: [
+                {
+                    label: 'Doanh thu của nhân viên',
+                    data: EmRevenueData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+            ]
+        },
+        options: {
+            scales: {
+                x: {
+                    barThickness: 3, // Độ dày của mỗi cột
+                    barPercentage: 1.5, // Điều chỉnh khoảng cách giữa các cột
+                },
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    color: 'black',
+                    font: {
+                        weight: 'bold',
+                        size: 8.5
+                    },
+                    formatter: function (value, context) {
+                        return value.toLocaleString(); // Định dạng số với dấu phẩy
+                    }
+                }
+            }
+        }
+    });
+
+</script>

@@ -1,0 +1,222 @@
+﻿
+@{
+    ViewBag.Title = "HomeAdmin";
+    Layout = "~/Areas/Admin/Views/Shared/_Admin.cshtml";
+    var topProductLabels = ViewBag.TopProductLabels as string[];
+    var topProductData = ViewBag.TopProductData as int[];
+
+    var topProduct3MonthsLabels = ViewBag.TopProduct3MonthsLabels as string[];
+    var topProduct3MonthsData = ViewBag.TopProduct3MonthsData as int[];
+}
+
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">KẾT QUẢ KINH DOANH</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>@ViewBag.OrderCount</h3>
+
+                        <p style="font-size: 18px;">Đơn Hàng</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-bag"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">Xem thêm <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>@ViewBag.ReveneTotal</h3>
+
+                        <p style="font-size: 18px;">Doanh Thu</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">Xem thêm <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>@ViewBag.CustomerCount</h3>
+
+                        <p style="font-size: 18px;">Khách hàng</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">Xem thêm <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>@ViewBag.EmployeeCount</h3>
+
+                        <p style="font-size: 18px;">Nhân viên</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+        </div>
+        <div class="row" style="margin-top: 20px;">
+            <div style="width: 100%;">
+                <canvas id="myChart"></canvas>
+            </div>
+
+            <div class="col-lg-12" style="text-align:center; font-size: 20px; font-weight: bold;">BIỂU ĐỒ ĐƯỜNG BIỂU DIỄN LƯỢNG KHÁCH HÀNG VÀ ĐƠN HÀNG QUA HẰNG THÁNG</div>
+        </div>
+        <div class="row" style="margin-top: 20px;">
+            <div style="width: 100%;">
+                <canvas id="lineChart"></canvas>
+            </div>
+            <div class="col-lg-12" style="text-align:center; font-size: 20px; font-weight: bold;">BIỂU ĐỒ CỘT BIỂU DIỄN DOANH THU QUA HẰNG THÁNG</div>
+        </div>
+        <div class="row" style="margin-top: 20px; justify-content: space-between; ">
+            <div style="width: 40%;">
+                <canvas id="productChart"></canvas>
+                <div class="col-lg-12" style="text-align:center; font-size: 14px; font-weight: bold;">BIỂU ĐỒ CỘT BIỂU DIỄN SẢN PHẨM BÁN CHẠY TRONG THÁNG NÀY</div>
+            </div>
+            <div style="width: 40%;">
+                <canvas id="produclastChart"></canvas>
+                <div class="col-lg-12" style="text-align:center; font-size: 14px; font-weight: bold;">BIỂU ĐỒ CỘT BIỂU DIỄN SẢN PHẨM BÁN CHẠY TRONG 3 THÁNG GẦN ĐÂY</div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('myChart');
+    const line = document.getElementById('lineChart');
+    const pro = document.getElementById('productChart');
+    const pro3months = document.getElementById('produclastChart');
+    var chartData = @Html.Raw(Json.Encode(ViewBag.ChartData));
+
+var months = [];
+var customerData = [];
+var orderData = [];
+    var revenueData = [];
+
+for (var i = 0; i < chartData.length; i++) {
+    months.push(chartData[i].Month + '/' + chartData[i].Year);
+    customerData.push(chartData[i].CustomerCount);
+    orderData.push(chartData[i].OrderCount);
+    revenueData.push(chartData[i].Revenue);
+    }
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Số lượng khách hàng',
+                data: customerData,
+                borderWidth: 1
+            }, {
+                    label: 'Số lượng đơn hàng',
+                    data: orderData,
+                    borderWidth: 1
+                }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    new Chart(line, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Số lượng đơn hàng',
+                data: revenueData,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    new Chart(pro, {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(Json.Encode(topProductLabels)),
+                datasets: [{
+                    label: 'Số lượng sản phẩm',
+                    data: @Html.Raw(Json.Encode(topProductData)),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+    });
+
+    new Chart(pro3months, {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(Json.Encode(topProduct3MonthsLabels)),
+                datasets: [{
+                    label: 'Số lượng sản phẩm',
+                    data: @Html.Raw(Json.Encode(topProduct3MonthsData)),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+</script>
+
+
+
+
+

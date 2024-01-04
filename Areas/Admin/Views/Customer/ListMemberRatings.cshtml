@@ -1,0 +1,279 @@
+﻿@model IPagedList<SABLANCE.Models.MemberRating>
+
+@{
+    ViewBag.Title = "Danh sách xếp loại thành viên";
+    Layout = "~/Areas/Admin/Views/Shared/_Admin.cshtml";
+
+}
+@using PagedList.Mvc;
+@using PagedList;
+<link href="~/Content/customeadmin.css" rel="stylesheet" />
+<div class="list-add">
+    <div>
+        <h2>DANH SÁCH XẾP HẠNG THÀNH VIÊN</h2>
+    </div>
+    <button class="Btn" id="addMemberBtn" data-toggle="modal" data-target="#addMemberModal">
+
+        <div class="sign">
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 72 72">
+                <path d="M36,12c13.255,0,24,10.745,24,24c0,13.255-10.745,24-24,24S12,49.255,12,36C12,22.745,22.745,12,36,12z M44,39	c1.657,0,3-1.343,3-3c0-1.657-1.343-3-3-3c-0.329,0-2.426,0-5,0c0-2.574,0-4.672,0-5c0-1.657-1.343-3-3-3c-1.657,0-3,1.343-3,3	c0,0.328,0,2.426,0,5c-2.574,0-4.671,0-5,0c-1.657,0-3,1.343-3,3c0,1.657,1.343,3,3,3c0.329,0,2.426,0,5,0c0,2.574,0,4.672,0,5	c0,1.657,1.343,3,3,3c1.657,0,3-1.343,3-3c0-0.328,0-2.426,0-5C41.574,39,43.671,39,44,39z"></path>
+            </svg>
+        </div>
+        <div class="text">Thêm xếp hạng thành viên</div>
+    </button>
+</div>
+
+<div class="modal" id="successModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/Image/logo_sab.png" class="modal-title" style="width: 30%;" />
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: bold; font-size: 20px;">Xóa thành công.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="questionModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/Image/logo_sab.png" class="modal-title" style="width: 30%;" />
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: bold; font-size: 20px;">Bạn có chắc muốn loại thành viên này ? </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button type="button" class="btn btn-primary" id="confirmDelete">Có</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*thêm danh mục khách hàng*@
+<div class="modal fade bd-example-modal-lg" id="addMemberModal" tabindex="-1" role="dialog" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CreateViewModalLabel" style="font-weight: bold; font-size: 18px;">Thêm Xếp loại thành viên</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="CreateViewModalContent">
+
+            </div>
+        </div>
+    </div>
+</div>
+@* sửa loại thành viên *@
+<div class="modal fade bd-example-modal-lg" id="editMemberModal" tabindex="-1" role="dialog" aria-labelledby="editMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditViewModalLabel" style="font-weight: bold; font-size: 18px;">Chỉnh sửa Thông tin Khách hàng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="EditViewModalContent">
+
+            </div>
+        </div>
+    </div>
+</div>
+@* hiện thị khách hàng *@
+<div class="modal fade bd-example-modal-lg" id="CustomerMemberModal" tabindex="-1" role="dialog" aria-labelledby="CustomerMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CustomerViewModalLabel" style="font-weight: bold; font-size: 18px;">DANH SÁCH KHÁCH HÀNG</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="CustomerViewModalContent">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<table id="customer-table" class="table table-bordered table-responsives table-striped">
+
+    <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Code
+            </th>
+            <th>
+                Xếp hạng thành viên
+            </th>
+            <th>
+                Số lượng khách hàng
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+
+    @if (Model != null && Model.Count() > 0)
+    {
+
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td >
+                        @item.ID.ToString("0")
+                    </td>
+                    <td >
+                        <a> @item.Code</a>
+                    </td>
+                    <td onclick="showCustomerMemberView(@item.ID)" class="hover-emdetail">
+                        <a data-toggle="modal" data-target="#CustomerMemberModal" data-id="@item.ID"> @item.Name</a>
+                    </td>
+                    <td style="text-align: center; cursor: pointer" onclick="showCustomerMemberView(@item.ID)" class="hover-emdetail">
+                        <a  data-toggle="modal" data-target="#CustomerMemberModal" data-id="@item.ID">
+                            @(ViewBag.CustomerCountsByMemberID.ContainsKey(item.ID) ? ViewBag.CustomerCountsByMemberID[item.ID] : 0)
+                        </a>
+                    </td>
+                    <td style="text-align: center;">
+                        <a onclick="showEditMemberView(@item.ID);">
+                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,255.99603,255.99603">
+                                <g fill="#000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-size="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M18,2l-2.41406,2.41406l4,4l2.41406,-2.41406zM14.07617,5.92383l-11.07617,11.07617v4h4l11.07617,-11.07617z"></path></g></g>
+                            </svg>
+                        </a>
+                    </td>
+                    <td style="text-align: center;">
+                        <a onclick="showModal(@item.ID);">
+                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,255.99603,255.99603">
+                                <g fill="#000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-size="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M10,2l-1,1h-6v2h18v-2h-6l-1,-1zM4.36523,7l1.70313,15h11.86328l1.70313,-15z"></path></g></g>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+
+</table>
+
+
+
+@Html.PagedListPager(Model, page => Url.Action("ListMemberRatings",
+    new { page, pageSize = 15 }))
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- Đặt Popper.js trước Bootstrap.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#addMemberBtn").click(function () {
+            showCreateMemberView();
+        });
+    });
+    function showCreateMemberView() {
+        // Thực hiện Ajax để lấy thông tin chi tiết nhân viên từ server
+        console.log("leeb")
+        $.ajax({
+            url: '@Url.Action("CreateMemberView")',
+            type: 'GET',
+            data: {
+            },
+            success: function (data) {
+                $('#CreateViewModalContent').html(data),
+                $('#addMemberModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra khi thêm xếp loại thành viên.');
+            }
+        });
+    }
+
+    function showCustomerMemberView(memberId) {
+        // Thực hiện Ajax để lấy thông tin chi tiết nhân viên từ server
+        console.log("leeb")
+        $.ajax({
+            url: '@Url.Action("CustomerMemberView")',
+            type: 'POST',
+            data: {
+                MemberId: memberId
+            },
+            success: function (data) {
+                $('#CustomerViewModalContent').html(data),
+                $('#CustomerMemberModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra khi thêm xếp loại thành viên.');
+            }
+        });
+    }
+    function showEditMemberView(memberID) {
+
+        $.ajax({
+            url: '@Url.Action("EditMemberView")',
+            type: 'GET',
+            data: {
+                Id: memberID
+            },
+            success: function (data) {
+                $('#EditViewModalContent').html(data),
+                $('#editMemberModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+                alert('Đã có lỗi xảy ra khi lấy thông tin chi tiết khách hàng.');
+            }
+        });
+    }
+    function deleteMember (memberId) {
+
+        $.ajax({
+            url: '@Url.Action("DeleteMember", "Customer")',
+            type: 'POST',
+            data: {
+                Id: memberId
+            },
+            success: function (data) {
+                if (data.status === 1) {
+                    $('#successModal').modal('show');
+                } else {
+                    alert('Xóa xếp loại thành viên không thành công')
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                alert('Đã có lỗi xảy ra khi xóa xếp loại thành viên khách hàng.');
+            }
+        });
+    }
+    $(document).ready(function () {
+        // Ẩn modal khi nhấn nút "OK"
+        $('#successModal').on('hidden.bs.modal', function () {
+            window.location.href = "@Url.Action("ListMemberRatings", "Customer")";
+        });
+    });
+
+    function showModal(memID) {
+        $('#confirmDelete').data('memid', memID);
+        $('#questionModal').modal('show');
+    }
+    $(document).on('click', '#confirmDelete', function () {
+        var ID = $(this).data('memid');
+        // Gọi hàm xóa nhân viên tại đây
+        deleteMember(ID);
+        // Đóng modal sau khi thực hiện xóa
+        $('#questionModal').modal('hide');
+    });
+
+</script>

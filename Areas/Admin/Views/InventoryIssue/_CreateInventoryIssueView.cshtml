@@ -1,0 +1,286 @@
+﻿@model SABLANCE.Models.InventoryReceipt
+@{
+    var dataEm = ViewBag.DataEmployeeSO as List<SABLANCE.Models.Employee>;
+    var dataPro = ViewBag.DataProductSO as List<SABLANCE.Models.ProductDetail>;
+    var ListProduct = ViewBag.ProductSOList as List<SABLANCE.Models.ProductDetail>;
+}
+@using Newtonsoft.Json;
+@{
+    var jsonSettings = new Newtonsoft.Json.JsonSerializerSettings
+    {
+        ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+    };
+
+    var jsonCus = Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ProductSOList, jsonSettings);
+}
+
+<link href="~/Content/orderadmin.css" rel="stylesheet" />
+<div class="col-lg-12" style="border-bottom:0.2px solid; margin-bottom: 10px;">
+    <div class="row">
+
+        <div class="col-lg-4" style="align-self: end;">
+            <div class="form-group">
+                <label>Số phiếu xuất kho <span class="required">*</span></label>
+                <input id="SONo" disabled="disabled" name="PONo" type="text" class="form-control" />
+                <div id="CodeError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group">
+                <label>Nhân viên tạo phiếu</label>
+                <select id="EmployeeID" name="EmployeeID" class="form-control">
+                    @foreach (var item in dataEm)
+                    {
+                        <option value="@item.ID">@item.Code | @item.LastName @item.FirstName </option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group">
+                <label>Ngày xuất kho</label>
+                <input id="SODate" name="PODate" type="datetime-local" class="form-control" />
+                <div id="SODateError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <label>Ghi chú phiếu xuất kho </label>
+                <textarea id="Note" name="Note" class="form-control" placeholder="Nhập ghi chú cho phiếu xuất kho"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <label>Danh sách sản phẩm</label>
+                <select id="ProductID" name="ProductID" class="form-control" onchange="displayCustomerDetails(this.value);">
+                    <option value="0">Chọn sản phẩm</option>
+                    @foreach (var item in dataPro)
+                    {
+                        var displayText = $"Mã MH: {item.Code}";
+
+                        if (item.Product != null)
+                        {
+                            displayText += $" | Tên: {item.Product.Name}";
+                        }
+
+                        if (item.Size != null)
+                        {
+                            displayText += $" | Size: {item.Size.Name}";
+                        }
+
+                        if (item.Color != null)
+                        {
+                            displayText += $" | Màu: {item.Color.Name}";
+                        }
+
+                        <option value="@item.ID">@displayText</option>
+                    }
+                </select>
+                <div id="ProductError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+        <button type="button" id="add-SO" class="btn btn-primary">Tạo phiếu</button>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="row" id="showcus" style="margin-top: 10px;">
+        <h3>DANH SÁCH SẢN PHẨM</h3>
+        <table id="customer-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+            <thead>
+                <tr style="text-align: center;">
+
+                    <th>ID </th>
+                    <th>Mã mặt hàng</th>
+                    <th>Tên mặt hàng</th>
+                    <th>Màu sắc</th>
+                    <th>Kích thước</th>
+                    <th>Số lượng xuât</th>
+                    <th>Đơn giá</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="cusMem">
+                <tr id="trow" ;>
+                </tr>
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+
+<script src="~/Scripts/inventory-issuse.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Lắng nghe sự kiện khi số lượng hoặc giá thay đổi
+        $(document).ready(function () {
+            $('body').on('input', '#QuantityPro', function () {
+                var errorContainer = $(this).closest('tr').find('.error-message'); // Tìm errorContainer trong cùng một dòng
+                errorContainer.text("");
+            });
+        });
+
+    });
+    function deleteCustomer(button) {
+        // Lấy đối tượng tr (dòng) chứa nút xóa
+        var row = $(button).closest("tr");
+        row.remove();
+    }
+    var dataCus = @Html.Raw(jsonCus);
+        function formatDate(date) {
+            var options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+            return date ? new Date(date).toLocaleDateString('vi-VN', options) : '';
+        }
+
+    function updateRow(row, data) {
+        row.innerHTML = '<td id="proID">' + data.Id + '</td>' +
+            '<td id="proCode">' + data.Code + '</td>' +
+            '<td id="proName">' + data.Name + '</td>' +
+            '<td id="proColor" style="text-align: center;">' +
+            '<a style="background-color: ' + data.Color + ';" class="color"> <span class="color-name"></span></a></td>' +
+            '<td id="proSize" style="text-align: center;">' + data.Size + '</td>' +
+            '<td id="proQuatity">' +
+            '<input id="QuantityPro" type = "number" class="orquantity form-control"/>' +
+            '<div id="ProQuantityError" class="error-message" style="color: red; font-size: 11px;"></div>' +
+            '</td >' +
+            '<td id="proPrices">' + data.Prices + '</td>' +
+            ' <td style="text-align: center;"> ' +
+            '<a onclick="deleteCustomer(this);"> ' +
+            '<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,255.99603,255.99603">' +
+            '<g fill="#000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-size="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M10,2l-1,1h-6v2h18v-2h-6l-1,-1zM4.36523,7l1.70313,15h11.86328l1.70313,-15z"></path></g></g> ' +
+            '</svg>' +
+            '</a>' +
+            '</td>';
+    }
+
+        function addEmptyRow() {
+            var tbody = document.getElementById("cusMem");
+            var templateRow = document.getElementById("trow");
+            var newRow = templateRow.cloneNode(true);
+
+            // Loại bỏ id "trow" để nó không bị xem là dòng trống nữa
+            newRow.id = "";
+            tbody.appendChild(newRow);
+        }
+
+    function displayCustomerDetails(selectedCustomerId) {
+        var selectedCustomer = dataCus.find(a => a.Id == selectedCustomerId);
+        var checkdata = document.getElementById("cusMem").querySelectorAll("td#proID");
+        document.getElementById("showcus").style.display = "block";
+        var isDuplicate = Array.from(checkdata).some(function (checkdata) {
+            return checkdata.innerHTML === selectedCustomer.Id.toString();
+        });
+        var tbody = document.getElementById("cusMem");
+        var existingRows = tbody.querySelectorAll("tr:not(#trow)");
+        var emptyRow = Array.from(existingRows).find(row => row.innerHTML.trim() === '');
+
+        if (!isDuplicate) {
+
+            if (emptyRow) {
+                // Nếu có dòng trống, cập nhật nó với dữ liệu mới
+                updateRow(emptyRow, selectedCustomer);
+                addEmptyRow(); // Thêm dòng trống mới
+            } else {
+                // Nếu không có dòng trống, thêm một dòng mới
+                addNewRow(selectedCustomer);
+            }
+        }
+        else {
+            alert("Dòng có ID trùng đã tồn tại!");
+        }
+    }
+
+    function addNewRow(data) {
+        var tbody = document.getElementById("cusMem");
+        var templateRow = document.getElementById("trow");
+        var newRow = templateRow.cloneNode(true);
+
+        // Loại bỏ id "trow" để nó không bị xem là dòng trống nữa
+        newRow.id = "";
+
+        // Thiết lập nội dung cho các ô trong dòng mới
+        updateRow(newRow, data);
+
+        // Thêm dòng mới vào tbody
+        tbody.appendChild(newRow);
+
+        // Tạo thêm dòng trống mới
+        addEmptyRow();
+    }
+
+    // Hàm khởi tạo dòng trống đầu tiên
+    addEmptyRow();
+
+$(document).ready(function () {
+    function createSOAction() {
+        if (checkSO()) {
+            var Code = $('#SONo').val();
+            var EmployeeID = $('#EmployeeID').val();
+            var SODate = $('#SODate').val();
+            var Note = $('#Note').val();
+
+            var proIds = $('[id^="proID"]').map(function () {
+                return $(this).text();
+            }).get();
+            var Quatity = $('[id^="QuantityPro"]').map(function () {
+                return $(this).val();
+            }).get();
+
+
+
+            if (proIds.length > 0) {
+
+                $.ajax({
+                    url: '@Url.Action("CreateInventoryIssuseSO")',
+                    type: 'POST',
+                    data: {
+                        SO_No: Code,
+                        EmployeeID: EmployeeID,
+                        sodate: SODate,
+                        productId: proIds,
+                        quantity: Quatity,
+                        Note: Note,
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.status == 1) {
+                            window.location.href = '@Url.Action("ListInventoryIssue", "InventoryIssue")';
+                            alert(data.text);
+                        } else {
+                            alert(data.text);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Đã có lỗi xảy ra tạo phiếu xuất kho.');
+                    }
+                });
+            }
+            else {
+                alert('Vui lòng chọn sản phẩm.');
+            }
+
+        }
+
+    }
+
+
+    // Gọi hàm createAction() khi nhấn nút "Thêm khách hàng"
+    $('#add-SO').on('click', function (event) {
+        createSOAction()
+    });
+
+});
+
+
+
+</script>
+
+

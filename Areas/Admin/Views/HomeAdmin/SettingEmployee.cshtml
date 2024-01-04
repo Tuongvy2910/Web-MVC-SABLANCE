@@ -1,0 +1,223 @@
+﻿@model SABLANCE.Models.Employee
+@{
+    ViewBag.Title = "Cài đặt tài khoản";
+    Layout = "~/Areas/Admin/Views/Shared/_Admin.cshtml";
+}
+<link href="~/Content/employee-setting.css" rel="stylesheet" />
+<div class="modal" id="successModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/Image/logo_sab.png" class="modal-title" style="width: 30%;" />
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: bold; font-size: 20px;">Đổi mật khẩu thành công.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="errorModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/Image/logo_sab.png" class="modal-title" style="width: 30%;" />
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: bold; font-size: 20px;">Đổi mật khẩu không thành công. Vui lòng kiểm tra lại.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 form-group" style="background-color: #ffffff; padding: 10px 25px; border-radius: 10px;">
+    <div class="row form-group">
+        <div class="col-lg-8" style="margin-top: 10px;">
+            <div class="row">
+                <div class="col-lg-7 form-group">
+                    <label>Họ tên</label>
+                    <input class="form-control edit-data" value="@Model.LastName @Model.FirstName" type="text" disabled />
+                    <input class="form-control" id="IdAcc" value="@Model.AccountID" style="display: none;" type="text" disabled />
+                    <input class="form-control" id="IdEm" value="@Model.ID" style="display: none;" type="text" disabled />
+                </div>
+                <div class="col-lg-5 form-group">
+                    <label>Ngày sinh</label>
+                    <input class="form-control edit-data" value="@((Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("yyyy-MM-dd") : ""))" type="date" disabled />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-7 form-group">
+                    <label>Email</label>
+                    @if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <input id="Email" name="Email" type="text" value="@Model.Email" disabled class="form-control" />
+                    }
+                    else
+                    {
+                        <input id="Email" name="Email" type="text" value="" class="form-control" disabled placeholder="Email của bạn trống" />
+                    }
+                </div>
+                <div class="col-lg-5 form-group">
+                    <label>Số điện thoại</label>
+                    <input class="form-control edit-data" value="@Model.Phone.Trim()" type="number" disabled />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 form-group">
+                    <label>Địa chỉ</label>
+                    <textarea class="form-control edit-data" disabled>@Model.Address</textarea>
+                </div>
+            </div>
+
+        </div>
+        <div class="img-user col-lg-4">
+            @if (!string.IsNullOrEmpty(Model.Image))
+            {
+                <img src="~/Image/User/@Model.Image" class="col-lg-7" style="border: 0.2px solid; border-radius: 50%; margin: 40px 75px;" />
+            }
+            else
+            {
+                <img src="~/Image/User/image-employee.jpg" class="col-lg-7" style="border: 0.2px solid; border-radius: 50%; margin: 40px 75px;" />
+            }
+
+        </div>
+    </div>
+    <div class="row form-group" style="justify-content: space-around">
+        <button class="btn  setting-pass" id="changePasswordBtn">
+            Đổi mật khẩu
+        </button>
+    </div>
+</div>
+
+    <div class="col-lg-12 form-group" id="changePasswordForm" style=" display: none; background-color: #ffffff; padding: 10px 25px; border-radius: 10px; ">
+        <div class="row" style="flex-direction: column; align-items: center;">
+            <input value="@Model.Account.Password" id="passAcc" style="display: none;" />
+            <h2>ĐỔI MẬT KHẨU</h2>
+            <div class="col-lg-5" style="margin-top: 10px;">
+                <label>Mật khẩu cũ</label>
+                <input type="password" id="oldPassword" class="form-control" placeholder="Nhập mật khẩu cũ" />
+                <div id="oldPasswordError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+            <div class="col-lg-5" style="margin-top: 10px;">
+                <label>Mật khẩu mới</label>
+                <input type="password" id="newPassword" class="form-control" placeholder="Nhập mật khẩu mới" />
+                <div id="newPasswordError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+            <div class="col-lg-5" style="margin-top: 10px; margin-bottom: 10px;">
+                <label>Xác nhận mật khẩu mới:</label>
+                <input type="password" id="confirmPassword" class="form-control" placeholder="Nhập lại mật khẩu mới" />
+                <div id="confirmPasswordError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+            <button class="btn  setting-pass" id="forget">Cập nhật mật khẩu</button>
+        </div>
+    </div>
+
+
+<div class="col-lg-12" style="border-top: 0.2px solid #000; border-bottom: none !important;">
+    <div class="row" id="showcus" style="margin-top: 20px;">
+        <div class="col-lg-12">
+            <h3 style="text-align: center;">THỐNG KÊ SỐ LƯỢNG CÔNG VIỆC ĐANG THEO DÕI</h3>
+        </div>
+        <table id="customer-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+            <thead>
+                <tr style="text-align: center;">
+                    <th>Đơn đặt hàng</th>
+                    <th>Nhập kho</th>
+                    <th>Xuất kho</th>
+                </tr>
+            </thead>
+            <tbody id="employee">
+                <tr style="text-align: center; font-size: 18px;">
+                    <td>@ViewBag.OrdersCount</td>
+                    <td>@ViewBag.ImportCount</td>
+                    <td>@ViewBag.ExportCount</td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- Đặt Popper.js trước Bootstrap.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+
+<script src="~/Scripts/setting-employee.js"></script>
+<script>
+    var changePasswordBtn = document.getElementById('changePasswordBtn');
+    var changePasswordForm = document.getElementById('changePasswordForm');
+
+    // Add a click event listener to the button
+    changePasswordBtn.addEventListener('click', function () {
+        // Toggle the display property of the form
+        changePasswordForm.style.display = (changePasswordForm.style.display === 'none' || changePasswordForm.style.display === '') ? 'block' : 'none';
+    });
+    $(document).ready(function () {
+        // Add a click event listener to the button
+        
+        var updateEmployeeBtn = document.getElementById('update-employee');
+        var editDataFields = document.querySelectorAll('.edit-data');
+
+        // Add a click event listener to the button
+        updateEmployeeBtn.addEventListener('click', function () {
+            // Loop through each input field and remove the 'disabled' attribute
+            editDataFields.forEach(function (field) {
+                field.removeAttribute('disabled');
+            });
+        });
+    });
+
+    
+
+    var ID = $('#IdAcc').val();
+    console.log(ID)
+    function Password() {
+        if (validateForm()) {
+            // Lấy giá trị từ các trường input
+            var ID = $('#IdAcc').val();
+            var oldPassword = $('#oldPassword').val();
+            var newPassword = $('#newPassword').val();
+
+            $.ajax({
+                url: '/HomeAdmin/ChangePasswords', // Đường dẫn đến Action xử lý đổi mật khẩu
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8', // Set content type to JSON
+                dataType: 'json', // Expect JSON data in response
+                data: JSON.stringify({
+                    Id: ID,
+                    oldPassword: oldPassword,
+                    newPassword: newPassword,
+                }),
+                cache: false,
+                processData: false,
+                success: function (data) {
+                    console.log(data);
+                    if (data.status === 1) {
+                        $('#successModal').modal('show');
+                    }
+                    else if (data.status === -1) {
+                        $('#errorModal').modal('show');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                    alert('Đã có lỗi xảy ra.');
+                }
+            });
+        }
+    }
+
+    // Sử dụng event listener
+    $('#forget').on('click', function (event) {
+        Password();
+    });
+
+
+</script>
+

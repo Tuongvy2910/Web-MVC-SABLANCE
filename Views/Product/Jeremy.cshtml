@@ -1,0 +1,308 @@
+﻿@model IEnumerable<SABLANCE.Models.ProductDetail>
+@{
+    ViewBag.Title = "Bộ sưu tập SABLANCA";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var data = ViewBag.data as List<SABLANCE.Models.Product>;
+    var db = new SABLANCE.Models.DataSablancaShopEntities();
+    int i = 0;
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/freeps2/a7rarpress@main/swiper-bundle.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+<link href="~/Content/Home_Buyer.css" rel="stylesheet" />
+<link href="~/Content/product.css" rel="stylesheet" />
+<link href="~/Content/products.css" rel="stylesheet" />
+<div class="container-fluid">
+    <div class="d-flex nav-cata-web">
+        <div class="title-nav-detail w90">
+            <a class="txt-color" href="@Url.Action("Home", "Home")">Trang chủ</a> &gt;
+            <a class="txt-color" href="@Url.Action("Jeremy", "Product")">&gt; BỘ SƯU TẬP JEREMY</a>
+        </div>
+    </div>
+    <div style="display: block">
+        <div style="background-color: #f4f4f4">
+            <div class="col-sale-owl-carousel">
+                <div class="row">
+                    @{
+                        var index = 0;
+                        foreach (var item in data)
+                        {
+                            var detail = db.ProductDetails.Where(a => a.ProductID == item.ID).ToList();
+                            <div class="cover-new-carousel col-6 col-sm-4 col-md-3 col-lg-3" style="margin-top: 10px">
+                                <div class="card">
+                                    <div class="image-container">
+                                        @if (detail.Count > 0)
+                                        {
+                                            var firstImage = detail.FirstOrDefault().Image;
+                                            <img src="~/Image/Product/@firstImage" id="ShoeImage_@index" class="img-item-home detailImage">
+                                        }
+
+                                        <div class="price">@detail[i].Prices.ToString("0,0 VNĐ")</div>
+                                    </div>
+                                    <label class="favorite">
+                                        <input checked="" type="checkbox">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000">
+                                            <path d="M12 20a1 1 0 0 1-.437-.1C11.214 19.73 3 15.671 3 9a5 5 0 0 1 8.535-3.536l.465.465.465-.465A5 5 0 0 1 21 9c0 6.646-8.212 10.728-8.562 10.9A1 1 0 0 1 12 20z"></path>
+                                        </svg>
+                                    </label>
+                                    <input id="ProductID_@item.ID" value="" style="display: none;" />
+                                    <input id="ColorID_@item.ID" value="" style="display: none;" />
+                                    @if (detail.Count > 0)
+                                    {
+                                        var colors = (from a in db.ProductDetails
+                                                      join b in db.Colors on a.ColorID equals b.ID
+                                                      where a.ProductID == item.ID
+                                                      group b by new { b.ID, b.Name, b.Code } into g
+                                                      select new
+                                                      {
+                                                          ID = g.Key.ID,
+                                                          Name = g.Key.Name,
+                                                          Code = g.Key.Code
+                                                      }).ToList();
+                                        var sizes = (from a in db.ProductDetails
+                                                     join b in db.Sizes on a.SizeID equals b.ID
+                                                     where a.ProductID == item.ID
+                                                     group b by new { b.ID, b.Name, b.Code } into g
+                                                     select new
+                                                     {
+                                                         ID = g.Key.ID,
+                                                         Name = g.Key.Name,
+                                                         Code = g.Key.Code
+                                                     }).ToList();
+                                        //var details = db.ProductDetails.Where(a => a.ProductID == item.ID).ToList();
+                                        <div class="content">
+                                            <div class="product-name">
+                                                <a class="product-name" href="@Url.Action("ProductDetail", "Product" , new {Id = item.ID})">
+                                                    @item.Name
+                                                </a>
+                                            </div>
+                                            <div class="color-size-container">
+                                                <div class="colors">
+                                                    Màu sắc
+                                                    <ul class="colors-container">
+                                                        @foreach (var color in colors)
+                                                        {
+
+                                                            <li class="color">
+                                                                <a onclick="ColorOnImage(@color.ID, @item.ID, 'ShoeImage_@index')" style="background-color: @color.Code"></a>
+                                                                <span class="color-name">@color.Name</span>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                                @if (sizes.Count > 0)
+                                                {
+                                                    <input id="SizeID_@item.ID" value="" style="display: none;" />
+                                                    <div class="sizes">
+                                                        Kích thước
+                                                        <ul class="size-container">
+                                                            @foreach (var size in sizes)
+                                                            {
+                                                                <li class="size">
+                                                                    <label class="size-radio">
+                                                                        <input name="size" value="@size.ID" onclick="getColorSizeOnImage(@size.ID, @item.ID)" type="radio">
+                                                                        <span class="name">@size.Name</span>
+                                                                    </label>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <input id="SizeID_@item.ID" value="0" style="display: none;" />
+                                                    <div class="sizes" style="display: none;"></div>
+                                                }
+
+                                            </div>
+
+                                        </div>
+                                        <div class="button-container">
+                                            <button class="buy-button button" onclick="AddToCart(@item.ID)">
+                                                <i class="fas fa-shopping-cart"></i>
+                                                Thêm vào giỏ hàng
+                                            </button>
+                                        </div>
+
+                                    }
+
+                                </div>
+                            </div>
+                            index++;
+                        }
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function ColorOnImage(color, id, idImg) {
+    console.log(idImg);
+    $.ajax({
+        type: "POST",
+        url: '@Url.Action("ColorOnImage")',
+        data: { color: color, id: id },
+        success: function (response) {
+            var a = '/Image/Product/' + response.obj.Image;
+            console.log('ket qua a:', a);
+            $(`#${idImg}`).attr('src', a);
+            console.log(response.obj.IDDetail);
+            $(`#ProductID_${id}`).val(response.obj.IDDetail);
+            $(`#ColorID_${id}`).val(response.obj.ColorID);
+        },
+        error: function (error) {
+            console.error("Lỗi: ", error);
+        }
+    });
+}
+
+function getColorSizeOnImage(size, id) {
+    // Your implementation here
+    console.log("Size: " + size + ", ID: " + id);
+    var color = $(`#ColorID_${id}`).val();
+    if (color !== "") {
+        $.ajax({
+            url: '@Url.Action("ColorSizeOnImage")',
+            type: "POST",
+            data: {
+                color: color,
+                size: size,
+                id: id
+            },
+            success: function (response) {
+                if (response.status === 1) {
+                    // Process the data here
+                    var data = response.obj;
+                    if (data !== null) {
+                        // Use data.ProductID, data.ColorID, data.SizeID, etc.
+                        $(`#ProductID_${id}`).val(data.IDDetail);
+                        $(`#ColorID_${id}`).val(response.obj.ColorID);
+                        $(`#SizeID_${id}`).val(response.obj.SizeID);
+                        console.log(data.IDDetail);
+                    } else {
+                        alert("Màu này hết size: " + size + ". Vui lòng chọn size khác");
+                    }
+                } else {
+                    // Handle error if needed
+                    console.error(response.text);
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle AJAX error if needed
+                console.error(error);
+            }
+        });
+    } else {
+        alert("Bạn vui lòng chọn màu sắc trước");
+    }
+    }
+    function showDetailProduct(productId) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ProductDetail", "Prodduct")',
+            data: { Id: productId },
+            success: function (data) {
+                console.log(data);
+                window.location.href = '/Prodduct/ProductDetail' + productId;
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra khi lấy thông tin chi tiết sản phẩm.');
+            }
+        });
+    }
+
+   function AddToCart(IdProduct)
+    {
+        var size = $(`#SizeID_${IdProduct}`).val();
+        console.log(size);
+        var IdDetailProduct = $(`#ProductID_${IdProduct}`).val();
+        if (size === "0" || size === undefined || size === null) {
+
+            console.log(IdDetailProduct);
+            if (IdDetailProduct == "" || IdDetailProduct == null || IdDetailProduct == undefined) {
+                alert("Vui lòng chọn màu sản phẩm");
+            }
+            else {
+                 $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddToCart", "Cart")',
+            data: { Id: IdDetailProduct },
+            success: function (response) {
+                if (response.status == "-2") {
+                    console.log(response);
+                    window.location.href = '/Login/Login';
+                    alert("Bạn vui lòng đăng nhập/đăng ký để có thể mua sắm")
+
+                }
+                else if (response.status == "-1") {
+                    alert(response.text);
+                }
+                else {
+                    alert(response.text);
+                    var countCartValue = parseInt('@HttpContext.Current.Session["CountCart"]');
+                    console.log('Session CountCart:', '@HttpContext.Current.Session["CountCart"]');
+if (!isNaN(countCartValue)) {
+    // Lưu giá trị CountCart vào LocalStorage
+    localStorage.setItem('CountCart', countCartValue);
+
+    // Cập nhật giá trị từ LocalStorage
+    $('#numSumProduct').text(localStorage.getItem('CountCart'));
+} else {
+    console.error("Giá trị CountCart không hợp lệ:", '@HttpContext.Current.Session["CountCart"]');
+}
+                }
+            },
+            error: function(error) {
+                console.error("Lỗi: ", error);
+            }
+        });
+            }
+
+        }
+        else {
+            if (IdDetailProduct == "" || IdDetailProduct == null || IdDetailProduct == undefined) {
+                alert("Vui lòng chọn màu sản phẩm");
+            }
+            else if (size === "") { alert("Vui lòng chọn kích thước sản phẩm"); }
+            else {
+                 $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddToCart", "Cart")',
+            data: { Id: IdDetailProduct },
+            success: function (response) {
+                if (response.status == "-2") {
+                    console.log(response);
+                    window.location.href = '/Login/Login';
+                    alert("Bạn vui lòng đăng nhập/đăng ký để có thể mua sắm")
+
+                }
+                else if (response.status == "-1") {
+                    alert(response.text);
+                }
+                else {
+                    alert(response.text);
+                }
+            },
+            error: function(error) {
+                console.error("Lỗi: ", error);
+            }
+        });
+            }
+
+        }
+
+
+    }
+
+
+
+
+
+</script>
+
+

@@ -1,0 +1,358 @@
+﻿@model SABLANCE.Models.CategoriesPromotion
+@{
+    var dataPro = ViewBag.ProductDataDetail as List<SABLANCE.Models.ProductDetail>;
+    var ListProduct = ViewBag.ProductPromotionDetailList as List<SABLANCE.Models.ProductDetail>;
+    var dataCate = ViewBag.CatePromotionId as SABLANCE.Models.CategoriesPromotion;
+}
+@using Newtonsoft.Json;
+@{
+    var jsonSettings = new Newtonsoft.Json.JsonSerializerSettings
+    {
+        ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+    };
+
+    var jsonCus = Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ProductPromotionDetailList, jsonSettings);
+}
+
+<link href="~/Content/orderadmin.css" rel="stylesheet" />
+<div class="modal-body" id="CreatePromotionViewModalContent">
+    <div class="col-lg-12" style="border-bottom:0.2px solid; margin-bottom: 10px;">
+        <div class="row">
+
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Mã khuyến mãi <span class="required">*</span></label>
+                    <input id="Code" disabled="disabled" name="Code" type="text" class="form-control" />
+                    <div id="CodeError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="form-group">
+                    <label>Tên chương trình khuyến mãi<span class="required">*</span> </label>
+                    <input id="Name" name="Name" type="text" class="form-control col-lg-12" style="float: none !important;" placeholder="Nhập tên chương trình khuyến mãi" />
+                    <div id="NameError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Mô tả chương trình khuyến mãi  <span class="required">*</span></label>
+                    <textarea id="Description" name="Description" class="form-control" placeholder="Nhập mô tả cho chương trình khuyến mãi"></textarea>
+                    <div id="DescriptionError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Ngày bắt đầu</label>
+                    <input id="StartDate" name="StartDate" type="datetime-local" class="form-control" />
+                    <div id="StartDateError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Ngày kết thúc</label>
+                    <input id="EndDate" name="EndDate" type="datetime-local" class="form-control" />
+                    <div id="EndDateError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Danh mục chương trình khuyến mãi</label>
+                    <select id="CategoriesPromotionID" name="CategoriesPromotionID" disabled class="form-control">
+
+                        <option value="@dataCate.ID" selected>@dataCate.Name</option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-lg-12 image-group">
+                <div class="col-lg-7 image-group" style="margin: 5px 250px;">
+                    <div class="uploadpreview image-upload col-lg-12">
+                        <img src="~/Image/Promotion/promotion.jpg" class="img-em" id="img-Employee" />
+                    </div>
+                    <div class="col-md-10" style="width: 100%; margin-top:10px; margin-bottom:15px;">
+                        <input title="Vui lòng chọn hình ảnh" type="file" name="Image" class="form-control" id="image-upload" />
+                        <div id="ImageError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Danh sách sản phẩm</label>
+                    <select id="ProductID" name="ProductID" class="form-control" onchange="displayCustomerDetails(this.value);">
+                        <option value="0">Chọn sản phẩm</option>
+                        @foreach (var item in dataPro)
+                        {
+                            var displayText = $"Mã MH: {item.Code}";
+
+                            if (item.Product != null)
+                            {
+                                displayText += $" | Tên: {item.Product.Name}";
+                            }
+
+                            if (item.Size != null)
+                            {
+                                displayText += $" | Size: {item.Size.Name}";
+                            }
+
+                            if (item.Color != null)
+                            {
+                                displayText += $" | Màu: {item.Color.Name}";
+                            }
+
+                            <option value="@item.ID">@displayText</option>
+                        }
+                    </select>
+                    <div id="ProductError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="button" id="add-order" class="btn btn-primary">Thêm CTKM</button>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="row" id="showcus" style="margin-top: 10px;">
+            <h3>DANH SÁCH SẢN PHẨM</h3>
+            <table id="customer-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+                <thead>
+                    <tr>
+
+                        <th>ID </th>
+                        <th>Mã mặt hàng</th>
+                        <th>Tên mặt hàng</th>
+                        <th>Màu sắc</th>
+                        <th>Kích thước</th>
+                        <th>Phần trăm giảm giá</th>
+                        <th>Đơn giá</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="cusMem">
+                    <tr id="trow" ;>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" defer></script>
+<script src="~/Scripts/promotion.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Lắng nghe sự kiện khi số lượng hoặc giá thay đổi
+        $(document).ready(function () {
+            $('body').on('input', '#QuantityPro', function () {
+                var errorContainer = $(this).closest('tr').find('.error-message'); // Tìm errorContainer trong cùng một dòng
+                errorContainer.text("");
+            });
+        });
+
+
+    });
+    function deleteCustomer(button) {
+        // Lấy đối tượng tr (dòng) chứa nút xóa
+        var row = $(button).closest("tr");
+
+        // Xóa dòng khỏi bảng
+        row.remove();
+    }
+    var dataCus = @Html.Raw(jsonCus);
+        function formatDate(date) {
+            var options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+            return date ? new Date(date).toLocaleDateString('vi-VN', options) : '';
+        }
+
+        function updateRow(row, data) {
+            row.innerHTML = '<td id="proID">' + data.Id + '</td>' +
+                '<td id="proCode">' + data.Code + '</td>' +
+                '<td id="proName">' + data.Name + '</td>' +
+                '<td id="proColor" style="text-align: center;">' +
+                '<a style="background-color: '+ data.Color +';" class="color"> <span class="color-name"></span></a></td>' +
+                '<td id="proSize" style="text-align: center;">' + data.Size + '</td>' +
+                '<td id="proQuatity">' +
+                '<input id="QuantityPro" type = "number" class="orquantity form-control"/>' +
+                '<div id="ProQuantityError" class="error-message" style="color: red; font-size: 11px;"></div>'+
+                '</td >' +
+                '<td id="proPrices">' + data.Prices + '</td>' +
+                ' <td style="text-align: center;"> ' +
+                                        '<a onclick="deleteCustomer(this);"> ' +
+                                            '<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,255.99603,255.99603">' +
+                                                '<g fill="#000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-size="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M10,2l-1,1h-6v2h18v-2h-6l-1,-1zM4.36523,7l1.70313,15h11.86328l1.70313,-15z"></path></g></g> ' +
+                                            '</svg>' +
+                                        '</a>' +
+                                    '</td>';
+        }
+
+        function addEmptyRow() {
+            var tbody = document.getElementById("cusMem");
+            var templateRow = document.getElementById("trow");
+            var newRow = templateRow.cloneNode(true);
+
+            // Loại bỏ id "trow" để nó không bị xem là dòng trống nữa
+            newRow.id = "";
+            tbody.appendChild(newRow);
+        }
+
+    function displayCustomerDetails(selectedCustomerId) {
+        var selectedCustomer = dataCus.find(a => a.Id == selectedCustomerId);
+        var checkdata = document.getElementById("cusMem").querySelectorAll("td#proID");
+        document.getElementById("showcus").style.display = "block";
+        var isDuplicate = Array.from(checkdata).some(function (checkdata) {
+            return checkdata.innerHTML === selectedCustomer.Id.toString();
+        });
+        var tbody = document.getElementById("cusMem");
+        var existingRows = tbody.querySelectorAll("tr:not(#trow)");
+        var emptyRow = Array.from(existingRows).find(row => row.innerHTML.trim() === '');
+
+        if (!isDuplicate) {
+
+            if (emptyRow) {
+                // Nếu có dòng trống, cập nhật nó với dữ liệu mới
+                updateRow(emptyRow, selectedCustomer);
+                addEmptyRow(); // Thêm dòng trống mới
+            } else {
+                // Nếu không có dòng trống, thêm một dòng mới
+                addNewRow(selectedCustomer);
+            }
+        }
+        else {
+            alert("Dòng có ID trùng đã tồn tại!");
+        }
+    }
+
+    function addNewRow(data) {
+        var tbody = document.getElementById("cusMem");
+        var templateRow = document.getElementById("trow");
+        var newRow = templateRow.cloneNode(true);
+
+        // Loại bỏ id "trow" để nó không bị xem là dòng trống nữa
+        newRow.id = "";
+
+        // Thiết lập nội dung cho các ô trong dòng mới
+        updateRow(newRow, data);
+
+        // Thêm dòng mới vào tbody
+        tbody.appendChild(newRow);
+
+        // Tạo thêm dòng trống mới
+        addEmptyRow();
+    }
+
+    // Hàm khởi tạo dòng trống đầu tiên
+    addEmptyRow();
+
+    $(document).ready(function () {
+        let imageData; // Biến để lưu dữ liệu hình ảnh
+
+        $('.image-group input[type=file]').change(function () {
+            var input = event.target;
+            var preview = document.getElementById('img-Employee');
+            var image = document.getElementById('image-upload');
+            var id = $(this).attr("id");
+            var newimage = new FileReader();
+
+
+            newimage.onload = function (e) {
+                preview.src = e.target.result;
+                image.src = e.target.result;
+            }
+
+            if (this.files && this.files[0]) {
+                newimage.readAsDataURL(this.files[0]);
+                imageData = this.files[0]
+
+            }
+            else {
+                ModelStateAddError("Image", "Chưa tải được hình ảnh. Vui lòng chọn lại hình ảnh.");
+            }
+        });
+    function createPromotionAction() {
+        if (checkPromotion()) {
+            var Code = $('#Code').val();
+            var Name = $('#Name').val();
+            var Detail = $('#Description').val();
+            var StartDate = $('#StartDate').val();
+            var EndDate = $('#EndDate').val();
+            var CategoriesPromotionID = $('#CategoriesPromotionID').val();
+            var proIds = $('[id^="proID"]').map(function () {
+                return $(this).text();
+            }).get();
+            var Quatity = $('[id^="QuantityPro"]').map(function () {
+                return $(this).val();
+            }).get();
+
+            console.log(StartDate);
+            console.log(EndDate);
+            var formData = new FormData();
+            formData.append("ImageData", imageData); // Thêm dữ liệu hình ảnh vào FormData
+            formData.append("Code", Code);
+            formData.append("Title", Name);
+            formData.append("Detail", Detail);
+            formData.append("start", StartDate);
+            formData.append("end", EndDate);
+            formData.append("CategoriesPromotionID", CategoriesPromotionID);
+            for (var i = 0; i < proIds.length; i++) {
+                formData.append("productId[" + i + "]", proIds[i]);
+                formData.append("quantity[" + i + "]", Quatity[i]);
+            }
+
+            if (proIds.length > 0) {
+
+                $.ajax({
+                    url: '@Url.Action("CreatePromotion")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        console.log(data);
+                        if (data.status == 1) {
+                            window.location.href = '@Url.Action("ListCatePromotion", "Promotion")';
+                            alert(data.text);
+                        } else {
+                            alert(data.text);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Đã có lỗi xảy ra tạo chương trình khuyến mãi.');
+                    }
+                });
+            }
+
+        }
+
+    }
+
+
+    // Gọi hàm createAction() khi nhấn nút "Thêm khách hàng"
+    $('#add-order').on('click', function (event) {
+        createPromotionAction()
+    });
+
+});
+
+
+
+</script>
+

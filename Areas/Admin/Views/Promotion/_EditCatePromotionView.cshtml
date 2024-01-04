@@ -1,0 +1,180 @@
+﻿@model List<SABLANCE.Models.Promotion>
+@{
+
+    var dataCate = ViewBag.CatePromotionData as SABLANCE.Models.CategoriesPromotion;
+    var dataPro = ViewBag.DataProductDetail as List<SABLANCE.Models.Promotion>;
+}
+
+<link href="~/Content/productadmin.css" rel="stylesheet" />
+<div class="modal-body" id="EditViewModalContent">
+    <div class="modal-body" id="EditSizeModalContent">
+        <div class="col-lg-12" style="margin-bottom: 10px;">
+            <div class="row">
+                <div class="col-lg-4" style="align-self: end;">
+                    <div class="form-group">
+                        <label>Mã danh mục <span class="required">*</span></label>
+                        <input id="CodeCateEdit" type="text" class="form-control" value="@dataCate.Code" disabled placeholder="Nhập mã chương trình khuyến mãi" />
+                        <div id="CodeCateError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="form-group">
+                        <label>Tên danh mục chương trình khuyến mãi<span class="required">*</span></label>
+                        <input id="ID" name="ID" value="@dataCate.ID" type="text" class="form-control" style="display: none;" />
+                        <input id="NameCate" name="NameCate" value="@dataCate.Name" type="text" class="form-control" placeholder="Nhập chương trình khuyến mãi" />
+                        <div id="NameCateError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" id="edit-catepromotion" class="btn btn-primary">Lưu</button>
+            </div>
+        </div>
+        <div class="col-lg-12" style="border-top: 0.2px solid #000; border-bottom: none !important;">
+            <div class="row" id="showcus" style="margin-top: 10px;">
+                @if (dataPro.Count > 0)
+                {
+                    <h3>DANH SÁCH CHƯƠNG TRÌNH KHUYẾN MÃI</h3>
+                    <table id="customer-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+                        <thead>
+                            <tr>
+                                <th>Mã chương trình</th>
+                                <th>Hình ảnh</th>
+                                <th>Tên chương trình</th>
+                                <th>Số lượng sản phẩm chạy trong chương trình</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product">
+                            @foreach (var item in dataPro)
+                            {
+                                <tr id="trow_@item.ID">
+
+                                    <td id="proCode" style="width: 15%;">
+                                        <input id="CodeProduct" name="CodeProduct" value="@item.Code" type="text" class="form-control" disabled />
+                                    </td>
+                                    <td id="proImage" style="width: 30%;">
+                                        <div class="col-lg-12 image-group">
+                                            <div class="uploadpreview image-upload">
+                                                @if (!string.IsNullOrEmpty(item.Image))
+                                                {
+
+                                                    <img src="~/Image/Promotion/@item.Image" class="img-em" id="img-Product" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="~/Image/Promotion/promotion.jpg" class="img-em" id="img-Product" />
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td id="proName">
+                                        @item.Title
+                                    </td>
+
+                                    <td id="proPrices" style="vertical-align: middle; text-align: center;">
+                                        <a>
+                                            @(ViewBag.PromotionDetailProCounts.ContainsKey(item.ID) ? ViewBag.PromotionDetailProCounts[item.ID] : 0)
+                                        </a>
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <a onclick="DeletePromotion(@item.ID);">
+                                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,255.99603,255.99603">
+                                                <g fill="#000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-size="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M10,2l-1,1h-6v2h18v-2h-6l-1,-1zM4.36523,7l1.70313,15h11.86328l1.70313,-15z"></path></g></g>
+                                            </svg>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                }
+                else
+                {
+                    <div class="col-lg-12" style="text-align: center; font-style: italic;">Danh sách chương trình khuyến mãi trống</div>
+                }
+
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/promotion.js"></script>
+<script>
+    function DeletePromotion(promotionId) {
+            // Hiển thị hộp thoại xác nhận hoặc thực hiện xóa trực tiếp
+
+            // Lấy phần tử tr (dòng) cần xóa
+        var rowToDelete = $("#trow_" + promotionId);
+
+            // Kiểm tra xem có phải là phần tử tr không
+
+            $.ajax({
+            url: '@Url.Action("DeletePromotionDetails", "Promotion")',
+            type: 'POST',
+            data: {
+                Id: promotionId
+            },
+            success: function (data) {
+                if (data.status === 1) {
+                    if (rowToDelete.length > 0) {
+                        rowToDelete.remove();
+                    } else {
+                        console.log("Không tìm thấy dòng cần xóa");
+                    }
+                    alert(data.text);
+                } else {
+                    alert(data.text);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                alert('Đã có lỗi xảy ra khi xóa chương trình khuyến mãi.');
+            }
+        });
+
+     }
+     $(document).ready(function () {
+        function EditCatePromotionAction() {
+            if (checkCatePromotion()) {
+                var ID = $('#ID').val();
+                var Code = $('#CodeCateEdit').val();
+                var Name = $('#NameCate').val();
+
+                $.ajax({
+                    url: '@Url.Action("EditCatePromotion")',
+                    type: 'POST',
+                    data: {
+                        ID: ID,
+                        Code: Code,
+                        Name: Name,
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.status == 1) {
+                            window.location.href = '@Url.Action("ListCatePromotion", "Promotion")';
+                            alert(data.text);
+                        } else {
+                            alert(data.text);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Đã có lỗi xảy ra cập nhật danh mục chương trình khuyến mãi.');
+                    }
+                });
+            }
+        }
+
+
+        // Gọi hàm createAction() khi nhấn nút "Thêm khách hàng"
+        $('#edit-catepromotion').on('click', function (event) {
+            EditCatePromotionAction()
+        });
+    });
+</script>
+

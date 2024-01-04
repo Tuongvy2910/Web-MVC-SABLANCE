@@ -1,0 +1,243 @@
+﻿@model SABLANCE.ViewModel.CustomerModel
+@{
+    ViewBag.Title = "Xác nhận thông tin đăng ký";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/register.css" rel="stylesheet" />
+
+
+<div class="modal" id="successModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/Image/logo_sab.png" class="modal-title" style="width: 30%;"/>
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: bold;">Đăng ký tài khoản thành công. Chào mừng bạn đến với SABLANCA.</p>
+                <p style="font-weight: bold;">Bạn vui lòng đăng nhập tài khoản để sử dụng dịch vụ.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+ </div>
+
+    @*//kết thúc modal*@
+    <div class="container-fluid">
+        <div class="row">
+            <div class="form-container col-sm-8">
+                <div class="section-header" style="font-size: 25px;">Đăng ký thông tin cá nhân</div>
+                <form>
+                    <div class="form-group inline-form">
+                        <label for="lastName">Họ</label>
+                        <input type="text" class="form-control" id="lastName" placeholder="">
+                        <div id="lastNameError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+
+                    <div class="form-group inline-form">
+                        <label for="firstName">Tên <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="firstName" placeholder="">
+                        <div id="firstNameError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+                    <div class="form-group inline-form">
+                        <label for="dob">Ngày sinh</label>
+                        <input type="date" class="form-control" id="DateOfBirth" placeholder="">
+                        <div id="dateOfBirthError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+                    <div class="form-group inline-form select-gender">
+                        <label>Giới tính </label>
+                        <select id="Gender" name="Gender" class="form-control">
+                            <option value="" selected disabled>Chọn giới tính...</option>
+                            <option value="Nữ">Nữ</option>
+                            <option value="Nam">Nam</option>
+                        </select>
+                    </div>
+                    <div class="form-group inline-form">
+                        <label for="email">Email </label>
+                        <input type="email" class="form-control" id="email" placeholder="">
+                        <div id="emailError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+                    <div class="form-group inline-form">
+                        <label for="phone">Số điện thoại <span class="required">*</span></label>
+                        <input disabled="disabled" type="tel" class="form-control" id="phone" placeholder="">
+                        <div id="phoneError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+                    <div class="form-group inline-form">
+                        <label for="city-state">Tỉnh/Thành phố <span class="required">*</span></label>
+                        <select class="form-control progres_value" id="city" aria-label=".form-select-sm">
+                            <option value="" selected>Chọn Tỉnh/Thành phố</option>
+                        </select>
+                        <div id="cityError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+                    <div class="form-group inline-form">
+                        <label for="city-state">Quận/Huyện <span class="required">*</span></label>
+                        <select class="form-control progres_value" id="district" aria-label=".form-select-sm">
+                            <option value="" selected>Chọn Quận / Huyện</option>
+                        </select>
+                        <div id="districtError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+                    <div class="form-group inline-form">
+                        <label for="city-state">Phường/Xã <span class="required">*</span></label>
+                        <select class="form-control progres_value" id="ward" aria-label=".form-select-sm">
+                            <option value="" selected>Chọn Phường/Xã</option>
+                        </select>
+                        <div id="wardError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+                    <div class="form-group inline-form">
+                        <label for="address">Số nhà <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="address" placeholder="">
+                        <div id="addressError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+                </form>
+                <hr style="border: 0.25px solid #999" />
+                <form>
+                    <div class="form-group inline-form">
+                        <label>Mật khẩu đăng nhập <span class="required">*</span></label>
+                        <input id="Password" name="Password" type="password" class="form-control" />
+                        <div id="passwordError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+
+                    <div class="form-group inline-form">
+                        <label>Xác nhận lại mật khẩu <span class="required">*</span></label>
+                        <input id="Password-confirm" name="Password" type="password" class="form-control" />
+                        <div id="Password-confirmError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="helper-container col-sm-4">
+                <nav class="pagination">
+                    <img src="~/Image/sab_shoe.png" style="width:100%; margin-top: -25px;" />
+                </nav>
+                <div class="helper-details">
+                    <div class="helper-header">Sablanca xin chào!</div>
+                    <p class="helper-text">Chân thành cảm ơn Quý khách đã lựa chọn trở thành thành viên của chúng tôi! Hãy cùng nhau khám phá những trải nghiệm tuyệt vời và nhận những ưu đãi đặc biệt dành riêng cho thành viên của chúng tôi..</p>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <a href="@Url.Action("Login", "Login")" class="btn btn-default" style="background-color: #db8f70; color: #fff; font-weight: bold; margin-right: 10px;">
+                    Quay lại
+                </a>
+                <input type="submit" value="Đăng ký tài khoản" onclick="RegisterSuccess();" class="btn btn-default" style="background-color: #db8f70; color: #fff; font-weight: bold;" />
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <!-- Đặt Popper.js trước Bootstrap.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var urlParams = new URLSearchParams(window.location.search);
+            var phone_no = urlParams.get('phone_no');
+
+            if (phone_no !== null) {
+                var phoneElement = document.getElementById('phone');
+                if (phoneElement) {
+                    phoneElement.value = phone_no;
+                }
+            }
+        });
+    var citis = document.getElementById("city");
+    var districts = document.getElementById("district");
+    var wards = document.getElementById("ward");
+    var Parameter = {
+        url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+        method: "GET",
+        responseType: "json",
+    };
+    var promise = axios(Parameter);
+    promise.then(function (result) {
+        renderCity(result.data);
+    });
+
+
+    function renderCity(data) {
+        for (const x of data) {
+            citis.options[citis.options.length] = new Option(x.Name, x.Id);
+        }
+        citis.onchange = function () {
+            district.length = 1;
+            ward.length = 1;
+            if (this.value != "") {
+                const result = data.filter(n => n.Id === this.value);
+
+                for (const k of result[0].Districts) {
+                    district.options[district.options.length] = new Option(k.Name, k.Id);
+                }
+            }
+        };
+        district.onchange = function () {
+            ward.length = 1;
+            const dataCity = data.filter((n) => n.Id === citis.value);
+            if (this.value != "") {
+                const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
+                for (const w of dataWards) {
+                    wards.options[wards.options.length] = new Option(w.Name, w.Id);
+                }
+            }
+        };
+    }
+    $(document).ready(function () {
+        // Ẩn modal khi nhấn nút "OK"
+        $('#successModal').on('hidden.bs.modal', function () {
+            window.location.href = "/Login/Login";
+        });
+    });
+function RegisterSuccess() {
+    if (validateForm()) {
+
+        var FirstName = $('#firstName').val();
+        var LastName = $('#lastName').val();
+        var Gender = $('#Gender').val();
+        var DateOfBirth = $('#DateOfBirth').val();
+        var Phone = $('#phone').val();
+        var addressString = document.getElementById("address").value + ", " + document.getElementById("ward").options[document.getElementById("ward").selectedIndex].text
+            + ", " + document.getElementById("district").options[document.getElementById("district").selectedIndex].text + ", " + document.getElementById("city").options[document.getElementById("city").selectedIndex].text;
+        console.log(addressString);
+        var Email = $('#email').val();
+        var Password = $('#Password').val();
+
+
+
+        $.ajax({
+            url: '@Url.Action("RegisterSuccess")', // Đường dẫn đến action xử lý việc tạo khách hàng
+            type: 'POST',
+            data: {
+                Email: Email,
+                Password: Password,
+                Address: addressString,
+                DateOfBirth: DateOfBirth,
+                Gender: Gender,
+                FirstName: FirstName,
+                LastName: LastName,
+                phone_no: Phone,
+            },
+            success: function (data) {
+
+                console.log(data);
+                if (data.status === 1) {
+                    $('#successModal').modal('show');
+                }
+
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                alert('Đã có lỗi xảy ra .');
+            }
+        });
+    }
+
+
+}
+    </script>
+    <script src="~/Scripts/registersuccess.js"></script>

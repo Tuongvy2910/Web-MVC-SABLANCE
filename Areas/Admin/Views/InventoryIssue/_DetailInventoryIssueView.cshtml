@@ -1,0 +1,130 @@
+﻿@model SABLANCE.Models.InventoryIssue
+@{
+    var dataPro = ViewBag.InventoryIssusesDetail as SABLANCE.Models.InventoryIssue;
+    var data = ViewBag.SODetailList as List<SABLANCE.Models.InventoryIssueDetail>;
+
+}
+
+
+<link href="~/Content/orderadmin.css" rel="stylesheet" />
+<div class="modal-body" id="SODetailContent">
+    <div class="col-lg-12" style="border-bottom:0.2px solid; margin-bottom: 10px;">
+        <div class="row">
+
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Số phiếu xuất kho <span class="required">*</span></label>
+                    <input id="CodeSO" disabled="disabled" value="@dataPro.SO_No" name="Code" type="text" class="form-control" />
+
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Nhân viên tạo phiếu</label>
+                    <input id="NameEmployee" disabled="disabled" name="NameEmployee" value=" @dataPro.Employee.LastName @dataPro.Employee.FirstName" type="text" class="form-control" />
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Ngày xuất kho </label>
+                    <input value="@dataPro.SODate" class="form-control" disabled />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Ghi chú phiếu xuất kho  </label>
+                    @if (!string.IsNullOrEmpty(dataPro.Note))
+                    {
+                        <textarea id="Description" name="Description" disabled class="form-control" placeholder="Nhập ghi chú cho phiếu xuất kho">@dataPro.Note</textarea>
+                    }
+                    else
+                    {
+                        <textarea id="Description" name="Description" disabled class="form-control" placeholder="Nhập ghi chú cho phiếu xuất kho"></textarea>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="row" id="showcus" style="margin-top: 10px;">
+            @if (data.Count > 0)
+            {
+                <h3>DANH SÁCH SẢN PHẨM</h3>
+                <table id="customer-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+                    <thead>
+                        <tr style="text-align: center;">
+
+                            <th>ID </th>
+                            <th>Mã mặt hàng</th>
+                            <th>Hình ảnh</th>
+                            <th>Tên mặt hàng</th>
+                            <th>Màu sắc</th>
+                            <th>Kích thước</th>
+                            <th>Số lượng xuất kho</th>
+                            <th>Đơn giá </th>
+                        </tr>
+                    </thead>
+                    <tbody id="cusMem">
+
+                        @foreach (var pro in data)
+                        {
+                            <tr id="trow">
+                                <td style="vertical-align: middle;">@pro.ProductDetail.ID</td>
+                                <td style="vertical-align: middle;">@pro.ProductDetail.Code</td>
+                                <td id="proImage" style="width: 30%;">
+                                    <div class="col-lg-12 image-group">
+                                        @if (!string.IsNullOrEmpty(pro.ProductDetail.Image))
+                                        {
+                                            <div class="uploadpreview image-upload">
+                                                <img src="~/Image/Product/@pro.ProductDetail.Image" class="img-em" id="img-Product" />
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="uploadpreview image-upload">
+                                                <img src="~/Image/Product/product.jpg" class="img-em" id="img-Product" />
+                                            </div>
+                                        }
+
+                                    </div>
+                                </td>
+                                <td style="vertical-align: middle;">@pro.ProductDetail.Product.Name</td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <a style="background-color: @pro.ProductDetail.Color.Code" class="color"> <span class="color-name"></span></a>
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    @if (pro.ProductDetail.SizeID.HasValue)
+                                    {
+                                        <a>@pro.ProductDetail.Size.Name</a>
+                                    }
+                                    else
+                                    {
+                                        <a>SP không bao gồm size</a>
+                                    }
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    @pro.Quantity
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">@pro.ProductDetail.Prices.ToString("0,0")</td>
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+            }
+
+            else
+            {
+                <div class="col-lg-12" style="text-align: center; font-style: italic;">Danh sách sản phẩm trống</div>
+            }
+        </div>
+
+    </div>
+</div>
+
+
+

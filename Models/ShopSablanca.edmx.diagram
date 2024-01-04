@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="164ec47b385544eebec50e91c020e921" Name="Diagram1">
+        <EntityTypeShape EntityType="DataSablancaModel.Account" Width="1.5" PointX="0.75" PointY="16.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.Cart" Width="1.5" PointX="7.5" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.CategoriesEmployee" Width="1.5" PointX="0.75" PointY="13.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.CategoriesProduct" Width="1.5" PointX="0.75" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.CategoriesPromotion" Width="1.5" PointX="3" PointY="31" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.Color" Width="1.5" PointX="3" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.Customer" Width="1.5" PointX="1.5" PointY="22.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.Employee" Width="1.5" PointX="3" PointY="16.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.InventoryIssue" Width="1.5" PointX="5.25" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.InventoryIssueDetail" Width="1.5" PointX="7.5" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.InventoryReceipt" Width="1.5" PointX="8.25" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.InventoryReceiptDetail" Width="1.5" PointX="10.5" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.MemberRating" Width="1.5" PointX="1.5" PointY="27.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.OrderDetail" Width="1.5" PointX="10.5" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.Order" Width="1.5" PointX="8.25" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.OrderStatu" Width="1.5" PointX="8.25" PointY="18.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.OrderStatusDetail" Width="1.5" PointX="10.5" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.PointDetailed" Width="1.5" PointX="6" PointY="3" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.Product" Width="1.5" PointX="3" PointY="8.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.ProductDetail" Width="1.5" PointX="5.25" PointY="7.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.Promotion" Width="1.5" PointX="5.25" PointY="30.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.PromotionDetail" Width="1.5" PointX="7.5" PointY="12" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.Size" Width="1.5" PointX="3" PointY="12.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.Slide" Width="1.5" PointX="0.75" PointY="2.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DataSablancaModel.TopicPage" Width="1.5" PointX="2.75" PointY="2.25" IsExpanded="true" />
+        <AssociationConnector Association="DataSablancaModel.FK__Account__Custome__33D4B598" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Account__Employe__32E0915F" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK_AccountID_Customer" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK_AccountID_Employee" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK_Carts_Customer" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK_Carts_ProductDetails" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Employee__Catego__300424B4" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Product__Categor__4D94879B" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Promotion__Categ__5FB337D6" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__ProductDe__Color__59063A47" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Customer__Member__151B244E" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Orders__Customer__440B1D61" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Inventory__Emplo__74AE54BC" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Inventory__Emplo__787EE5A0" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Orders__Employee__4316F928" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Inventory__Issue__00200768" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Inventory__Produ__01142BA1" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Inventory__Recei__7B5B524B" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Inventory__Produ__7C4F7684" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__OrderDeta__Order__6D0D32F4" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__OrderDeta__Produ__6E01572D" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Orders__PointID__44FF419A" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__OrderStat__Order__6A30C649" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK_OrderID_Point" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__OrderStat__Order__693CA210" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__ProductDe__Produ__571DF1D5" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__ProductDe__SizeI__5812160E" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Promotion__Produ__628FA481" ManuallyRouted="false" />
+        <AssociationConnector Association="DataSablancaModel.FK__Promotion__Promo__6383C8BA" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

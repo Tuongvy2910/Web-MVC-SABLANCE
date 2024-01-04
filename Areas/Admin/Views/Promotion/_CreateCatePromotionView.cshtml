@@ -1,0 +1,70 @@
+﻿@model SABLANCE.Models.CategoriesPromotion
+
+<link href="~/Content/productadmin.css" rel="stylesheet" />
+<div class="modal-body" id="CreateCatePromotionViewModalContent">
+    <div class="col-lg-12" style="margin-bottom: 10px;">
+        <div class="row">
+
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Mã danh mục <span class="required">*</span></label>
+                    <input id="CodeCate" type="text" class="form-control" disabled placeholder="Mã danh mục" />
+                    <div id="CodeCateError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="form-group">
+                    <label>Tên danh mục chương trình khuyến mãi<span class="required">*</span></label>
+                    <input id="NameCate" name="Name" type="text" class="form-control" placeholder="Nhập tên danh mục chương trình khuyến mãi" />
+                    <div id="NameCateError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12" style="border-top: 0.2px solid #000; border-bottom: none !important;">
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="button" id="add-cate" class="btn btn-primary">Thêm danh mục</button>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/promotion.js"></script>
+<script>
+
+    $(document).ready(function () {
+        function createCatePromotionAction() {
+            if (checkCatePromotion()) {
+                var Code = $('#CodeCate').val();
+                var Name = $('#NameCate').val();
+
+                $.ajax({
+                    url: '@Url.Action("CreateCatePromotion")',
+                    type: 'POST',
+                    data: {
+                        Code: Code,
+                        Name: Name,
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.status == 1) {
+                            window.location.href = '@Url.Action("ListCatePromotion", "Promotion")';
+                            alert(data.text);
+                        } else {
+                            alert(data.text);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Đã có lỗi xảy ra thêm kích thước.');
+                    }
+                });
+            }
+        }
+
+
+        // Gọi hàm createAction() khi nhấn nút "Thêm khách hàng"
+        $('#add-cate').on('click', function (event) {
+            createCatePromotionAction()
+        });
+    });
+</script>
+

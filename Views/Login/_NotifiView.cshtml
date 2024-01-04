@@ -1,0 +1,21 @@
+﻿<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Đăng ký thành công</h5>
+        </div>
+        <div class="modal-body">
+            <p>Đăng ký tài khoản thành công. Chào mừng bạn đến với SABLANCA</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // Ẩn modal khi nhấn nút "OK"
+        $('#successModal').on('hidden.bs.modal', function () {
+            window.location.href = "/Home/Home";
+        });
+    });
+</script>

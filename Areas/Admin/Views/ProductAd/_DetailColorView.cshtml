@@ -1,0 +1,114 @@
+﻿@model List<SABLANCE.Models.ProductDetail>
+    @{ 
+        var dataColor = ViewBag.DataColor as SABLANCE.Models.Color;
+        var dataSize = ViewBag.DataSize as List<SABLANCE.Models.Size>;
+        var dataPro = ViewBag.DataProduct as List<SABLANCE.Models.ProductDetail>;
+    }
+
+<link href="~/Content/productadmin.css" rel="stylesheet" />
+<div class="modal-body" id="ColorProductViewModalContent">
+    <div class="col-lg-12" style="margin-bottom: 10px;">
+        <div class="row">
+
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Mã định danh</label>
+                    <div class="color-picker-container">
+                        <input id="HexCode" type="text" class="form-control hex-code-input" value="@dataColor.Code.ToUpper()" style="border: none; background-color: transparent;" disabled placeholder="Màu sắc" />
+                        <div class="color-picker-wrapper">
+                            <input id="Code" name="Code" type="color" disabled class="color-input" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="form-group">
+                    <label>Tên màu sắc <span class="required">*</span></label>
+                    <input id="Name" name="Name" value="@dataColor.Name" type="text" disabled class="form-control" placeholder="Nhập tên loại thành viên" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12" style="border-top: 0.2px solid #000; border-bottom: none !important;">
+        <div class="row" id="showcus">
+            <h3>DANH SÁCH SẢN PHẨM</h3>
+            <table id="customer-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+                <thead>
+                    <tr>
+                        <th>Mã sản phẩm</th>
+                        <th>Hình ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Kích thước</th>
+                        <th>Đơn giá</th>
+                        <th>Tình trạng sản phẩm</th>
+                    </tr>
+                </thead>
+                <tbody id="product">
+                    @foreach (var item in Model)
+                    {
+                        <tr id="trow_@item.ID">
+
+                            <td id="proCode" style="width: 15%;">
+                                <input id="CodeProduct" name="CodeProduct" value="@item.Code" type="text" class="form-control" disabled />
+                            </td>
+                            <td id="proImage" style="width: 30%;">
+                                <div class="col-lg-12 image-group">
+                                    <div class="uploadpreview image-upload">
+                                        @if (!string.IsNullOrEmpty(item.Image))
+                                        {
+
+                                            <img src="~/Image/Product/@item.Image" class="img-em" id="img-Product" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/Image/Product/product.jpg" class="img-em" id="img-Product" />
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td id="proName">
+                                <input id="NameProduct" name="NameProduct" value="@item.Product.Name" type="text" class="form-control" disabled />
+
+                            </td>
+                            <td id="proSize">
+                                <select id="Size" name="Size" class="form-control edit-data" disabled>
+                                    @foreach (var size in dataSize)
+                                    {
+                                        <option value="@size.ID" @(size.ID == item.SizeID ? "selected" : "")>@size.Name</option>
+                                    }
+                                </select>
+                            </td>
+                            <td id="proPrices" style="vertical-align: middle;">
+                                <input id="Prices" name="Prices" value="@item.Prices" type="number" class="form-control edit-data" disabled />
+                            <td id="proStatus">
+                                <select id="Status" name="Status" class="form-control edit-data" disabled>
+                                    <option value="Hàng Mới" @(item.StatusProduct == "Hàng Mới" ? "selected" : "")>Hàng Mới</option>
+                                    <option value="Còn hàng" @(item.StatusProduct == "Còn hàng" ? "selected" : "")>Còn hàng</option>
+                                    <option value="Sắp hết hàng" @(item.StatusProduct == "Sắp hết hàng" ? "selected" : "")>Sắp hết hàng</option>
+                                    <option value="Hết hàng" @(item.StatusProduct == "Hết hàng" ? "selected" : "")>Hết hàng</option>
+                                </select>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // Đoạn mã này sẽ chạy khi trang web được tải
+
+        // Theo dõi sự kiện thay đổi giá trị của #HexCode
+ 
+            // Lấy giá trị của #HexCode
+        var hexColor = $("#HexCode").val().trim();
+            console.log(hexColor);
+            // Cập nhật màu nền của .color-picker-wrapper
+            $(".color-input").val(hexColor);
+
+    });
+</script>

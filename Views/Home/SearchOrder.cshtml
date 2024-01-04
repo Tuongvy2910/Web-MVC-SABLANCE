@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "Lịch sử giao dịch";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/profilecustomer.css" rel="stylesheet" />
+<div class="container-detail">
+
+    <div class="search-text">
+        <div class="checkbill-content-center">
+            <div class="checkbill-form-content">
+                <div class="header-title">
+                    <span class="checkbill-title">LỊCH SỬ GIAO DỊCH</span>
+                </div>
+                <div class="phone-section">
+                    <input class="checkbill-input mt-3" type="tel" id="valueInPutphone" data-type="1" placeholder="Vui lòng nhập số điện thoại kiểm tra">
+                    <div id="phoneNumberError" class="error-message" style="color: red; font-size: 11px;"></div>
+                    <button class="checkbill-btn mt-5" onclick="checkPhoneClick();"> TIẾP TỤC </button>
+                    <div class="text-error my-2"></div>
+                </div>
+                
+                <div class="mt-5">
+                    <span style="color:#6c757d">Tổng đài hổ trợ: </span><b>1800 6050</b>
+                </div>
+                <div>
+                    <span id="text-error" style="color:red"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="detailcheckinbill" style="display:none" id="loaddetailhear">
+        <div style="margin-left: 20px; margin-top: 10px;">LỊCH SỬ GIAO DỊCH</div>
+        <hr>
+        <div class="checkbill-cover-detail loaddetailhear">
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function ModelStateAddError(fieldName, errorMessage) {
+        // Hiển thị thông báo lỗi của trường
+        $("#" + fieldName + "Error").text(errorMessage).show();
+    }
+    function ModelStateRemoveError(fieldName) {
+        // Xóa thông báo lỗi của trường
+        $("#" + fieldName + "Error").text("");
+    }
+    $('#valueInPutphone').on('input', function () {
+        ModelStateRemoveError("phoneNumber");
+    });
+    function checkphone() {
+        var phoneNumber = $('#valueInPutphone').val();
+        if (phoneNumber === "") {
+            ModelStateAddError("phoneNumber", "Số điện thoại không được để trống.");
+        }
+        else if (!/^\d{8,12}$/.test(phoneNumber)) {
+            ModelStateAddError("phoneNumber", "Số điện thoại phải chứa từ 8 đến 12 ký tự số.");
+        }
+        if ($("#phoneNumberError").text() !== "") {
+            return false;
+        }
+
+        return true;
+    }
+
+   function checkPhoneClick() {
+         if (checkphone()) {
+                var phone_no = document.getElementById("valueInPutphone").value;
+                $.ajax({
+                    url: '@Url.Action("SearchOrderList")',
+                    type: 'POST',
+                    data: { phone_no: phone_no },
+                    success: function (data) {
+                        if (data.text == "success") {
+                            notify("Số điện thoại đã mua hàng. Bạn vui lòng chờ trong giây lát!", "success")
+                            setTimeout(() => {
+                                /* location.href = "/Login/RegisterSuccess";*/
+                                location.href = "/Home/ListOrderSearch?phone_no=" + encodeURIComponent(phone_no);
+                            }, 1500)
+
+                        }
+                        else {
+                            notify("Số điện thoại này chưa mua hàng!", "warning")
+                        }
+                    },
+                    error: function (error) {
+                        notify("Đăng ký thất bại", "error")
+                    }
+                });
+         }
+    }
+</script>

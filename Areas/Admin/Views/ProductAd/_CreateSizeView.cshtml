@@ -1,0 +1,70 @@
+﻿@model SABLANCE.Models.Size
+
+<link href="~/Content/productadmin.css" rel="stylesheet" />
+<div class="modal-body" id="CreateViewModalContent">
+    <div class="col-lg-12" style="margin-bottom: 10px;">
+        <div class="row">
+
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Mã kích thước <span class="required">*</span></label>
+                    <input id="CodeSize" type="text" class="form-control"  disabled placeholder="Mã kích thước" />
+                    <div id="CodeError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="form-group">
+                    <label>Tên kích thước<span class="required">*</span></label>
+                    <input id="Name" name="LastName" type="text" class="form-control" placeholder="Nhập tên kích thước" />
+                    <div id="NameError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12" style="border-top: 0.2px solid #000; border-bottom: none !important;">
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="button" id="add-size" class="btn btn-primary">Lưu kích thước</button>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/productadmin.js"></script>
+<script>
+   
+    $(document).ready(function () {
+        function createSizeAction() {
+            if (checkSize()) {
+                var Code = $('#CodeSize').val();
+                var Name = $('#Name').val();
+
+                $.ajax({
+                    url: '@Url.Action("CreateSize")',
+                    type: 'POST',
+                    data: {
+                        Code: Code,
+                        Name: Name,
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.status == 1) {
+                            window.location.href = '@Url.Action("ListSize", "ProductAd")';
+                            alert(data.text);
+                        } else {
+                            alert(data.text);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Đã có lỗi xảy ra thêm kích thước.');
+                    }
+                });
+            }
+        }
+
+
+        // Gọi hàm createAction() khi nhấn nút "Thêm khách hàng"
+        $('#add-size').on('click', function (event) {
+            createSizeAction()
+        });
+    });
+</script>
+

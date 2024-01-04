@@ -1,0 +1,88 @@
+﻿.container-fluid {
+    position: relative;
+    display: block;
+    width: 80%;
+    margin: 50px auto;
+    border: 0.5px solid #999;
+    border-radius: 10px;
+    padding: 2em;
+}
+
+.form-container {
+    border-right: 0.5px solid #999;
+    padding: 2em;
+}
+
+.section-header {
+    font-weight: bold;
+    margin-bottom: 2em;
+    font-size: 1.25em;
+}
+
+.inline-form {
+    display: inline-block;
+    width: 44%;
+    margin-right: 2em;
+    margin-bottom: 2em;
+}
+
+.sex-form {
+    display: block
+}
+
+.radio-inline {
+    margin-left: 0.5em;
+    margin-right: 1.5em;
+}
+
+
+
+
+.helper-container {
+    padding: 2em;
+}
+
+.page {
+    display: inline-block;
+    list-style-image: none;
+    font-size: 1.5em;
+    margin-right: 1.25em;
+    color: #555;
+}
+
+.active {
+    color: #4990E2;
+    border: 3px solid #4990E2;
+    border-radius: 50%;
+    padding: 0.5em 1em;
+}
+
+.helper-details {
+/*    margin: 30px auto;*/
+    text-align: center;
+}
+    .helper-header
+
+{
+    font-size:25px;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+.pagination {
+    display: inline-block;
+    padding-left: 0;
+    margin: 10px 0 !important;
+    border-radius: 4px;
+}
+
+.helper-text {
+    border-top: 0.5px solid #555;
+    padding: 10px;
+    text-align: justify;
+}
+.required {
+    color: red;
+    margin-left: 4px; 
+}
+
+

@@ -1,0 +1,220 @@
+﻿@model SABLANCE.Models.Customer
+@{
+    ViewBag.Title = "Đổi mật khẩu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/register.css" rel="stylesheet" />
+
+
+<div class="modal" id="successModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/Image/logo_sab.png" class="modal-title" style="width: 30%;" />
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: bold;">Đổi mật khẩu tài khoản thành công. Chào mừng bạn đến với SABLANCA.</p>
+                <p style="font-weight: bold;">Bạn vui lòng đăng nhập tài khoản để sử dụng dịch vụ.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*//kết thúc modal*@
+<div class="container-fluid">
+    <div class="row">
+        <div class="form-container col-sm-8">
+            <div class="section-header" style="font-size: 25px;">Kiểm tra thông tin cá nhân</div>
+            <form>
+                <div class="form-group inline-form">
+                    <label for="Code">Mã số khách hàng</label>
+                    <input type="text" value="@Model.Code" disabled class="form-control" id="Code" placeholder="">
+                    <input type="text" value="@Model.ID" disabled style="display: none;" class="form-control" id="IDCus" placeholder="">
+                </div>
+                <div class="form-group inline-form">
+                    <label for="lastName">Họ</label>
+                    <input type="text" value="@Model.LastName" disabled class="form-control" id="lastName" placeholder="">
+                </div>
+
+                <div class="form-group inline-form">
+                    <label for="firstName">Tên </label>
+                    <input type="text" value="@Model.FirstName" disabled class="form-control" id="firstName" placeholder="">
+                </div>
+                <div class="form-group inline-form">
+                    <label for="dob">Ngày sinh</label>
+                    @if (Model.DateOfBirth.Value != null)
+                    {
+                        <input type="date" value="@Model.DateOfBirth.Value.ToString("dd/MM/yyyy")" disabled class="form-control" id="DateOfBirth" placeholder="">
+                    }
+                    else
+                    {
+                        <input type="date" class="form-control" id="DateOfBirth" placeholder="Ngày sinh trống">
+                    }
+
+
+                </div>
+                <div class="form-group inline-form select-gender">
+                    <label>Giới tính </label>
+                    <input type="text" value="@Model.Gender" disabled class="form-control" id="Gender" placeholder="">
+
+                </div>
+                <div class="form-group inline-form">
+                    <label for="email">Email </label>
+                    @if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <input type="email" disabled value="@Model.Email" class="form-control" id="email" placeholder="">
+                    }
+                    else
+                    {
+                        <<input type="email" disabled class="form-control" id="email" placeholder="Email trống">
+                    }
+                </div>
+                <div class="form-group inline-form">
+                    <label for="phone">Số điện thoại</label>
+                    <input disabled="disabled" value="@Model.Phone" type="tel" class="form-control" id="phone" placeholder="">
+                </div>
+                <div class="form-group inline-form">
+                        <label for="address">Địa chỉ</label>
+                        <textarea class="form-control" disabled>@Model.Address</textarea>
+                </div>
+
+            </form>
+
+            <hr style="border: 0.25px solid #999" />
+            <form>
+                <div class="form-group inline-form">
+                    <label>Mật khẩu mới <span class="required">*</span></label>
+                    <input id="Password" name="Password" type="password" class="form-control" />
+                    <div id="passwordError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+
+                <div class="form-group inline-form">
+                    <label>Xác nhận lại mật khẩu <span class="required">*</span></label>
+                    <input id="Password-confirm" name="Password" type="password" class="form-control" />
+                    <div id="Password-confirmError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+
+            </form>
+        </div>
+        <div class="helper-container col-sm-4">
+            <nav class="pagination">
+                <img src="~/Image/sab_shoe.png" style="width:100%; margin-top: -25px;" />
+            </nav>
+            <div class="helper-details">
+                <div class="helper-header">Sablanca xin chào!</div>
+                <p class="helper-text">Chân thành cảm ơn Quý khách đã lựa chọn trở thành thành viên của chúng tôi! Hãy cùng nhau khám phá những trải nghiệm tuyệt vời và nhận những ưu đãi đặc biệt dành riêng cho thành viên của chúng tôi..</p>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <a href="@Url.Action("Login", "Login")" class="btn btn-default" style="background-color: #db8f70; color: #fff; font-weight: bold; margin-right: 10px;">
+                Quay lại
+            </a>
+            <input type="submit" value="Đổi mật khẩu" onclick="ForgetPass();" class="btn btn-default" style="background-color: #db8f70; color: #fff; font-weight: bold;" />
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- Đặt Popper.js trước Bootstrap.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        // Ẩn modal khi nhấn nút "OK"
+        $('#successModal').on('hidden.bs.modal', function () {
+            window.location.href = "/Login/Login";
+        });
+    });
+    function validateForgetPassForm() {
+        var newPassword = $("#Password").val();
+        var confirmPassword = $('#Password-confirm').val();
+
+        //kiểm tra pass mới và pass cũ
+        if (confirmPassword.trim() === "") {
+            ModelStateAddError("Password-confirm", "Vui lòng nhập xác nhận mật khẩu mới.");
+        }
+        else if (newPassword !== confirmPassword) {
+            ModelStateAddError("Password-confirm", "Xác nhận mật khẩu mới không khớp.");
+        } else {
+            ModelStateRemoveError("Password-confirm");
+        }
+
+        //kiểm tra nhập pass mới
+        if (newPassword.trim() === "") {
+            ModelStateAddError("password", "Mật khẩu mới không được để trống.");
+        }
+        else if (newPassword.length < 8 || !(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@@$!%*?&])[A-Za-z\d@@$!%*?&]+$/.test(newPassword))) {
+            ModelStateAddError("password", "Mật khẩu mới phải chứa ít nhất 8 ký tự, một chữ cái, một số và một ký tự đặc biệt.");
+        }
+        else {
+            ModelStateRemoveError("password");
+        }
+
+        if ($("#passwordError").text() !== ""
+            || $("#Password-confirmError").text() !== "") {
+            return false;
+        }
+
+        return true;
+
+    }
+    function ModelStateAddError(fieldName, errorMessage) {
+        // Hiển thị thông báo lỗi của trường
+        $("#" + fieldName + "Error").text(errorMessage).show();
+    }
+    function ModelStateRemoveError(fieldName) {
+        // Xóa thông báo lỗi của trường
+        $("#" + fieldName + "Error").text("");
+    }
+    $('#Password').on('input', function () {
+        ModelStateRemoveError("password");
+    });
+    $('#Password-confirm').on('input', function () {
+        ModelStateRemoveError("Password-confirm");
+    });
+
+function ForgetPass() {
+    if (validateForgetPassForm()) {
+        var ID = $('#IDCus').val();
+        var Password = $('#Password').val();
+
+
+
+        $.ajax({
+            url: '@Url.Action("ForgetPassSuccess")', // Đường dẫn đến action xử lý việc tạo khách hàng
+            type: 'POST',
+            data: {
+                Id: ID,
+                newPassword: Password,
+                
+            },
+            success: function (data) {
+
+                console.log(data);
+                if (data.status === 1) {
+                    $('#successModal').modal('show');
+                }
+
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                alert('Đã có lỗi xảy ra .');
+            }
+        });
+    }
+
+
+}
+</script>
+<script src="~/Scripts/registersuccess.js"></script>

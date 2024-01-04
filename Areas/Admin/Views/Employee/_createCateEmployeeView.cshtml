@@ -1,0 +1,221 @@
+﻿@model SABLANCE.Models.CategoriesEmployee
+@{
+    var dataEm = ViewBag.NullEmployee as List<SABLANCE.Models.Employee>;
+    var dataEmployee = ViewBag.EmNull as List<SABLANCE.Models.Employee>;
+}
+@using Newtonsoft.Json;
+@{
+    var jsonSettings = new Newtonsoft.Json.JsonSerializerSettings
+    {
+        ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+    };
+
+    var jsonCus = Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.EmNull, jsonSettings);
+}
+<link href="~/Content/customeadmin.css" rel="stylesheet" />
+<div class="modal-body" id="CreateViewModalContent">
+    <div class="col-lg-12" style="margin-bottom: 10px;">
+        <div class="row">
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Mã chức vụ <span class="required">*</span></label>
+                    <input id="CodeCate" disabled="disabled" name="Code" type="text" class="form-control" />
+                    <div id="CodeError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Tên chức vụ <span class="required">*</span></label>
+                    <input id="Name" name="LastName" type="text" class="form-control" placeholder="Nhập tên chức vụ" />
+                    <div id="NameCateError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Chọn Nhân viên thuộc chức vụ</label>
+                    <select id="CateEmployeeID" name="MemberRatingsID" class="form-control" onchange="displayCustomerDetails(this.value);">
+                        <option value="0"> Chọn nhân viên </option>
+                        @foreach (var item in dataEm)
+                        {
+
+                            <option value="@item.ID"> @item.LastName @item.FirstName </option>
+                        }
+
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12" style="border-top: 0.2px solid #000; border-bottom: none !important;">
+            <div class="row" id="showcus" style="display: none; margin-top: 10px;">
+                <h3>DANH SÁCH NHÂN VIÊN</h3>
+                <table id="customer-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+                    <thead>
+                        <tr>
+
+                            <th>ID </th>
+                            <th>Họ</th>
+                            <th>Tên</th>
+                            <th>Ngày sinh</th>
+                            <th>Số điện thoại</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cusMem">
+                        <tr id="trow" ;>
+                            @*<td id="cusID"></td>
+                                <td id="cusLastName"></td>
+                                <td id="cusFirstName"></td>
+                                <td id="cusDateOfBirth"></td>
+                                <td id="cusPhone"></td>*@
+                        </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" id="add-cateEm" class="btn btn-primary">Lưu chức vụ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/employee.js"></script>
+<script>
+
+        var dataCus = @Html.Raw(jsonCus);
+        function formatDate(date) {
+            var options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+            return date ? new Date(date).toLocaleDateString('vi-VN', options) : '';
+        }
+
+        function updateRow(row, data) {
+            row.innerHTML = '<td id="cusID">' + data.Id + '</td>' +
+                '<td id="cusLastName">' + data.LastName + '</td>' +
+                '<td id="cusFirstName">' + data.FirstName + '</td>' +
+                '<td id="cusDateOfBirth">' + formatDate(data.DateOfBirth) + '</td>' +
+                '<td id="cusPhone">' + data.Phone + '</td>' +
+                ' <td style="text-align: center;"> ' +
+                                        '<a onclick="deleteCustomer(this);"> ' +
+                                            '<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,255.99603,255.99603">' +
+                                                '<g fill="#000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-size="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M10,2l-1,1h-6v2h18v-2h-6l-1,-1zM4.36523,7l1.70313,15h11.86328l1.70313,-15z"></path></g></g> ' +
+                                            '</svg>' +
+                                        '</a>' +
+                                    '</td>';
+        }
+        function deleteCustomer(button) {
+            // Lấy đối tượng tr (dòng) chứa nút xóa
+            var row = $(button).closest("tr");
+
+            // Xóa dòng khỏi bảng
+            row.remove();
+        }
+        function addEmptyRow() {
+            var tbody = document.getElementById("cusMem");
+            var templateRow = document.getElementById("trow");
+            var newRow = templateRow.cloneNode(true);
+
+            // Loại bỏ id "trow" để nó không bị xem là dòng trống nữa
+            newRow.id = "";
+            tbody.appendChild(newRow);
+        }
+
+        function displayCustomerDetails(selectedCustomerId) {
+            var selectedCustomer = dataCus.find(a => a.Id == selectedCustomerId);
+            var checkdata = document.getElementById("cusMem").querySelectorAll("td#cusID");
+            document.getElementById("showcus").style.display = "block";
+            var isDuplicate = Array.from(checkdata).some(function (checkdata) {
+                return checkdata.innerHTML === selectedCustomer.Id.toString();
+            });
+            var tbody = document.getElementById("cusMem");
+            var existingRows = tbody.querySelectorAll("tr:not(#trow)");
+            var emptyRow = Array.from(existingRows).find(row => row.innerHTML.trim() === '');
+
+            if (!isDuplicate) {
+
+                if (emptyRow) {
+                    // Nếu có dòng trống, cập nhật nó với dữ liệu mới
+                    updateRow(emptyRow, selectedCustomer);
+                    addEmptyRow(); // Thêm dòng trống mới
+                } else {
+                    // Nếu không có dòng trống, thêm một dòng mới
+                    addNewRow(selectedCustomer);
+                }
+            }
+            else {
+                alert("Dòng có ID trùng đã tồn tại!");
+            }
+        }
+
+        function addNewRow(data) {
+            var tbody = document.getElementById("cusMem");
+            var templateRow = document.getElementById("trow");
+            var newRow = templateRow.cloneNode(true);
+
+            // Loại bỏ id "trow" để nó không bị xem là dòng trống nữa
+            newRow.id = "";
+
+            // Thiết lập nội dung cho các ô trong dòng mới
+            updateRow(newRow, data);
+
+            // Thêm dòng mới vào tbody
+            tbody.appendChild(newRow);
+
+            // Tạo thêm dòng trống mới
+            addEmptyRow();
+        }
+
+        // Hàm khởi tạo dòng trống đầu tiên
+        addEmptyRow();
+
+
+    $(document).ready(function () {
+        function createCateAction() {
+            if (checkCateEm()) {
+                var Code = $('#CodeCate').val();
+                var Name = $('#Name').val();
+                var emIds = $('[id^="cusID"]').map(function () {
+                    return $(this).text();
+                }).get();
+
+                if (emIds.length >= 0) {
+
+
+                $.ajax({
+                    url: '@Url.Action("CreateCateEmployee")',
+                    type: 'POST',
+                    data: {
+                        Code: Code,
+                        Name: Name,
+                        employeeId: emIds,
+
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.status == 1) {
+                            window.location.href = '@Url.Action("ListCateEmployee", "Employee")';
+                            alert(data.text);
+                        } else {
+                            alert(data.text);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Đã có lỗi xảy ra thêm chức vụ nhân viên.');
+                    }
+                });
+                } else {
+                    alert("Không thể lấy danh sách giá trị ID.");
+                }
+            }
+        }
+
+
+        // Gọi hàm createAction() khi nhấn nút "Thêm khách hàng"
+        $('#add-cateEm').on('click', function (event) {
+            createCateAction()
+        });
+    });
+
+</script>

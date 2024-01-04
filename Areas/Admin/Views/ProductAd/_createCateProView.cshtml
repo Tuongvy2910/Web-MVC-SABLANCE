@@ -1,0 +1,218 @@
+﻿@model SABLANCE.Models.CategoriesProduct
+@{
+    var dataPro = ViewBag.dataProduct as List<SABLANCE.Models.Product>;
+    var dataProNull = ViewBag.ProNull as List<SABLANCE.Models.Product>;
+}
+
+@using Newtonsoft.Json;
+@{
+    var jsonSettings = new Newtonsoft.Json.JsonSerializerSettings
+    {
+        ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+    };
+
+    var jsonCus = Newtonsoft.Json.JsonConvert.SerializeObject(dataProNull, jsonSettings);
+}
+<link href="~/Content/customeadmin.css" rel="stylesheet" />
+<div class="modal-body" id="CreateViewModalContent">
+    <div class="col-lg-12" style="margin-bottom: 10px;">
+        <div class="row">
+
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Mã định danh <span class="required">*</span></label>
+                    <input id="CodeCate" name="Code" type="text" class="form-control" placeholder="Nhập mã loại sản phẩm" />
+                    <div id="CodeError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Tên loại sản phẩm <span class="required">*</span></label>
+                    <input id="Name" name="LastName" type="text" class="form-control" placeholder="Nhập tên loại sản phẩm" />
+                    <div id="NameError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label> Lựa chọn sản phẩm</label>
+                    <select id="MemberRatingsID" name="MemberRatingsID" class="form-control" onchange="displayProductDetails(this.value);">
+                        <option value="0"> Chọn sản phẩm </option>
+                        @foreach (var item in dataPro)
+                        {
+
+                            <option value="@item.ID"> @item.Name </option>
+                        }
+
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12" style="border-top: 0.2px solid #000; border-bottom: none !important;">
+            <div class="row" id="showcus" style="display: none; margin-top: 10px;">
+                <h3>DANH SÁCH SẢN PHẨM</h3>
+                <table id="customer-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+                    <thead>
+                        <tr>
+
+                            <th>ID </th>
+                            <th>Mã sản phẩm</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng mặt hàng</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cusMem">
+                        <tr id="trow" ;>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" id="add-catepro" class="btn btn-primary">Lưu loại sản phẩm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/productadmin.js"></script>
+<script>
+
+        var dataCus = @Html.Raw(jsonCus);
+        function formatDate(date) {
+            var options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+            return date ? new Date(date).toLocaleDateString('vi-VN', options) : '';
+        }
+
+        function updateRow(row, data) {
+            row.innerHTML = '<td id="proID">' + data.Id + '</td>' +
+                '<td id="proCode">' + data.Code + '</td>' +
+                '<td id="proName">' + data.Name + '</td>' +
+                '<td id="quatityPro">' + 0 + '</td>' +
+                ' <td style="text-align: center;"> ' +
+                '<a onclick="deleteProduct(this);"> ' +
+                '<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,255.99603,255.99603">' +
+                '<g fill="#000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-size="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M10,2l-1,1h-6v2h18v-2h-6l-1,-1zM4.36523,7l1.70313,15h11.86328l1.70313,-15z"></path></g></g> ' +
+                '</svg>' +
+                '</a>' +
+                '</td>';
+    }
+    function deleteProduct(button) {
+        // Lấy đối tượng tr (dòng) chứa nút xóa
+        var row = $(button).closest("tr");
+
+        // Xóa dòng khỏi bảng
+        row.remove();
+    }
+
+        function addEmptyRow() {
+            var tbody = document.getElementById("cusMem");
+            var templateRow = document.getElementById("trow");
+            var newRow = templateRow.cloneNode(true);
+
+            // Loại bỏ id "trow" để nó không bị xem là dòng trống nữa
+            newRow.id = "";
+            tbody.appendChild(newRow);
+        }
+
+        function displayProductDetails(selectedProductId) {
+            var selectedProduct = dataCus.find(a => a.Id == selectedProductId);
+            var checkdata = document.getElementById("cusMem").querySelectorAll("td#proID");
+            document.getElementById("showcus").style.display = "block";
+            var isDuplicate = Array.from(checkdata).some(function (checkdata) {
+                return checkdata.innerHTML === selectedProduct.Id.toString();
+            });
+            var tbody = document.getElementById("cusMem");
+            var existingRows = tbody.querySelectorAll("tr:not(#trow)");
+            var emptyRow = Array.from(existingRows).find(row => row.innerHTML.trim() === '');
+
+            if (!isDuplicate) {
+
+                if (emptyRow) {
+                    // Nếu có dòng trống, cập nhật nó với dữ liệu mới
+                    updateRow(emptyRow, selectedProduct);
+                    addEmptyRow(); // Thêm dòng trống mới
+                } else {
+                    // Nếu không có dòng trống, thêm một dòng mới
+                    addNewRow(selectedProduct);
+                }
+            }
+            else {
+                alert("Dòng có ID trùng đã tồn tại!");
+            }
+        }
+
+        function addNewRow(data) {
+            var tbody = document.getElementById("cusMem");
+            var templateRow = document.getElementById("trow");
+            var newRow = templateRow.cloneNode(true);
+
+            // Loại bỏ id "trow" để nó không bị xem là dòng trống nữa
+            newRow.id = "";
+
+            // Thiết lập nội dung cho các ô trong dòng mới
+            updateRow(newRow, data);
+
+            // Thêm dòng mới vào tbody
+            tbody.appendChild(newRow);
+
+            // Tạo thêm dòng trống mới
+            addEmptyRow();
+        }
+
+        // Hàm khởi tạo dòng trống đầu tiên
+        addEmptyRow();
+
+
+    $(document).ready(function () {
+        function createCateProAction() {
+            if (checkCateProduct()) {
+                var Code = $('#CodeCate').val();
+                var Name = $('#Name').val();
+                var proIds = $('[id^="proID"]').map(function () {
+                    return $(this).text();
+                }).get();
+
+                if (proIds.length >= 0) {
+
+
+                $.ajax({
+                    url: '@Url.Action("CreateCatePro")',
+                    type: 'POST',
+                    data: {
+                        Code: Code,
+                        Name: Name,
+                        productId: proIds,
+
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.status == 1) {
+                            window.location.href = '@Url.Action("ListCateProduct", "ProductAd")';
+                            alert(data.text);
+                        } else {
+                            alert(data.text);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Đã có lỗi xảy ra thêm loại sản phẩm.');
+                    }
+                });
+                } else {
+                    alert("Không thể lấy danh sách giá trị ID.");
+                }
+            }
+        }
+
+
+        // Gọi hàm createAction() khi nhấn nút "Thêm khách hàng"
+        $('#add-catepro').on('click', function (event) {
+            createCateProAction()
+        });
+    });
+
+</script>
+

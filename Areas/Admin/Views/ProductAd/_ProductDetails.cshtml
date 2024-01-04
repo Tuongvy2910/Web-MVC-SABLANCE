@@ -1,0 +1,144 @@
+﻿@model List<SABLANCE.Models.ProductDetail>
+@{
+    var data = ViewBag.ProductDetails as SABLANCE.Models.ProductDetail;
+    var dataList = ViewBag.ProductList as List<SABLANCE.Models.ProductDetail>;
+}
+
+
+<link href="~/Content/productadmin.css" rel="stylesheet" />
+<div class="modal-body" id="productDetailContent">
+    <div class="col-lg-12" style="border-bottom:0.2px solid; margin-bottom: 10px;">
+        <div class="row">
+
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Mã định danh </label>
+                    <input id="Code" disabled="disabled" name="Code" value="@data.Product.Code" type="text" class="form-control" />
+                    <div id="CodeError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Danh mục sản phẩm </label>
+                    <input id="CategoriesProductID" value="@data.Product.CategoriesProduct.Name" type="text" disabled class="form-control"/>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Đơn vị tính</label>
+                    <input id="Unit" value="@data.Product.Unit" disabled  class="form-control"/>
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Tên sản phẩm  </label>
+                    <input id="Name" name="Name" value="@data.Product.Name" type="text" class="form-control" disabled />
+                </div>
+            </div>
+        </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        <label>Mô tả sản phẩm</label>
+                        @if (!string.IsNullOrEmpty(data.Product.Description))
+                        {
+                            <textarea id="Description" name="Description" class="form-control col-lg-12" disabled>@data.Product.Description</textarea>
+                        }
+                        else
+                        {
+                            <input id="Description" name="Description" placeholder="Mô tả sản phẩm trống" type="text" class="form-control" />
+                        }
+                    </div>
+                </div>
+                </div>
+
+            <div class="col-lg-12" style="border-top: 0.2px solid #000; border-bottom: none !important;">
+                <div class="row" id="showcus" style="margin-top: 10px;">
+                    <h2>DANH SÁCH CHI TIẾT SẢN PHẨM</h2>
+                    <table id="product-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+                        <thead>
+                            <tr>
+
+                                <th>Mã định danh </th>
+                                <th>Hinh ảnh</th>
+                                <th>Màu sắc</th>
+                                <th>Kích thước</th>
+                                <th>Đơn giá</th>
+                                <th>Tình trạng sản phẩm</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product">
+                            @foreach (var item in dataList)
+                            {
+                                <tr id="trow">
+                                    <td id="proCode" style="width: 15%;">
+                                        @item.Code
+                                    <td id="proImage" style="width: 30%;">
+                                        <div class="col-lg-12 image-group">
+                                            @if (!string.IsNullOrEmpty(item.Image))
+                                            {
+                                                <div class="uploadpreview image-upload">
+                                                    <img src="~/Image/Product/@item.Image" class="img-em" id="img-Product" />
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="uploadpreview image-upload">
+                                                    <img src="~/Image/Product/product.jpg" class="img-em" id="img-Product" />
+                                                </div>
+                                            }
+
+                                        </div>
+                                    </td>
+                                    <td id="proColor" style="text-align: center;">
+                                        @if (item.ColorID.HasValue)
+                                        {
+                                            <a style="background-color: @item.Color.Code" class="color"> <span class="color-name">@item.Color.Name</span></a>
+                                        }
+                                        else
+                                        {
+                                            <a style="background-color: transparent" class="color"> <span class="color-name"></span></a>
+                                        }
+                                    </td>
+                                    <td id="proSize" style="text-align: center;">
+                                        @if (item.SizeID.HasValue)
+                                        {
+                                            @item.Size.Name
+                                        }
+                                        else
+                                        {
+                                            <a style="font-style: italic;">Trống</a>
+                                        }
+                                    </td>
+                                    <td id="proPrices" style="vertical-align: middle; text-align: center;">
+                                        @item.Prices.ToString("0,0 VNĐ")
+                                    </td>
+                                    <td id="proStatus" style="text-align: center;">
+                                        @item.StatusProduct
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="edit-product" class="btn btn-primary">Cập nhật</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" defer></script>
+    <script src="~/Scripts/productadmin.js"></script>

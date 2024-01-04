@@ -1,0 +1,137 @@
+﻿@model SABLANCE.Models.Promotion
+@{
+    var dataPro = ViewBag.PromotionDetail as SABLANCE.Models.Promotion;
+    var data = ViewBag.PromotionList as List<SABLANCE.Models.PromotionDetail>;
+    int discount = 0;
+}
+
+
+<link href="~/Content/orderadmin.css" rel="stylesheet" />
+<div class="modal-body" id="promotionDetailContent">
+    <div class="col-lg-12" style="border-bottom:0.2px solid; margin-bottom: 10px;">
+        <div class="row">
+
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Số đơn đặt hàng <span class="required">*</span></label>
+                    <input id="Code" disabled="disabled" value="@dataPro.Code" name="Code" type="text" class="form-control" />
+
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="form-group">
+                    <label>Tên chương trình khuyến mãi<span class="required">*</span> </label>
+                    <input id="Name" name="Name" value="@dataPro.Title" disabled type="text" class="form-control col-lg-12" style="float: none !important;" placeholder="Nhập tên chương trình khuyến mãi" />
+
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Mô tả chương trình khuyến mãi  <span class="required">*</span></label>
+                    <textarea id="Description" name="Description" disabled class="form-control" placeholder="Nhập mô tả cho chương trình khuyến mãi">@dataPro.Detail</textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Ngày bắt đầu</label>
+                    <input id="StartDate" name="StartDate" value="@dataPro.StartTime" disabled type="text" class="form-control" />
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Ngày kết thúc</label>
+                    <input id="EndDate" name="EndDate" value="@dataPro.EndTime" type="text" disabled class="form-control" />
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Danh mục chương trình khuyến mãi</label>
+                    <input id="Code" disabled value="@dataPro.CategoriesPromotion.Name" name="Code" type="text" class="form-control" />
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-lg-12 image-group">
+                <div class="col-lg-7 image-group" style="margin: 5px 175px;">
+                    @if (!string.IsNullOrEmpty(dataPro.Image))
+                    {
+                        <div class="uploadpreview image-upload col-lg-12">
+                            <img src="~/Image/Promotion/@dataPro.Image" class="img-em" id="img-Employee" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="uploadpreview image-upload col-lg-12">
+                            <img src="~/Image/Promotion/promotion.jpg" class="img-em" id="img-Employee" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="row" id="showcus" style="margin-top: 10px;">
+            <h3>DANH SÁCH SẢN PHẨM</h3>
+            <table id="customer-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+                <thead>
+                    <tr>
+
+                        <th>ID </th>
+                        <th>Mã mặt hàng</th>
+                        <th>Tên mặt hàng</th>
+                        <th>Màu sắc</th>
+                        <th>Kích thước</th>
+                        <th>Phần trăm giảm giá</th>
+                        <th>Đơn giá</th>
+                    </tr>
+                </thead>
+                <tbody id="cusMem">
+                    @if (data.Count > 0)
+                    {
+                        foreach (var pro in data)
+                        {
+                            <tr id="trow">
+                                <td>@pro.ProductDetailsID</td>
+                                <td>@pro.ProductDetail.Code</td>
+                                <td>@pro.ProductDetail.Product.Name</td>
+                                <td style="text-align: center;">
+                                    <a style="background-color: @pro.ProductDetail.Color.Code" class="color"> <span class="color-name"></span></a>
+                                </td>
+                                <td style="text-align: center;">
+                                    @if (pro.ProductDetail.SizeID.HasValue)
+                                    {
+                                        <a>@pro.ProductDetail.Size.Name</a>
+                                    }
+                                    else
+                                    {
+                                        <a>SP không bao gồm size</a>
+                                    }
+                                </td>
+                                <td style="text-align: center;"> @{discount =(int)(pro.Discount * 100); } 
+                                @discount
+                                </td>
+                                <td style="text-align: center;">@pro.ProductDetail.Prices.ToString("0,0")</td>
+                            </tr>
+
+                        }
+                    }
+
+                    else
+                    {
+                        <tr id="trow"> </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+

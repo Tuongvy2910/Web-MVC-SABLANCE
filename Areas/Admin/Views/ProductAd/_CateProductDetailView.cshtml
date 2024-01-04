@@ -1,0 +1,73 @@
+﻿@model List<SABLANCE.Models.Product>
+@{
+    var dataCate = ViewBag.CateProduct as SABLANCE.Models.CategoriesProduct;
+    var data = ViewBag.ProductList as List<SABLANCE.Models.Product>;
+}
+
+<link href="~/Content/productadmin.css" rel="stylesheet" />
+<div class="modal-body" id="CateProDetailModalContent">
+    <div class="col-lg-12" style="margin-bottom: 10px;">
+        <div class="row">
+
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Mã danh mục</label>
+                    <input id="CodeCate" type="text" class="form-control" value="@dataCate.Code.ToUpper()" disabled placeholder="Nhập mã loại sản phẩm" />
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="form-group">
+                    <label>Tên loại sản phẩm </label>
+                    <input id="Name" name="Name" value="@dataCate.Name" type="text" disabled class="form-control" placeholder="Nhập tên loại thành viên" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12" style="border-top: 0.2px solid #000; border-bottom: none !important;">
+        <div class="row" id="showcus" style="margin-top: 10px;">
+            <h3>DANH SÁCH SẢN PHẨM</h3>
+            @if (data.Count > 0)
+            {
+                <table id="customer-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Mã sản phẩm</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng mặt hàng</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product">
+                        @foreach (var item in data)
+                        {
+                            <tr id="trow_@item.ID" style="text-align: center;">
+                                <td id="proID">
+                                    @item.ID
+                                </td>
+                                <td id="proCode">
+                                    @item.Code
+                                </td>
+                                <td id="proName" style="width: 30%;">
+                                    @item.Name
+                                </td>
+                                <td id="proCount">
+                                    @(ViewBag.ProductCounts.ContainsKey(item.ID) ? ViewBag.ProductCounts[item.ID] : 0)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            }
+            else
+            {
+        <div class="col-lg-12" style="text-align: center; font-style: italic">
+            Không có sản phẩm
+        </div>
+                
+            }
+
+
+        </div>
+    </div>
+</div>

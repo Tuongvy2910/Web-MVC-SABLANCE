@@ -1,0 +1,349 @@
+﻿@model IPagedList<SABLANCE.Areas.Admin.Models.OrderDetailModel>
+
+@{
+    ViewBag.Title = "Danh sách Đơn đặt hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_Admin.cshtml";
+    var data = ViewBag.OrderList;
+}
+@using PagedList.Mvc;
+@using PagedList;
+<link href="~/Content/customeadmin.css" rel="stylesheet" />
+
+
+<div class="list-add">
+    <div>
+        <h2>DANH SÁCH ĐƠN ĐẶT HÀNG BỊ HỦY</h2>
+    </div>
+</div>
+<div class="modal" id="successModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/Image/logo_sab.png" class="modal-title" style="width: 30%;" />
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: bold; font-size: 20px;">Xóa đơn hàng thành công.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="questionModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/Image/logo_sab.png" class="modal-title" style="width: 30%;" />
+            </div>
+            <div class="modal-body">
+                <p style="font-weight: bold; font-size: 20px;">Bạn có chắc muốn xóa đơn hàng này ? </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button type="button" class="btn btn-primary" id="confirmDelete">Có</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*Modal chi tiết nhân viên*@
+
+
+<div class="modal fade bd-example-modal-lg" id="employeeDetailModal" tabindex="-1" role="dialog" aria-labelledby="employeeDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="employeeDetailModalLabel" style="font-weight: bold; font-size: 18px;">THÔNG TIN CHI TIẾT NHÂN VIÊN</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="employeeDetailContent">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-lg" id="customerDetailModal" tabindex="-1" role="dialog" aria-labelledby="customerDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerDetailModalLabel" style="font-weight: bold; font-size: 18px;">THÔNG TIN CHI TIẾT KHÁCH HÀNG</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="customerDetailContent">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal chỉnh sửa đơn hàng -->
+<div class="modal fade bd-example-modal-lg" id="editOrderModal" tabindex="-1" role="dialog" aria-labelledby="editOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditViewModalLabel" style="font-weight: bold; font-size: 18px;">CHỈNH SỬA THÔNG TIN ĐƠN HÀNG</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="EditViewModalContent">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Modal chi tiết đơn hàng*@
+
+
+<div class="modal fade bd-example-modal-lg" id="OrderDetailModal" tabindex="-1" role="dialog" aria-labelledby="OrderDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="OrderDetailModalLabel" style="font-weight: bold; font-size: 18px;">THÔNG TIN CHI TIẾT ĐƠN ĐẶT HÀNG</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="OrderDetailContent">
+
+            </div>
+        </div>
+    </div>
+</div>
+<table id="customer-table" class="table table-bordered table-responsives table-striped">
+
+    <thead>
+        <tr>
+            <th>
+                Số đơn đặt hàng
+            </th>
+            <th>
+                Nhân viên tạo đơn
+            </th>
+            <th>
+                Khách hàng
+            </th>
+            <th>
+                Số điện thoại
+            </th>
+            <th>
+                Ngày đặt
+            </th>
+            <th>
+                Tổng tiền
+            </th>
+            <th>
+                Tình trạng đơn hàng
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    @if (Model != null && Model.Count() > 0)
+    {
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td onclick="showOrderDetail(@item.OrderId)" class="hover-emdetail">
+                        <a data-toggle="modal" data-target="#OrderDetailModal" data-id="@item.OrderId"> @item.OrderNo</a>
+                    </td>
+                    <td onclick="showEmployeeDetail(@item.EmployeeId)" class="hover-emdetail">
+                        @if (item.EmployeeId != null)
+                        {
+                            <a data-toggle="modal" data-target="#employeeDetailModal" data-id="@item.EmployeeId">
+                                @item.EmployeeName
+                            </a>
+                        }
+                        else
+                        {
+                            <span style="color: darkred; font-weight: bold;">KHÔNG TÌM THẤY NHÂN VIÊN</span>
+                        }
+                    </td>
+                    <td onclick="showCustomerDetail(@item.OrderId)" class="hover-emdetail">
+                        <a data-toggle="modal" data-target="#customerDetailModal" data-id="@item.OrderId"> @item.CustomerName</a>
+                    </td>
+                    <td>
+                        @item.ReceiptPhone
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.OrderDate.ToString()))
+                        {
+                            @item.OrderDate.ToString("dd/MM/yyyy")
+                        }
+                        else
+                        {
+                            <a>N/A</a>
+                        }
+                    </td>
+                    <td>
+                        @item.TotalPayment.ToString("0,0 ")
+                    </td>
+                    <td style="text-align: center;">
+                        @if (!string.IsNullOrEmpty(item.LatestOrderStatus))
+                        {
+                            @item.LatestOrderStatus
+                        }
+                        else
+                        {
+                            <a style="color: darkred; font-weight: bold;">CHƯA CẬP NHẬT ĐƠN HÀNG</a>
+                        }
+
+                    </td>
+
+                    <td>
+                        <a onclick="showEditOrderView(@item.OrderId);">
+                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,255.99603,255.99603">
+                                <g fill="#000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-size="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M18,2l-2.41406,2.41406l4,4l2.41406,-2.41406zM14.07617,5.92383l-11.07617,11.07617v4h4l11.07617,-11.07617z"></path></g></g>
+                            </svg>
+                        </a>
+                    </td>
+                    <td>
+                        <a onclick="showModal(@item.OrderId);">
+                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,255.99603,255.99603">
+                                <g fill="#000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-size="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M10,2l-1,1h-6v2h18v-2h-6l-1,-1zM4.36523,7l1.70313,15h11.86328l1.70313,-15z"></path></g></g>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+
+</table>
+@Html.PagedListPager(Model, page => Url.Action("ListOrder",
+    new { page, pageSize = 25 }))
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- Đặt Popper.js trước Bootstrap.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+
+
+
+<script>
+    $(document).ready(function () {
+        // Ẩn modal khi nhấn nút "OK"
+        $('#successModal').on('hidden.bs.modal', function () {
+            window.location.href = "@Url.Action("ListOrder", "Orders")";
+        });
+    });
+
+    function showModal(orderId) {
+        $('#confirmDelete').data('orderId', orderId);
+        $('#questionModal').modal('show');
+    }
+    $(document).on('click', '#confirmDelete', function () {
+        var ID = $(this).data('orderId');
+        // Gọi hàm xóa nhân viên tại đây
+        deleteAction(ID);
+        // Đóng modal sau khi thực hiện xóa
+        $('#questionModal').modal('hide');
+    });
+
+    function deleteAction (orderId) {
+
+        $.ajax({
+            url: '@Url.Action("DeleteOrder", "Orders")',
+            type: 'POST',
+            data: {
+                Id: orderId
+            },
+            success: function (data) {
+                if (data.status === 1) {
+                    $('#successModal').modal('show');
+                } else {
+                    // Xử lý trường hợp không thành công nếu cần
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                alert('Đã có lỗi xảy ra khi xóa đơn hàng.');
+            }
+        });
+    }
+
+        function showCustomerDetail(customerID) {
+        // Thực hiện Ajax để lấy thông tin chi tiết nhân viên từ server
+        console.log(customerID)
+        $.ajax({
+            url: '@Url.Action("GetCustomerDetail","Customer")',
+            type: 'POST',
+            data: {
+                Id: customerID
+            },
+            success: function (data) {
+                console.log(data);
+                $('#customerDetailContent').html(data);
+                $('#customerDetailModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra khi lấy thông tin chi tiết khách hàng.');
+            }
+        });
+    }
+    function showCreateOrderView() {
+        // Thực hiện Ajax để lấy thông tin chi tiết nhân viên từ server
+        console.log("leeb")
+        $.ajax({
+            url: '@Url.Action("CreateOrderView")',
+            type: 'GET',
+            data: {
+            },
+            success: function (data) {
+                $('#CreateViewModalContent').html(data),
+                $('#addOrderModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra khi tạo đơn hàng mới.');
+            }
+        });
+    }
+    function showOrderDetail(orderId) {
+        // Thực hiện Ajax để lấy thông tin chi tiết nhân viên từ server
+        console.log(orderId)
+        $.ajax({
+            url: '@Url.Action("OrderDetailView")',
+            type: 'POST',
+            data: {
+                Id: orderId
+            },
+            success: function (data) {
+                console.log(data);
+                $('#OrderDetailContent').html(data);
+                $('#OrderDetailModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra khi lấy thông tin chi tiết khách hàng.');
+            }
+        });
+    }
+
+    function showEditOrderView(orderId) {
+
+        $.ajax({
+            url: '@Url.Action("EditOrderView")',
+            type: 'GET',
+            data: {
+                Id: orderId
+            },
+            success: function (data) {
+                $('#EditViewModalContent').html(data),
+                $('#editOrderModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+                alert('Đã có lỗi xảy ra khi lấy thông tin chi tiết khách hàng.');
+            }
+        });
+    }
+
+
+</script>
+

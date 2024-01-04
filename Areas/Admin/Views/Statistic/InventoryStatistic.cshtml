@@ -1,0 +1,260 @@
+﻿@model IPagedList<SABLANCE.Areas.Admin.Models.Inventory>
+@{
+    ViewBag.Title = "Báo cáo tồn kho";
+    Layout = "~/Areas/Admin/Views/Shared/_Admin.cshtml";
+}
+@using PagedList.Mvc;
+@using PagedList;
+<link href="~/Content/employee.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+<div class="list-add">
+    <div>
+        <h2>BÁO CÁO THỐNG KÊ TỒN KHO</h2>
+    </div>
+</div>
+<div style="margin: 10px;">
+    <div class="search-bar" style="justify-content: space-between;">
+        <div class="input-group" style="width: 40% !important;">
+            <input type="text" id="searchInput" class="form-control" placeholder="Nhập mã sản phẩm để tim kiếm...">
+            <div id="SearchError" class="error-message mt-2" style="color: red; font-size: 11px;"></div>
+            <div class="input-group-append">
+                <button type="button" id="searchbtn" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="input-group" style="width: 30% !important;">
+            <div class="input-group-prepend">
+                <button type="button" class="input-group-text" id="search-date">
+                    <i class="fas fa-calendar"></i>
+                </button>
+            </div>
+            <input type="text" id="datepicker" class="form-control" placeholder="Lọc theo ngày...">
+            <div class="input-group-append">
+                <a type="button" id="exportBtn" class="btn btn-success" href="@Url.Action("ExportExcel","Statistic")">
+                    <i class="fas fa-file-excel"></i> Xuất Excel
+                </a>
+            </div>
+        </div>
+        
+    </div>
+</div>
+<div class="modal fade bd-example-modal-lg" id="employeeDetailModal" tabindex="-1" role="dialog" aria-labelledby="employeeDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="employeeDetailModalLabel" style="font-weight: bold; font-size: 18px;">KẾT QUẢ TÌM KIẾM TỒN KHO THEO SẢN PHẨM</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="employeeDetailContent">
+
+            </div>
+        </div>
+    </div>
+</div>
+@*Chi tiết sản phẩm*@
+<div class="modal fade bd-example-modal-lg" id="productDetailModal" tabindex="-1" role="dialog" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productDetailModalLabel" style="font-weight: bold; font-size: 18px;">THÔNG TIN CHI TIẾT SẢN PHẨM</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="productDetailContent">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<table id="example" class="table table-bordered table-responsives table-striped">
+    <thead>
+        <tr style="text-align: center;">
+            <th>ID</th>
+            <th>Mã mặt hàng</th>
+            <th>Số lượng tồn kho</th>
+            <th>Số lượng sản phẩm đã bán</th>
+            <th>Số lượng sản phẩm xuất kho</th>
+            <th>Ngày nhập kho mới nhất</th>
+        </tr>
+    </thead>
+    <tbody id="inventoryData">
+        @foreach (var item in Model)
+        {
+            <tr style="text-align: center; font-size: 15px;" id="inventory_@item.ProductID">
+                <td>@item.ProductID</td>
+                <td onclick="showProductDetail(@item.ProductID)" class="hover-emdetail">
+                    <a data-toggle="modal" data-target="#productDetailModal" data-id="@item.ProductID"> @item.ProductCode</a>
+
+                </td>
+                <td>@item.Quantity</td>
+                <td>@item.QuantityOrder</td>
+                <td>@item.QuantitySO</td>
+                <td>@item.PODate.ToString("dd/MM/yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@Html.PagedListPager(Model, page => Url.Action("InventoryStatistic", new { page, pageSize = 30 }))
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- Đặt Popper.js trước Bootstrap.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+<script>
+   $(function () {
+   $("#search-date").on("click", function () {
+    var selectedDate = $("#datepicker").val();
+
+    if (selectedDate.trim() !== '') {
+        // Format the date using Moment.js
+        var formattedDate = moment(selectedDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
+
+        // Send the formatted date to the server and perform data filtering
+        $.ajax({
+            url: '@Url.Action("InventoryWithDateTime")',
+            type: 'GET',
+            data: { datesearch: formattedDate },
+            success: function (data, textStatus, jqXHR) {
+                if (jqXHR.status === 200) {
+                    // Check the 'status' property in the returned data
+                    if (data.status === 1) {
+                        displayFilteredData(data);
+                        console.log("Thành công: ", data);
+                    } else {
+                        console.error("Lỗi: ", data.message);
+                    }
+                } else {
+                    console.error("Lỗi không xác định: ", data);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Lỗi AJAX:", textStatus, errorThrown);
+            }
+        });
+    } else {
+        window.location.href = "@Url.Action("InventoryStatistic", "Statistic")";
+    }
+   });
+       function displayFilteredData(response) {
+           var tableBody = document.getElementById('inventoryData');
+           // Xóa dữ liệu cũ trong bảng
+           tableBody.innerHTML = '';
+
+           // Kiểm tra xem response có thuộc tính "data" và "data" có phải là mảng không
+           if (response && response.data && Array.isArray(response.data)) {
+               // Thêm dữ liệu mới vào bảng
+               response.data.forEach(function (item) {
+                   var row = '<tr style="text-align: center; font-size: 15px;">';
+                   row += '<td>' + item.ProductID + '</td>';
+                   row += '<td>' + item.ProductCode + '</td>';
+                   row += '<td>' + item.Quantity + '</td>';
+                   row += '<td>' + item.QuantityOrder + '</td>';
+                   row += '<td>' + item.QuantitySO + '</td>'; // Nếu có thuộc tính QuantitySO
+                   // Định dạng lại ngày sử dụng moment.js hoặc một cách khác
+                   var formattedDate = moment(item.PODate).format('DD/MM/YYYY');
+                   row += '<td>' + formattedDate + '</td>';
+                   row += '</tr>';
+                   tableBody.innerHTML += row;
+               });
+           } else {
+               console.error('Dữ liệu không phải là mảng hoặc không có thuộc tính "data" trong response.');
+           }
+       }
+
+});
+    
+    
+    $(function () {
+        var searchKeyword = "";
+        var selectedDate = "";
+
+        $("#datepicker").datepicker({
+            dateFormat: "dd/mm/yy",
+            showButtonPanel: true,
+            changeMonth: true,
+            changeYear: true
+        });
+
+
+        function performSearch() {
+            console.log("Search Keyword: " + searchKeyword);
+            console.log("Selected Date: " + selectedDate);
+            // Gọi hàm tìm kiếm hoặc xử lý dữ liệu tại đây
+            // Bạn có thể sử dụng giá trị searchKeyword và selectedDate để gửi yêu cầu tìm kiếm lên server
+        }
+    });
+    function ModelStateAddError(fieldName, errorMessage) {
+        // Hiển thị thông báo lỗi của trường
+        $("#" + fieldName + "Error").text(errorMessage).show();
+    }
+
+    function ModelStateRemoveError(fieldName) {
+        // Xóa thông báo lỗi của trường
+        $("#" + fieldName + "Error").text("");
+    }
+    $(document).ready(function () {
+        $("#searchbtn").click(function () {
+            showSearchResult();
+        });
+        $('#searchInput').on('input', function () {
+            ModelStateRemoveError("Search");
+        });
+    });
+    function showSearchResult() {
+        var keyword = document.getElementById('searchInput').value;
+        if (keyword === "" || keyword === null) {
+            ModelStateAddError("Search", "Vui lòng nhập mã sản phẩm cần tìm kiếm.");
+        }
+        else {
+            ModelStateRemoveError("Search");
+             $.ajax({
+            url: '@Url.Action("Search")',
+            type: 'POST',
+            data: {
+                keyword: keyword
+            },
+            success: function (data) {
+                console.log(data);
+                $('#employeeDetailContent').html(data);
+                $('#employeeDetailModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra khi tìm kiếm sản phẩm tồn kho.');
+            }
+        });
+        }
+        // Thực hiện Ajax để lấy thông tin chi tiết nhân viên từ server
+
+    }
+    function showProductDetail(productID) {
+        // Thực hiện Ajax để lấy thông tin chi tiết nhân viên từ server
+        $.ajax({
+            url: '@Url.Action("GetProductDetailInventory")',
+            type: 'POST',
+            data: {
+                Id: productID
+            },
+            success: function (data) {
+                console.log(data);
+                $('#productDetailContent').html(data);
+                $('#productDetailModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra khi lấy thông tin chi tiết sản phẩm.');
+            }
+        });
+    }
+</script>

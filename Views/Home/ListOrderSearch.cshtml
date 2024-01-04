@@ -1,0 +1,84 @@
+﻿@model List<SABLANCE.Models.Order>
+@{
+    ViewBag.Title = "Danh sách đơn hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="col-lg-12">
+    <div class="list-add">
+        <div>
+            <h2 style="text-align: center;">DANH SÁCH ĐƠN ĐẶT HÀNG</h2>
+        </div>
+
+    </div>
+    <table id="customer-table" class="table table-bordered table-responsives table-striped">
+
+        <thead>
+            <tr>
+                <th>
+                    Số đơn đặt hàng
+                </th>
+                <th>
+                    Khách hàng
+                </th>
+                <th>
+                    Số điện thoại
+                </th>
+                <th>
+                    Ngày đặt
+                </th>
+                <th>
+                    Tổng tiền
+                </th>
+                <th>
+                    Tình trạng đơn hàng
+                </th>
+            </tr>
+        </thead>
+        @if (Model != null && Model.Count() > 0)
+        {
+            <tbody>
+                @foreach (var item in ViewBag.SearchOrder)
+                {
+                    <tr>
+                        <td>
+                            <a> @item.OrderNo</a>
+                        </td>
+                        <td style="text-align: center;">
+                            <a> @item.CustomerName</a>
+                        </td>
+                        <td style="text-align: center;">
+                            @item.ReceiptPhone
+                        </td>
+                        <td style="text-align: center;">
+                            @if (!string.IsNullOrEmpty(item.OrderDate.ToString()))
+                            {
+                                @item.OrderDate.ToString("dd/MM/yyyy")
+                            }
+                            else
+                            {
+                                <a>N/A</a>
+                            }
+                        </td>
+                        <td style="text-align: center;">
+                            @item.TotalAmount.ToString("0,0 ")
+                        </td>
+                        <td style="text-align: center;">
+                            @if (!string.IsNullOrEmpty(item.LatestOrderStatus))
+                            {
+                                @item.LatestOrderStatus
+                            }
+                            else
+                            {
+                                <a style="color: darkred; font-weight: bold;">CHƯA CẬP NHẬT ĐƠN HÀNG</a>
+                            }
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        }
+
+    </table>
+</div>
+

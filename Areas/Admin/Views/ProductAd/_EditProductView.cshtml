@@ -1,0 +1,412 @@
+﻿@model SABLANCE.Areas.Admin.Models.ProductDetailModel
+@{
+    var data = ViewBag.ProductDetails as SABLANCE.Models.ProductDetail;
+    var dataPro = ViewBag.dataPro as List<SABLANCE.Models.CategoriesProduct>;
+    var dataColor = ViewBag.dataColor as List<SABLANCE.Models.Color>;
+    var dataSize = ViewBag.dataSize as List<SABLANCE.Models.Size>;
+    var dataList = ViewBag.ProductLst as List<SABLANCE.Models.ProductDetail>;
+}
+
+
+<link href="~/Content/productadmin.css" rel="stylesheet" />
+<div class="modal-body" id="EditViewModalContent">
+    <div class="col-lg-12" style="border-bottom:0.2px solid; margin-bottom: 10px;">
+        <div class="row">
+
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Mã sản phẩm <span class="required">*</span></label>
+                    <input id="Code" disabled="disabled" value="@data.Product.Code" name="Code" type="text" class="form-control" />
+                    <input id="ID" name="ID" value="@data.Product.ID" type="text" class="form-control" disabled style="display: none;" />
+                    <div id="CodeError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Danh mục sản phẩm <span class="required">*</span> </label>
+                    <select id="CategoriesProductID" name="CategoriesProductID" class="form-control">
+                        <option value="0">Chọn danh mục sản phẩm</option>
+                        @foreach (var item in dataPro)
+                        {
+                            <option value="@item.ID" @(item.ID == data.Product.CategoriesProductID ? "selected" : "")>@item.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>Đơn vị tính</label>
+                    <select id="Unit" name="Unit" class="form-control">
+                        <option value="Đôi" @if (data.Product.Unit == "Đôi") { <text> selected</text> }>Đôi</option>
+                        <option value="Túi" @if (data.Product.Unit == "Túi") { <text> selected</text> }>Túi</option>
+                        <option value="Chiếc" @if (data.Product.Unit == "Chiếc") { <text> selected</text> }>Chiếc</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Tên sản phẩm <span class="required">*</span> </label>
+                    <input id="Name" name="Phone" value="@data.Product.Name" type="text" class="form-control" />
+                    <div id="NameError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Mô tả sản phẩm</label>
+                    @if (!string.IsNullOrEmpty(data.Product.Description))
+                    {
+                        <textarea id="Description" name="Description" class="form-control"> @data.Product.Description</textarea>
+                    }
+                    else
+                    {
+                        <textarea id="Description" placeholder="Mô tả sản phẩm đang trống" name="Description" class="form-control"></textarea>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12" style="border-top: 0.2px solid #000; border-bottom: none !important;">
+            <div class="row" id="showcus" style="margin-top: 10px;">
+                <div class="list-add" style="width:100%;">
+                        <h2>DANH SÁCH CHI TIẾT SẢN PHẨM</h2>
+                </div>
+
+                <table id="product-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+                    <thead>
+                        <tr>
+
+                            <th>Mã định danh </th>
+                            <th>Hinh ảnh</th>
+                            <th>Màu sắc</th>
+                            <th>Kích thước</th>
+                            <th>Đơn giá</th>
+                            <th>Tình trạng sản phẩm</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="product">
+                        @foreach (var item in dataList)
+                        {
+                            <tr id="trow_@item.ID">
+
+                                <td id="proCode" style="width: 15%;">
+                                    <input id="CodeProduct" name="CodeProduct" value="@item.Code" type="text" class="form-control" disabled />
+                                    <input id="IDProducts" name="IDroduct" value="@item.ID" type="text" class="form-control" disabled  style="display: none;"/>
+                                </td>
+                                <td id="proImage" style="width: 30%;">
+                                    <div class="col-lg-12 image-group">
+                                        <div class="uploadpreview image-upload">
+                                            @if (!string.IsNullOrEmpty(item.Image))
+                                            {
+
+                                                <img src="~/Image/Product/@item.Image" class="img-em" id="img-Product" />
+                                                <input type="text" value="@item.Image" id="Img" style="display: none;" />
+
+
+                                            }
+                                            else
+                                            {
+                                                    <img src="~/Image/Product/product.jpg" class="img-em" id="img-Product" />
+                                            }
+                                        </div>
+                                            <div class="col-md-10 input-img" style="width: 100%; margin-top: 10px; margin-bottom: 15px; display: none;">
+                                                <input title="Vui lòng chọn hình ảnh" type="file" name="Image" class="form-control" id="image-upload" />
+                                                <div id="ImageError" class="error-message" style="color: red; font-size: 11px;"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                <td id="proColor">
+                                    <div class="input-group">
+                                        <select id="Color_@item.ID" name="Color" class="form-control color-select edit-data" disabled>
+                                            <option value="0">Chọn màu sắc</option>
+                                            @foreach (var color in dataColor)
+                                            {
+                                                <option value="@color.ID" data-color="@color.Code" @(color.ID == item.ColorID ? "selected" : "")>
+                                                    @color.Name
+                                                </option>
+                                            }
+                                        </select>
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">
+                                                <span class="color-dot" id="selectedColorDot_@item.ID"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="ColorError" class="error-message" style="color: red; font-size: 11px;"></div>
+                                </td>
+                                <td id="proSize">
+                                    <select id="Size" name="Size" class="form-control edit-data" disabled>
+                                        <option value="0">Chọn kích thước</option>
+                                        @foreach (var size in dataSize)
+                                        {
+                                            <option value="@size.ID" @(size.ID == item.SizeID ? "selected" : "")>@size.Name</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td id="proPrices" style="vertical-align: middle;">
+                                    <input id="Prices" name="Prices" value="@item.Prices" type="number" class="form-control edit-data" disabled />
+                                    <div id="PricesError" class="error-message" style="color: red; font-size: 11px;"></div>
+                                </td>
+                                <td id="proStatus">
+                                    <select id="Status" name="Status" class="form-control edit-data" disabled>
+                                        <option value="Hàng Mới" @(item.StatusProduct == "Hàng Mới" ? "selected" : "")>Hàng Mới</option>
+                                        <option value="Còn hàng" @(item.StatusProduct == "Còn hàng" ? "selected" : "")>Còn hàng</option>
+                                        <option value="Sắp hết hàng" @(item.StatusProduct == "Sắp hết hàng" ? "selected" : "")>Sắp hết hàng</option>
+                                        <option value="Hết hàng" @(item.StatusProduct == "Hết hàng" ? "selected" : "")>Hết hàng</option>
+                                    </select>
+                                </td>
+                                <td style="text-align: center;">
+                                    <a onclick="EditProduct(@item.ID);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,255.99603,255.99603">
+                                            <g fill="#000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-size="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M18,2l-2.41406,2.41406l4,4l2.41406,-2.41406zM14.07617,5.92383l-11.07617,11.07617v4h4l11.07617,-11.07617z"></path></g></g>
+                                        </svg>
+                                    </a>
+                                </td>
+                                <td style="text-align: center;">
+                                    <a onclick="DeleteProduct(@item.ID);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,255.99603,255.99603">
+                                            <g fill="#000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-size="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M10,2l-1,1h-6v2h18v-2h-6l-1,-1zM4.36523,7l1.70313,15h11.86328l1.70313,-15z"></path></g></g>
+                                        </svg>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" id="edit-product" class="btn btn-primary">Cập nhật</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" defer></script>
+    <script src="~/Scripts/productadmin.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.color-select').change(function () {
+                // Lấy giá trị màu sắc đã chọn
+                var selectedColor = $(this).find(':selected').data('color');
+
+                // Lấy id của select để xác định span tương ứng
+                var selectId = $(this).attr('id');
+
+                // Lấy id của màu sắc từ selectId
+                var colorId = selectId.split('_')[1];
+
+                // Tạo id cho span tương ứng
+                var spanId = 'selectedColorDot_' + colorId;
+
+                // Cập nhật màu sắc của span
+                $('#' + spanId).css('background-color', selectedColor);
+            });
+            $('.color-select').change();
+
+        });
+
+        var isEditMode = false;
+
+        function EditProduct(productId) {
+            var productRow = $("#trow_" + productId);
+
+            // Kiểm tra xem dòng đó có class "editing" hay không
+            if (productRow.hasClass("editing")) {
+                // Tắt chế độ chỉnh sửa cho dòng đó
+                productRow.find(".edit-data").prop("disabled", true);
+                productRow.find(".input-img").css('display', 'none');
+
+                // Hủy class "editing" cho dòng đó
+                productRow.removeClass("editing");
+            } else {
+                // Bật chế độ chỉnh sửa cho dòng đó
+                productRow.find(".edit-data").prop("disabled", false);
+                productRow.find(".input-img").css('display', 'block');
+
+                // Tắt chế độ chỉnh sửa cho tất cả các dòng khác
+                $(".editing").find(".edit-data").prop("disabled", true);
+                $(".editing").find(".input-img").css('display', 'none');
+
+                // Hủy class "editing" cho tất cả các dòng khác
+                $(".editing").removeClass("editing");
+
+                // Đặt class "editing" cho dòng đó
+                productRow.addClass("editing");
+            }
+        }
+        function DeleteProduct(productId) {
+            // Hiển thị hộp thoại xác nhận hoặc thực hiện xóa trực tiếp
+
+            // Lấy phần tử tr (dòng) cần xóa
+            var rowToDelete = $("#trow_" + productId);
+
+            // Kiểm tra xem có phải là phần tử tr không
+            
+            $.ajax({
+            url: '@Url.Action("DeleteProductDetails", "ProductAd")',
+            type: 'POST',
+            data: {
+                Id: productId
+            },
+            success: function (data) {
+                if (data.status === 1) {
+                    if (rowToDelete.length > 0) {
+                        rowToDelete.remove();
+                    } else {
+                        console.log("Không tìm thấy dòng cần xóa");
+                    }
+                    alert(data.text);
+                } else {
+                    alert(data.text);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                alert('Đã có lỗi xảy ra khi xóa mặt hàng.');
+            }
+        });
+
+        }
+
+        $(document).ready(function () {
+            let imageDatas = []; // Mảng để lưu dữ liệu hình ảnh cho từng dòng sản phẩm
+            $(document).on('change', '.image-group input[type=file]', function () {
+                var input = event.target;
+                var preview = $(this).closest('tr').find('.img-em')[0];
+                var image = $(this).closest('tr').find('.image-upload')[0];
+                var newimage = new FileReader();
+
+                newimage.onload = function (e) {
+                    preview.src = e.target.result;
+                    image.src = e.target.result;
+                }
+
+                if (input.files && input.files[0]) {
+                    newimage.readAsDataURL(input.files[0]);
+
+                    // Lưu thông tin hình ảnh cho từng dòng sản phẩm
+                    var rowIndex = $(this).closest('tr').index();
+                    imageDatas[rowIndex] = input.files[0];
+                }
+                else {
+                    ModelStateAddError("Image", "Chưa tải được hình ảnh. Vui lòng chọn lại hình ảnh.");
+                }
+            });
+
+function EditProductAction() {
+    if (checkProduct()) {
+
+        var formData = new FormData();
+
+        var ID = $('#ID').val();
+        var Code = $('#Code').val();
+        var Name = $('#Name').val();
+        var Unit = $('#Unit').val();
+        var Description = $('#Description').val();
+        var CategoriesProductID = $('#CategoriesProductID').val();
+        var IDPro = $('input[id^="IDProducts"]').map(function () {
+            return $(this).val();
+        }).get();
+        var Color = $('#product-table select[id^="Color"]').map(function () {
+            return $(this).val();
+        }).get();
+        var Size = $('[id^="Size"]').map(function () {
+            return $(this).val();
+        }).get();
+        var Prices = $('#product-table input[id^="Prices"]').map(function () {
+            return $(this).val();
+        }).get();
+        var Status = $('[id^="Status"]').map(function () {
+            return $(this).val();
+        }).get();
+        var CodeProduct = $('[id^="CodeProduct"]').map(function () {
+            return $(this).val();
+        }).get();
+        var Image = $('input[id^="Img"]').map(function () {
+            return $(this).val();
+        }).get();
+
+        console.log(Color);
+        console.log(Size);
+        console.log(Prices);
+        console.log(Status);
+        console.log(CodeProduct);
+        console.log(Image);
+
+        // Kiểm tra xem có dữ liệu trong imageDatas không
+
+        formData.append("Id", ID);
+        formData.append("Code", Code);
+        formData.append("Name", Name);
+        formData.append("Unit", Unit);
+        formData.append("Description", Description);
+        for (var i = 0; i < CodeProduct.length; i++) {
+            formData.append("ProductId[" + i + "]", IDPro[i]);
+            formData.append("CodeProducts[" + i + "]", CodeProduct[i]);
+            formData.append("ColorIds[" + i + "]", Color[i]);
+            formData.append("SizeIds[" + i + "]", Size[i]);
+            formData.append("Prices[" + i + "]", Prices[i]);
+            formData.append("Status[" + i + "]", Status[i]);
+            if (imageDatas[i] == undefined) {
+                formData.append("Images[" + i + "]", Image[i]);
+            }
+            else {
+                for (var i = 0; i < imageDatas.length; i++) {
+                    formData.append("ImageData[" + i + "]", imageDatas[i]);
+                }
+
+            }
+        }
+
+        formData.append("CategoriesProductId", CategoriesProductID);
+
+        $.ajax({
+            url: '@Url.Action("EditProduct")',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                console.log(data);
+                if (data.status == 1) {
+                    window.location.href = '@Url.Action("ListProduct", "ProductAd")';
+                    alert(data.text);
+                } else {
+                    alert(data.text);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra thêm sản phẩm.');
+            }
+        });
+    }
+}
+
+    // Gọi hàm createAction() khi nhấn nút "Thêm nhân viên"
+    $('#edit-product').on('click', function (event) {
+        EditProductAction();
+    });
+
+});
+
+
+
+    </script>
+
+

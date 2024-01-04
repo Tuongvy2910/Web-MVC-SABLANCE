@@ -1,0 +1,266 @@
+﻿@model SABLANCE.Areas.Admin.Models.CustomerModel
+@{
+    var dataMember = ViewBag.dataMember as List<SABLANCE.Models.MemberRating>;
+}
+<link href="~/Content/employee.css" rel="stylesheet" />
+<div class="col-lg-12" style="border-bottom:0.2px solid; margin-bottom: 10px;">
+    <div class="row">
+
+        <div class="col-lg-4" style="align-self: end;">
+            <div class="form-group">
+                <label>Mã định danh <span class="required">*</span></label>
+                <input id="Code" disabled="disabled" name="Code" type="text" class="form-control" />
+                <div id="CodeError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group">
+                <label>Họ Khách hàng</label>
+                <input id="LastName" name="LastName" type="text" class="form-control" />
+                <div id="lastNameError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group">
+                <label>Tên Khách hàng <span class="required">*</span></label>
+                <input id="FirstName" name="FirstName" type="text" class="form-control" />
+                <div id="firstNameError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
+
+        <div class="col-lg-4">
+            <div class="form-group">
+                <label>Giới tính</label>
+                <select id="Gender" name="Gender" class="form-control">
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group">
+                <label>Ngày sinh</label>
+                <input id="DateOfBirth" name="DateOfBirth" type="date" class="form-control" />
+                <div id="dateOfBirthError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group">
+                <label>Xếp hạng thành viên</label>
+                <select id="MemberRatingsID" name="MemberRatingsID" class="form-control">
+                    @foreach (var item in dataMember)
+                    {
+                        <option value="@item.ID">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label>Số điện thoại <span class="required">*</span> </label>
+                <input id="Phone" name="Phone" type="number" maxlength="12" class="form-control" />
+                <div id="phoneError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label>Email</label>
+                <input id="Email" name="Email" type="email" class="form-control" />
+                <div id="emailError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="form-group inline-form">
+                <label for="city-state">Tỉnh/Thành phố <span class="required">*</span></label>
+                <select class="form-control progres_value" id="city" aria-label=".form-select-sm">
+                    <option value="" selected>Chọn Tỉnh/Thành</option>
+                </select>
+                <div id="cityError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group inline-form">
+                <label for="city-state">Quận/Huyện <span class="required">*</span></label>
+                <select class="form-control progres_value" id="district" aria-label=".form-select-sm">
+                    <option value="" selected>Chọn Quận/Huyện</option>
+                </select>
+                <div id="districtError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group inline-form">
+                <label for="city-state">Phường/Xã <span class="required">*</span></label>
+                <select class="form-control progres_value" id="ward" aria-label=".form-select-sm">
+                    <option value="" selected>Chọn Phường/Xã</option>
+                </select>
+                <div id="wardError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+        <div class="col-lg-11">
+            <div class="form-group">
+                <label>Số nhà <span class="required">*</span> </label>
+                <input id="Address" name="Address" type="text" class="form-control col-lg-11" style="float: none !important;" />
+                <div id="addressError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label>Tên tài khoản <span class="required">*</span> </label>
+                <input id="AccountType" disabled name="AccountType" type="text" class="form-control" />
+                <div id="accTypeError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label>Mật khẩu <span class="required">*</span> </label>
+                <input id="Password" name="Password" type="password" class="form-control" />
+                <div id="passwordError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+        <button type="button" id="add-customer" class="btn btn-primary">Lưu khách hàng</button>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" defer></script>
+<script src="~/Scripts/customeradmin.js"></script>
+<script>
+    $(document).ready(function () {
+        var citis = $("#city");
+        var districts = $("#district");
+        var wards = $("#ward");
+
+        // Gọi API hoặc sử dụng một nguồn dữ liệu khác
+        var dataUrl = "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json";
+
+        // Lấy dữ liệu tỉnh/thành phố từ nguồn dữ liệu
+        $.getJSON(dataUrl, function (data) {
+            renderOptions(citis, data, "Chọn Tỉnh/Thành");
+            citis.on("change", function () {
+                var selectedCity = $("#city").val();
+                console.log("Selected City: " + selectedCity);
+
+                districts.empty();
+                wards.empty();
+
+                if (selectedCity !== "") {
+                    var selectedCityData = data.find(n => n.Id === selectedCity);
+                    renderOptions(districts, selectedCityData.Districts, "Chọn Quận/Huyện");
+                }
+                else if (selectedCity === "") {
+                    renderOptions(districts, [], "Chọn Quận/Huyện");
+                    renderOptions(wards, [], "Chọn Phường/Xã");
+                }
+            });
+            districts.on("change", function () {
+                var selectedDistrict = $(this).val();
+
+                wards.empty();
+
+                if (selectedDistrict !== "") {
+                    var selectedDistrictData = data
+                        .flatMap(city => city.Districts)
+                        .find(district => district.Id === selectedDistrict);
+                    renderOptions(wards, selectedDistrictData.Wards, "Chọn Phường/Xã");
+                }
+                else if (selectedDistrict === "" || selectedCity === "") {
+                    renderOptions(wards, [], "Chọn Phường/Xã");
+                }
+            });
+        });
+
+
+
+        // Hàm hiển thị danh sách lựa chọn
+        function renderOptions(selectElement, optionsData, defaultOptionText) {
+            selectElement.append("<option value=''>" + defaultOptionText + "</option>");
+
+            $.each(optionsData, function (index, option) {
+                selectElement.append("<option value='" + option.Id + "'>" + option.Name + "</option>");
+            });
+        }
+    });
+
+</script>
+<script type="text/javascript">
+
+$(document).ready(function () {
+    function createCustomerAction() {
+        if (checkCustomer()) {
+        var Code = $('#Code').val();
+        var FirstName = $('#FirstName').val();
+        var LastName = $('#LastName').val();
+        var Gender = $('#Gender').val();
+        var DateOfBirth = $('#DateOfBirth').val();
+        var Phone = $('#Phone').val();
+        var Email = $('#Email').val();
+        var MemberID = $('#MemberRatingsID').val();
+        var AccountType = $('#AccountType').val();
+        var Password = $('#Password').val();
+        var addressString = document.getElementById("Address").value + ", " + document.getElementById("ward").options[document.getElementById("ward").selectedIndex].text
+                + ", " + document.getElementById("district").options[document.getElementById("district").selectedIndex].text + ", " + document.getElementById("city").options[document.getElementById("city").selectedIndex].text;
+            console.log(addressString);
+
+
+        $.ajax({
+            url: '@Url.Action("CreateCustomer")',
+            type: 'POST',
+            data: {
+                Code: Code,
+                FirstName: FirstName,
+                LastName: LastName,
+                Gender: Gender,
+                DateOfBirth: DateOfBirth,
+                Phone: Phone,
+                Email: Email,
+                Address: addressString,
+                MemberRatingsID: MemberID,
+                AccountType: AccountType,
+                Password: Password,
+            },
+            success: function (data) {
+                console.log(data);
+                if (data.status == 1) {
+                    window.location.href = '@Url.Action("ListCustomer", "Customer")';
+                    alert(data.text);
+                } else {
+                    alert(data.text);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra thêm thông tin khách hàng.');
+            }
+        });
+    }
+        }
+
+
+    // Gọi hàm createAction() khi nhấn nút "Thêm khách hàng"
+    $('#add-customer').on('click', function (event) {
+        createCustomerAction()
+    });
+
+});
+
+
+
+</script>
+

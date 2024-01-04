@@ -1,0 +1,359 @@
+﻿@model SABLANCE.Areas.Admin.Models.ProductDetailModel
+@{
+    var dataPro = ViewBag.dataPro as List<SABLANCE.Models.CategoriesProduct>;
+    var dataColor = ViewBag.dataColor as List<SABLANCE.Models.Color>;
+    var dataSize = ViewBag.dataSize as List<SABLANCE.Models.Size>;
+    var dataProduct= ViewBag.dataProduct as List<SABLANCE.Models.ProductDetail>;
+}
+
+
+<link href="~/Content/productadmin.css" rel="stylesheet" />
+<div class="col-lg-12" style="border-bottom:0.2px solid; margin-bottom: 10px;">
+    <div class="row">
+
+        <div class="col-lg-4" style="align-self: end;">
+            <div class="form-group">
+                <label>Mã sản phẩm <span class="required">*</span></label>
+                <input id="Code" disabled="disabled" name="Code" type="text" class="form-control" />
+                <div id="CodeError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+        <div class="col-lg-4" style="align-self: end;">
+            <div class="form-group">
+                <label>Danh mục sản phẩm <span class="required">*</span> </label>
+                <select id="CategoriesProductID" name="CategoriesProductID" class="form-control">
+                    <option value="0">Chọn danh mục sản phẩm</option>
+                    @foreach (var item in dataPro)
+                    {
+                        <option value="@item.ID">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group">
+                <label>Đơn vị tính</label>
+                <select id="Unit" name="Unit" class="form-control">
+                    <option value="Đôi">Đôi</option>
+                    <option value="Túi">Túi</option>
+                    <option value="Chiếc">Chiếc</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <label>Tên sản phẩm <span class="required">*</span> </label>
+                <input id="Name" name="Phone" type="text" class="form-control" />
+                <div id="NameError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <label>Mô tả sản phẩm</label>
+                <textarea id="Description" name="Description" class="form-control"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12" style="border-top: 0.2px solid #000; border-bottom: none !important;">
+        <div class="row" id="showcus" style="margin-top: 10px;">
+            <div class="list-add" style="width:100%;">
+                <div>
+                    <h2>DANH SÁCH CHI TIẾT SẢN PHẨM</h2>
+                </div>
+                <button class="buttonn" id="addProBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0,0,255.99603,255.99603"
+                         style="fill:#000000;">
+                        <g fill="#db8f70" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"  style="mix-blend-mode: normal"><g transform="scale(5.12,5.12)"><path d="M25,2c-12.683,0 -23,10.317 -23,23c0,12.683 10.317,23 23,23c12.683,0 23,-10.317 23,-23c0,-12.683 -10.317,-23 -23,-23zM37,26h-11v11h-2v-11h-11v-2h11v-11h2v11h11z"></path></g></g>
+                    </svg>
+                </button>
+            </div>
+
+            <table id="product-table" class=" col-lg-12 table table-bordered table-responsives table-striped">
+                <thead>
+                    <tr>
+
+                        <th>Mã định danh </th>
+                        <th>Hinh ảnh</th>
+                        <th>Màu sắc</th>
+                        <th>Kích thước</th>
+                        <th>Đơn giá</th>
+                        <th>Tình trạng sản phẩm</th>
+                    </tr>
+                </thead>
+                <tbody id="product">
+                    <tr id="trow" >
+                        <td id="proCode"  style="width: 15%;">
+                            <input id="CodeProduct" name="CodeProduct" type="text" class="form-control" disabled />
+                        </td>
+                        <td id="proImage" style="width: 30%;">
+                            <div class="col-lg-12 image-group">
+                                <div class="uploadpreview image-upload">
+                                    <img src="~/Image/Product/product.jpg" class="img-em" id="img-Product" />
+                                </div>
+                                <div class="col-md-10" style="width: 100%; margin-top:10px; margin-bottom:15px;">
+                                    <input title="Vui lòng chọn hình ảnh" type="file" name="Image" class="form-control" id="image-upload" />
+                                </div>
+                                <div id="ImageError" class="error-message" style="color: red; font-size: 11px;"></div>
+                            </div>
+                        </td>
+                        <td id="proColor">
+                            <div class="input-group">
+                                <select id="Color" name="Color" class="form-control">
+                                    <option value="0">Chọn màu sắc</option>
+                                    @foreach (var color in dataColor)
+                                    {
+                                        <option value="@color.ID" data-color="@color.Code">
+                                            @color.Name
+                                        </option>
+                                    }
+                                </select>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <span class="color-dot"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="ColorError" class="error-message" style="color: red; font-size: 11px;"></div>
+                        </td>
+                        <td id="proSize">
+                            <select id="Size" name="Size" class="form-control">
+                                <option value="0">Chọn kích thước</option>
+                                @foreach (var item in dataSize)
+                                {
+                                    <option value="@item.ID">@item.Name</option>
+                                }
+                            </select>
+                        </td>
+                        <td id="proPrices" style="vertical-align: middle;">
+                            <input id="Prices" name="Prices" type="number"  class="form-control" />
+                            <div id="PricesError" class="error-message" style="color: red; font-size: 11px;"></div>
+                        </td>
+                        <td id="proStatus">
+                            <select id="Status" name="Status" class="form-control">
+                                <option value="Hàng Mới">Hàng Mới</option>
+                                <option value="Còn hàng">Còn hàng</option>
+                                <option value="Sắp hết hàng">Sắp hết hàng</option>
+                                <option value="Hết hàng">Hết hàng</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="button" id="add-product" class="btn btn-primary">Lưu sản phẩm</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" defer></script>
+<script src="~/Scripts/productadmin.js"></script>
+
+<script type="text/javascript">
+     $(document).ready(function () {
+        $('#Color').change(function () {
+            var selectedColor = $(this).find(':selected').data('color');
+            $('.color-dot').css('background-color', selectedColor);
+        });
+     });
+    function addNewRow() {
+        // Get the table reference
+        var table = document.getElementById("product-table");
+
+        // Create a new row
+        var newRow = table.insertRow(-1);
+
+        // Insert cells with your content
+        newRow.insertCell(0).innerHTML = '<input id="CodeProduct" name="CodeProduct" value="' + RandomCodeProduct() + '" type="text" class="form-control" readonly  />';
+        newRow.insertCell(1).innerHTML = `
+            <div class="col-lg-12 image-group">
+                <div class="uploadpreview image-upload">
+                    <img src="/Image/Product/product.jpg" class="img-em" id="img-Product" />
+                </div>
+                <div class="col-md-10" style="width: 100%; margin-top:10px; margin-bottom:15px;">
+                    <input title="Vui lòng chọn hình ảnh" type="file" name="Image" class="form-control" id="image-upload" />
+                    
+                </div>
+<div id="ImageError" class="error-message" style="color: red; font-size: 11px;"></div>
+            </div>`;
+        newRow.insertCell(2).innerHTML = `
+            <div class="input-group">
+                <select id="Color" name="Color" class="form-control">
+                    <option value="0">Chọn màu sắc</option>
+                    @foreach (var color in dataColor)
+                    {
+                        <option value="@color.ID" data-color="@color.Code">
+                            @color.Name
+                        </option>
+                    }
+                </select>
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="color-dot"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="ColorError" class="error-message" style="color: red; font-size: 11px;"></div>`;
+        newRow.insertCell(3).innerHTML = `
+            <select id="Size" name="Size" class="form-control">
+                <option value="0">Chọn kích thước</option>
+                @foreach (var item in dataSize)
+                {
+                    <option value="@item.ID">@item.Name</option>
+                }
+            </select>`;
+        newRow.insertCell(4).innerHTML = `
+            <input id="Prices" name="Prices" type="number" maxlength="12" class="form-control" />
+            <div id="PricesError" class="error-message" style="color: red; font-size: 11px;"></div>`;
+        newRow.insertCell(5).innerHTML = `
+            <select id="Status" name="Status" class="form-control">
+                <option value="Còn hàng">Còn hàng</option>
+                <option value="Sắp hết hàng">Sắp hết hàng</option>
+                <option value="Hết hàng">Hết hàng</option>
+            </select>`;
+        newRow.querySelectorAll('select#Color').forEach(function (select) {
+            select.addEventListener('change', function () {
+                var selectedColor = this.options[this.selectedIndex].dataset.color;
+                var colorDot = this.closest('.input-group').querySelector('.color-dot');
+                colorDot.style.backgroundColor = selectedColor;
+            });
+        });
+
+    }
+
+
+    // Handle button click event
+    document.getElementById("addProBtn").addEventListener("click", function () {
+        addNewRow();
+    });
+
+$(document).ready(function () {
+    let imageDatas = []; // Mảng để lưu dữ liệu hình ảnh cho từng dòng sản phẩm
+    $(document).on('change', '.image-group input[type=file]', function () {
+        var input = event.target;
+        var preview = $(this).closest('tr').find('.img-em')[0];
+        var image = $(this).closest('tr').find('.image-upload')[0];
+        var newimage = new FileReader();
+
+        newimage.onload = function (e) {
+            preview.src = e.target.result;
+            image.src = e.target.result;
+        }
+
+        if (input.files && input.files[0]) {
+            newimage.readAsDataURL(input.files[0]);
+
+            // Lưu thông tin hình ảnh cho từng dòng sản phẩm
+            var rowIndex = $(this).closest('tr').index();
+            imageDatas[rowIndex] = input.files[0];
+        }
+        else {
+            ModelStateAddError("Image", "Chưa tải được hình ảnh. Vui lòng chọn lại hình ảnh.");
+        }
+    });
+
+    function createProductAction() {
+        if (checkProduct()) {
+        var Code = $('#Code').val();
+        var Name = $('#Name').val();
+        var Unit = $('#Unit').val();
+        var Description = $('#Description').val();
+            var CategoriesProductID = $('#CategoriesProductID').val();
+            var Color = $('#product-table select[id^="Color"]').map(function () {
+                return $(this).val();
+            }).get();
+            var Size = $('[id^="Size"]').map(function () {
+                return $(this).val();
+            }).get();
+            var Prices = $('#product-table input[id^="Prices"]').map(function () {
+                return $(this).val();
+            }).get(); 
+            var Status = $('[id^="Status"]').map(function () {
+                return $(this).val();
+            }).get();
+            var CodeProduct = $('[id^="CodeProduct"]').map(function () {
+                return $(this).val ();
+            }).get(); 
+
+           
+
+            console.log(Color);
+            console.log(Size);
+            console.log(Prices);
+            console.log(Status);
+            console.log(CodeProduct);
+            console.log(imageDatas);
+            var formData = new FormData();
+            for (var i = 0; i < imageDatas.length; i++) {
+                formData.append("ImageData[" + i + "]", imageDatas[i]);
+            } 
+            formData.append("Code", Code);
+            formData.append("Name", Name);
+            formData.append("Unit", Unit);
+            formData.append("Description", Description);
+            for (var i = 0; i < Color.length; i++) {
+                formData.append("ColorIds[" + i + "]", Color[i]);
+            } 
+            for (var i = 0; i < Size.length; i++) {
+                formData.append("SizeIds[" + i + "]", Size[i]);
+            } 
+            for (var i = 0; i < CodeProduct.length; i++) {
+                formData.append("CodeProducts[" + i + "]", CodeProduct[i]);
+            } 
+            for (var i = 0; i < Prices.length; i++) {
+                formData.append("Prices[" + i + "]", Prices[i]);
+            } 
+            for (var i = 0; i < Status.length; i++) {
+                formData.append("Status[" + i + "]", Status[i]);
+            } 
+            formData.append("CategoriesProductId", CategoriesProductID);
+
+
+        $.ajax({
+            url: '@Url.Action("CreateProducts")',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                console.log(data);
+                if (data.status == 1) {
+                    window.location.href = '@Url.Action("ListProduct", "ProductAd")';
+                    alert(data.text);
+                } else {
+                    alert(data.text);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('Đã có lỗi xảy ra thêm sản phẩm.');
+            }
+        });
+    }
+}
+
+
+    // Gọi hàm createAction() khi nhấn nút "Thêm nhân viên"
+    $('#add-product').on('click', function (event) {
+        createProductAction();
+    });
+
+});
+
+
+
+</script>
+

@@ -1,0 +1,94 @@
+﻿
+@{
+    ViewBag.Title = "Chính sách đổi hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/policy.css" rel="stylesheet" />
+<div class="container-detail">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start">
+        <div class="d-flex justify-content-between align-items-stretch right-column-detail">
+            <div class="main-news-detail row">
+                <div class="col-xl-12">
+                    <h3 class="gr-title-news">CHÍNH SÁCH</h3>
+
+                    <h4><strong>CHÍNH SÁCH ĐỔI SẢN PHẨM TRONG VÒNG 30 NGÀY</strong></h4>
+
+                    <p><strong> Với mong muốn mang đến cho quý khách hàng những dịch vụ hậu mãi tốt nhất, Sablanca áp dụng “Chính sách đổi sản phẩm trong vòng 30 ngày”. </strong></p>
+                </div>
+                <div class="col-lg-12" id="detail-news">
+                    <ul><li><strong><span style="color:#ff0000;">Thời gian đổi sản phẩm:</span></strong></li></ul><p style="text-align:center;"><img src="https://cdn.sablanca.vn/ImageNews/z2150432257055_a129abfdeefa600f6b639b2797c4334c.jpg"></p><ul><li><strong><span style="color:#ff0000;">Điều kiện đổi sản phẩm:</span></strong></li></ul><p style="text-align:center;"><img src="https://cdn.sablanca.vn/ImageNews/SuKien_2000x1000_doi%20tra%2030%20ngay-03.jpg" alt=""></p><ul><li><strong><span style="color:#ff0000;">Cách thức đổi sản phẩm:</span></strong></li></ul><p>Quý khách hàng khi có nhu cầu đổi sản phẩm có thể thực hiện theo 1 trong 2 cách sau đây:<br><br><strong></strong></p><p style="text-align:center;"><strong><img src="https://cdn.sablanca.vn/ImageNews/c0eef137f3e809b650f9.jpg"></strong></p><p style="text-align:left;">Hệ thống 22 cửa hàng: <a href="https://sablanca.vn/he-thong-cua-hang">Xem thêm</a></p><ul><li><strong><span style="color:#ff0000;">Quy tắc đổi sản phẩm:</span></strong></li></ul><p data-list="0" data-level="1" style="margin-left:30px;">-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Giá trị sản phẩm đổi tính theo giá bán thực tế tại thời điểm đổi hàng.</p><p data-list="0" data-level="1" style="margin-left:30px;">-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Nếu&nbsp;giá trị sản phẩm đổi lớn hơn giá trị sản phẩm cũ&nbsp;(dựa trên hóa đơn khi thanh toán):&nbsp;Khách hàng bù thêm phần tiền chênh lệch.</p><p data-list="0" data-level="1" style="margin-left:30px;">-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Nếu&nbsp;giá trị sản phẩm đổi nhỏ hơn giá trị sản phẩm cũ&nbsp;(dựa trên hóa đơn khi thanh toán):&nbsp;Sablanca sẽ không hoàn lại phần tiền thừa.</p><ul><li><span style="color:#ff0000;"><strong>Phí vận chuyển:</strong></span></li></ul><p>&nbsp; &nbsp; &nbsp; &nbsp;- Do lỗi Sablanca: Miễn phí vận chuyển</p><p>&nbsp; &nbsp; &nbsp; &nbsp;- Theo nhu cầu của khách hàng:</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;+ Cước phí đổi hàng 2 chiều Tp. HCM: 40.000đ</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;+ Cước phí đổi hàng 2 chiều các tỉnh khác: 50.000 đ</p><p>Mọi chi tiết hoặc thắc mắc Qúy Khách vui lòng liên hệ với bộ phận Chăm Sóc Khách Hàng của Sablanca qua Hotline: 1800 6050 (miễn phí) hoặc Email:&nbsp;<a href="mailto:cs@sablanca.vn">cs@sablanca.vn</a></p><p style="text-align:right;"><strong><em>Xin chân thành cám ơn!</em></strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-left">
+            <div class="row sub-list">
+                <div class="col-md-6">
+                    <a href="@Url.Action("TermsOfUse", "Policy")">
+                        <img src="https://cdn.sablanca.vn/ImageNews/dieu-khoan-su-dung.jpg" alt="NULL">
+                    </a>
+                </div>
+                <div class="col-md-6 discription">
+                    <a href="@Url.Action("TermsOfUse", "Policy")">
+                        <strong>ĐIỀU KHOẢN SỬ DỤNG</strong>
+                    </a>
+                    <p>Khi quý khách hàng truy cập vào trang website của chúng tôi có nghĩa là quý khách đồng ý với các điều khoản này.</p>
+                </div>
+            </div>
+            <div class="row sub-list">
+                <div class="col-md-6">
+                    <a href="@Url.Action("Delivery", "Policy")">
+                        <img src="https://cdn.sablanca.vn/ImageNews/chinh-sach-thanh-toan---van-chuyen.jpg" alt="NULL">
+                    </a>
+                </div>
+                <div class="col-md-6 discription">
+                    <ahref="@Url.Action("Delivery", "Policy")">
+                        <strong>CHÍNH SÁCH THANH TOÁN - VẬN CHUYỂN</strong>
+                    </a>
+                    <p>Chính sách giao nhận của Sablanca được áp dụng tất cả các đối tượng khách hàng mua sản phẩm của Sablanca qua website sablanca.vn (bao gồm livechat &amp; ...</p>
+                </div>
+            </div>
+            <div class="row sub-list">
+                <div class="col-md-6">
+                    <a href="@Url.Action("GiftCard", "Policy")">
+                        <img src="https://cdn.sablanca.vn/ImageNews/quy-dinh-su-dung-gift-card-sablanca.jpg" alt="NULL">
+                    </a>
+                </div>
+                <div class="col-md-6 discription">
+                    <a href="@Url.Action("GiftCard", "Policy")">
+                        <strong>QUY ĐỊNH SỬ DỤNG GIFT CARD SABLANCA</strong>
+                    </a>
+                    <p>Là quà ý nghĩa mà đơn giản cho những dịp đặc biệt như sinh nhật, những ngày lễ, Tết… dành riêng cho người thương, đối tác thì Gift Card Sablanca sẽ ...</p>
+                </div>
+            </div>
+            <div class="row sub-list">
+                <div class="col-md-6">
+                    <a href="@Url.Action("Warranty", "Policy")">
+                        <img src="https://cdn.sablanca.vn/ImageNews/chinh-sach-bao-hanh-san-pham-tron-doi.jpg" alt="NULL">
+                    </a>
+                </div>
+                <div class="col-md-6 discription">
+                    <a href="@Url.Action("Warranty", "Policy")">
+                        <strong>CHÍNH SÁCH BẢO HÀNH SẢN PHẨM TRỌN ĐỜI</strong>
+                    </a>
+                    <p>Với mong muốn mang đến cho Quý Khách Hàng những dịch vụ hậu mãi tốt nhất, Sablanca áp dụng “Chính sách Bảo Hành Trọn Đời” đối với tất cả sản phẩm.</p>
+                </div>
+            </div>
+            <div class="row sub-list">
+                <div class="col-md-6">
+                    <a href="@Url.Action("Policy", "Home")">
+                        <img src="https://cdn.sablanca.vn/ImageNews/chinh-sach-khach-hang-than-thiet.jpg" alt="NULL">
+                    </a>
+                </div>
+                <div class="col-md-6 discription">
+                    <a href="@Url.Action("Policy", "Home")">
+                        <strong>CHÍNH SÁCH KHÁCH HÀNG THÂN THIẾT</strong>
+                    </a>
+                    <p>Để cảm ơn sự ủng hộ và yêu thích của Quý Khách đối với thương hiệu Sablanca, chúng tôi xin gửi đến Quý Khách chương trình ưu đãi dành cho khách hàng ...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

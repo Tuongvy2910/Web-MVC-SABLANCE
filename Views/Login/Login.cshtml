@@ -1,0 +1,237 @@
+﻿@model SABLANCE.Models.Account
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
+<link href="~/Content/login.css" rel="stylesheet" />
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <form action="/Login/Login" method="get">
+        <div class="flex-container">
+
+            <div class="flex-content">
+                <div class="main">
+                    <img src="~/Image/logo_sab.png" />
+                </div>
+                <div class="main2">
+                    <font color="black">
+                        <h1>Xin chào,</h1>
+                        <p style="text-align: justify; width: 100%">SABLANCA xin cảm ơn sự ủng hộ và yêu thích của Quý Khách đối với thương hiệu Sablanca.Chúng tôi sẽ mang tới sự thoải mái và tiện ích trên từng bước chân của người phụ nữ Việt, trở thành cầu nối thời trang giữa khách hàng và các sản phẩm.</p>
+                    </font>
+                </div>
+            </div>
+
+            <div class="menu">
+                <div class="login-wrap">
+                    <div class="login-html">
+                        <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Đăng Nhập</label>
+                        <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Đăng Ký</label>
+                                                                                  <div class="login-form">
+
+                                                                                      <div class="sign-in-htm" id="login-acc">
+                                                                                          <div class="group">
+                                                                                              @Html.EditorFor(model => model.AccountType, new { htmlAttributes = new { placeholder = "Nhập số điện thoại", style = "color:#6a6f8c !important; border: solid;", @class = "input" } })
+                                                                                              @Html.ValidationMessageFor(model => model.AccountType, "", new { @class = "text-danger", style = "color: red; font-size: 11px;" })
+                                                                                          </div>
+                                                                                          <div class="group">
+                                                                                              @Html.EditorFor(model => model.Password, new { htmlAttributes = new { placeholder = "Mật khẩu", type = "password", style = "color:#6a6f8c !important; border: solid;", @class = "input" } })
+                                                                                              @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger", style = "color: red; font-size: 11px;" })
+                                                                                          </div>
+                                                                                          <div class="group">
+                                                                                              <input id="check" type="checkbox" class="check" checked>
+                                                                                          </div>
+                                                                                          <div class="group">
+                                                                                              <input type="submit" class="button" style="font-size: 16px;" value="Đăng Nhập">
+                                                                                          </div>
+                                                                                          <h4 style="font: 200 12px/14px 'Comfortaa', cursive; color: red;">@ViewBag.LoginFail</h4>
+                                                                                          <div class="hr"></div>
+                                                                                          <div class="foot-lnk">
+                                                                                              <a href="#forgot" id="forgotLink">Quên mật khẩu?</a>
+                                                                                          </div>
+                                                                                      </div>
+                                                                                      @using (Html.BeginForm("ForgetPass", "Login", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                                                                      {
+                                                                                          @Html.AntiForgeryToken()
+                                                                                          <div class="sign-in-htm" style="display: none;" id="forget-pass">
+                                                                                              <div class="group">
+                                                                                                  <input id="forgetphone" type="text" class="input" placeholder="Số điện thoại đăng nhập " style="color: #6a6f8c !important; border: solid; ">
+                                                                                                  <div id="forgetphoneNumberError" class="error-message" style="color: red; font-size: 11px;"></div>
+                                                                                              </div>
+                                                                                              <div class="group">
+                                                                                                  <input type="button" id="btnregi" class="button" style="font-size: 16px;" onclick="checkPhoneForgerClick();" value="Đổi mật khẩu">
+                                                                                              </div>
+                                                                                          </div>
+                                                                                      }
+
+                                                                                          @using (Html.BeginForm("Register", "Login", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                                                                          {
+                                                                                              @Html.AntiForgeryToken()
+
+                                                                                              <div class="sign-up-htm">
+                                                                                                  <div class="group">
+                                                                                                      <input id="txtphone" type="text" class="input" placeholder="Số điện thoại đăng ký " style="color: #6a6f8c !important; border: solid; ">
+                                                                                                      <div id="phoneNumberError" class="error-message" style="color: red; font-size: 11px;"></div>
+                                                                                                  </div>
+                                                                                                  <div class="group">
+                                                                                                      <input type="button" id="btnregi" class="button" style="font-size: 16px;" onclick="checkPhoneClick();" value="Đăng ký tài khoản">
+                                                                                                  </div>
+                                                                                              </div>
+                                                                                          }
+                                                                                      </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        </form>
+}
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get the link and the sections to toggle
+        var loginAccSection = document.getElementById("login-acc");
+        var forgetPassSection = document.getElementById("forget-pass");
+        var forgotLink = document.getElementById("forgotLink");
+        var tab1Input = document.getElementById("tab-1");
+
+        // Thêm sự kiện click cho forgotLink
+        forgotLink.addEventListener("click", function (event) {
+            // Ngăn chặn hành vi mặc định của liên kết (ví dụ: chuyển đến href)
+            event.preventDefault();
+
+            // Ẩn phần tử login-acc và hiển thị phần tử forget-pass
+            loginAccSection.style.display = "none";
+            forgetPassSection.style.display = "block";
+        });
+
+        // Thêm sự kiện click cho backToLoginLink
+        tab1Input.addEventListener("change", function (event) {
+            // Ngăn chặn hành vi mặc định của input radio
+            if (tab1Input.checked) {
+                // Hiển thị phần tử login-acc và ẩn phần tử forget-pass
+                loginAccSection.style.display = "block";
+                forgetPassSection.style.display = "none";
+            }
+        });
+    });
+    
+            function ModelStateAddError(fieldName, errorMessage) {
+                // Hiển thị thông báo lỗi của trường
+                $("#" + fieldName + "Error").text(errorMessage).show();
+            }
+            function ModelStateRemoveError(fieldName) {
+                // Xóa thông báo lỗi của trường
+                $("#" + fieldName + "Error").text("");
+            }
+            function checkphone() {
+                var phoneNumber = $('#txtphone').val();
+                if (phoneNumber === "") {
+                    ModelStateAddError("phoneNumber", "Số điện thoại không được để trống.");
+                }
+                else if (!/^\d{8,12}$/.test(phoneNumber)) {
+                    ModelStateAddError("phoneNumber", "Số điện thoại phải chứa từ 8 đến 12 ký tự số.");
+                }
+                if ($("#phoneNumberError").text() !== "") {
+                    return false;
+                }
+
+                return true;
+    }
+   
+    
+    function checkphoneforget() {
+        var phoneNumber = $('#forgetphone').val();
+        if (phoneNumber === "") {
+            ModelStateAddError("forgetphoneNumber", "Số điện thoại không được để trống.");
+        }
+        else if (!/^\d{8,12}$/.test(phoneNumber)) {
+            ModelStateAddError("forgetphoneNumber", "Số điện thoại phải chứa từ 8 đến 12 ký tự số.");
+        }
+        if ($("#forgetphoneNumberError").text() !== "") {
+            return false;
+        }
+
+        return true;
+    }
+    
+    
+            function checkPhoneClick() {
+                if (checkphone()) {
+                    var phone_no = document.getElementById("txtphone").value;
+                    var phoneNumber = $('#txtphone').val();
+                $.ajax({
+                    url: '@Url.Action("Register")',
+                    type: 'POST',
+                    data: { phone_no: phone_no },
+                    success: function (data) {
+                        if (data.text == "success") {
+                            notify("Số điện thoại chưa đăng ký. Bạn vui lòng nhập các thông tin sau!", "success")
+                            setTimeout(() => {
+                                /* location.href = "/Login/RegisterSuccess";*/
+                                location.href = "/Login/RegisterSuccess?phone_no=" + encodeURIComponent(phone_no);
+                            }, 1500)
+
+                        }
+                        else {
+                            notify("Số điện thoại đã đăng ký tài khoản. Bạn vui lòng đăng nhập!", "warning")
+                        }
+                    },
+                    error: function (error) {
+                        notify("Đăng ký thất bại", "error")
+                    }
+                });
+                }
+    }
+
+            function checkPhoneForgerClick() {
+                if (checkphoneforget()) {
+                    var phone_no = document.getElementById("forgetphone").value;
+                $.ajax({
+                    url: '@Url.Action("ForgetPass")',
+                    type: 'POST',
+                    data: { phone_no: phone_no },
+                    success: function (data) {
+                        if (data.text == "success") {
+                            notify("Số điện thoại đã đăng ký tài khoản. Bạn vui lòng kiểm tra các thông tin sau để đổi mật khẩu!", "success")
+                            setTimeout(() => {
+                                location.href = "/Login/ForgetPassSuccess?phone_no=" + encodeURIComponent(phone_no);
+                            }, 1500)
+                        }
+                        else {
+                            
+                            notify("Số điện thoại chưa đăng ký. Bạn vui lòng đăng ký tài khoản!", "warning")
+                        }
+                    },
+                    error: function (error) {
+                        notify("Đổi mật khẩu thất bại", "error")
+                    }
+                });
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                // Hiển thị modal khi trang tải xong
+                var myModal = new bootstrap.Modal(document.getElementById('myModal'));
+                myModal.show();
+            });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#txtphone').on('input', function () {
+            ModelStateRemoveError("phoneNumber");
+        });
+        $('#forgetphone').on('input', function () {
+            ModelStateRemoveError("forgetphoneNumber");
+        });
+    });
+</script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,95 @@
+﻿@model SABLANCE.Models.Color
+
+<link href="~/Content/productadmin.css" rel="stylesheet" />
+<div class="modal-body" id="CreateViewModalContent">
+    <div class="col-lg-12" style="margin-bottom: 10px;">
+        <div class="row">
+
+            <div class="col-lg-4" style="align-self: end;">
+                <div class="form-group">
+                    <label>Mã màu sắc <span class="required">*</span></label>
+                    <div class="color-picker-container">
+                        <input id="HexCode" type="text" class="form-control hex-code-input" style="border: none; background-color: transparent;" disabled placeholder="Màu sắc" />
+                        <div class="color-picker-wrapper">
+                            <input id="Code" name="Code" type="color" class="color-input" />
+                            <button id="ColorPickerBtn" class="color-picker-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="CodeError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="form-group">
+                    <label>Tên màu sắc <span class="required">*</span></label>
+                    <input id="Name" name="LastName" type="text" class="form-control" placeholder="Nhập tên màu sắc" />
+                    <div id="NameError" class="error-message" style="color: red; font-size: 11px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12" style="border-top: 0.2px solid #000; border-bottom: none !important;">
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="button" id="add-color" class="btn btn-primary">Lưu màu</button>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/productadmin.js"></script>
+<script>
+    var color = $("#Code").val();
+    console.log(color);
+    $("#Code").on("input", function () {
+        var selectedColor = $(this).val();
+        $("#HexCode").val(selectedColor.toUpperCase()); // Hiển thị giá trị hex in hoa
+
+        // Ánh xạ giá trị màu vào nút chọn màu
+        $("#ColorPickerBtn").css("background-color", selectedColor);
+    });
+
+    // Sự kiện khi nút chọn màu được nhấn
+    $("#ColorPickerBtn").on("click", function () {
+        $("#Code").click(); // Gọi sự kiện click trên input color
+    });
+    $(document).ready(function () {
+        function createColorAction() {
+            if (checkColor()) {
+                var Code = $('#HexCode').val();
+                var Name = $('#Name').val();
+               
+                $.ajax({
+                    url: '@Url.Action("CreateColor")',
+                    type: 'POST',
+                    data: {
+                        Code: Code,
+                        Name: Name,
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.status == 1) {
+                            window.location.href = '@Url.Action("ListColor", "ProductAd")';
+                            alert(data.text);
+                        } else {
+                            alert(data.text);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Đã có lỗi xảy ra thêm màu sắc.');
+                    }
+                });
+            }
+        }
+
+
+        // Gọi hàm createAction() khi nhấn nút "Thêm khách hàng"
+        $('#add-color').on('click', function (event) {
+            createColorAction()
+        });
+    });
+</script>
+

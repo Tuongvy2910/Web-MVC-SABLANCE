@@ -1,0 +1,762 @@
+﻿@{
+    Layout = "";
+    var data = ViewBag.Carts as List<SABLANCE.Models.Cart>;
+    var cus = ViewBag.Customer as SABLANCE.Models.Customer;
+    decimal sumtotal = 0;
+    decimal total = 0;
+    decimal ship = 25000;
+    decimal totalorder = 0;
+    int diem = 0;
+}
+
+<head>
+
+    <link rel="shortcut icon" type="image/png" href="~/Image/fav_icon.png" />
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link href="~/Content/cart.css" rel="stylesheet" />
+    <link href="~/Content/toastr.css" rel="stylesheet" />
+    <title>Giỏ hàng của bạn - SABLANCA</title>
+</head>
+
+
+
+
+
+
+<script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+<script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+
+<script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-firestore.js"></script>
+
+
+
+@{
+    @*<div class="modal fade bd-example-modal-lg" id="OrderDetailModal" tabindex="-1" role="dialog" aria-labelledby="OrderDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-m" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #ffffff; color: #000;">
+                    <h5 class="modal-title" id="OrderDetailModalLabel" style="font-weight: bold; font-size: 18px; display: flex; margin: 10px; align-items: center;">
+                        <img class="paymethod-icon" src="~/Image/VNPAY.png" alt="VNPAY">THANH TOÁN VNPAY
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="OrderDetailContent" style="color: #000;">
+                    <h5> <lable>Chọn phương thức thanh toán: </lable><br /></h5>
+                    <h6>Cách 1: Chuyển hướng sang VNPay chọn phương thức thanh toán</h6>
+                    <label style="margin: 5px 20px;"><input type="radio" name="TypePaymentVN" id="payment1" value="0" checked />  Cổng thanh tóa VNPAYQR</label>
+                    <h6>Cách 2: Tách phương thức thanh toán tại site của Merchant</h6>
+                    <label style="margin: 5px 20px;"><input type="radio" name="TypePaymentVN" id="payment2" value="1" />Thanh toán qua ứng dụng hỗ trợ VNPAY QR</label>
+                    <label style="margin: 5px 20px;"><input type="radio" name="TypePaymentVN" id="payment3" value="2" />ATM tài khoản ngân hàng nội địa</label>
+                    <label style="margin: 5px 20px;"><input type="radio" name="TypePaymentVN" id="payment4" value="3" />Thanh toán qua thẻ quốc tế</label>
+                </div>
+                <div class="modal-footer" style="background-color: #ffffff; border-top: 0.2px solid;">
+                    <button type="button" class="btn btn-primary" id="orderVN" data-dismiss="modal">ĐẶT HÀNG</button>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+    var user = Session["Account"] as SABLANCE.Models.Account;
+    var CountCart = (int)(Session["CountCart"] ?? 0);
+    if (user != null)
+    {
+        <div id="fullscreen">
+
+            <div id="TrenCung" class="d-flex justify-content-between">
+                <div class="button-back-checkout">
+
+                    <a href="/" class="btn btn-link"><img src="/Image/left-arrowblue.png" /> Mua thêm sản phẩm khác </a>
+
+                </div>
+                <div class="logo-checkout">
+                    <a href="/">
+                        <img src="/Image/SAB_Logo-Mint.png" />
+                    </a>
+                </div>
+                <div class="login-checkout">
+
+                </div>
+            </div>
+            <div class="d-flex flex-lg-row flex-md-row flex-sm-column flex-column justify-content-center w-90">
+                <div id="noidungtrai">
+                    <div id="order-fast" style="display: block; font-size: 16px; text-align: center; font-weight: bold;">
+                        <span>
+                            <img style="width: 20px;" src="~/Image/icon_phone.png" />
+                            Gọi
+                            <a style="color: red; text-decoration: none;" href="tel:18006050">1800 6050</a> để đặt hàng nhanh
+                        </span>
+                    </div>
+                    <div style="color:black; padding-left: 2%; ">
+                        <strong>GIỎ HÀNG CỦA BẠN</strong>
+                        <div style="font-size: 11px; font-style: italic; margin-top: 10px;">(Có @CountCart sản phẩm trong giỏ hàng)</div>
+                    </div>
+                    <div id="dssp">
+
+                        <div class="shopping-cart">
+
+                            @foreach (var item in data)
+                            {
+                                <div class="iteminCart" style="margin-top: 10px;" id="listproduct_@item.Id">
+                                    <div class="hiddenItemID" name="0" style="display:none">6050SN0012</div>
+                                    <input type="text" style="display:none" id="IDPro" value="@item.IdProductDetail" />
+                                    <input type="text" style="display:none" id="IDCart" value="@item.Id" />
+                                    <div class="image">
+                                        <img src="~/Image/Product/@item.ProductDetail.Image" alt="" />
+                                    </div>
+                                    <div class="description" name="0">
+                                        <span>@item.ProductDetail.Product.Name </span>
+                                        <div style="font-size:12px;display:flex; margin-top: 25px; ">
+                                            <a> Màu: @item.ProductDetail.Color.Name </a>
+
+                                            @if (item.ProductDetail.SizeID.HasValue)
+                                            {
+                                                <div style="height:100%"></div> <a> &nbsp; | &nbsp; Size: &nbsp;</a> @item.ProductDetail.Size.Name
+                                            }
+                                            else
+                                            {
+                                                <a></a>
+                                            }
+                                        </div>
+
+                                        <div class="quantity d-flex align-items-center " id="quantity_@item.IdProductDetail">
+                                            <button class="minus-btn">
+                                                -
+                                            </button>
+                                            <input style="font-size: 1em;" type="number" id="QuantityPro" class="quantity-input" name="0" value=" @item.Quantity">
+                                            <button class="plus-btn" name="0">
+
+                                                +
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="" style="position:relative">
+                                        <div class="delete-btn" style="position:absolute;top:5px;right:5px" name="0"><span onclick="deleteProduct(@item.Id);">Xóa</span></div>
+                                        <div style="margin-top:50%"></div>
+                                        <input style="display: none;" value="@item.SumPrice" id="ProPrices_@item.Id" />
+                                        @{ sumtotal = (decimal)(item.SumPrice * item.Quantity);}
+                                        <input style="display: none;" value="@sumtotal" id="totalPro_@item.Id" />
+                                        <div class="total-price"> <span id="total_@item.Id"> @sumtotal.ToString("0,0")<sup>đ</sup></span> </div>
+                                    </div>
+                                </div>
+                                { total += sumtotal; }
+
+                            }
+
+                        </div>
+                        @{ totalorder = total + ship;}
+                        <div class="d-flex justify-content-between" style="margin-top: 20px ;font-size: 18px;">
+                            <div style="color:black">Thành tiền:</div>
+                            <input style="display: none;" value="@total" id="lb-totalprice-Input" />
+                            <div style="font-weight: 100;"><span id="lb-totalprice"> @total.ToString("0,0")<sup>đ</sup></span></div>
+                        </div>
+
+                        <div class="bdtietkiem d-flex justify-content-between" style="font-size: 18px; margin-top: 10px;">
+                            <div class="hint" style="color:black">
+                                Phí ship:
+                            </div>
+                            <div><span id="lb-ship-cost">@ship.ToString("0,0")<sup>đ</sup></span></div>
+                        </div>
+                        <div class="bdtietkiem d-flex justify-content-between" style="font-size: 18px; margin-top: 10px;">
+                            <div class="hint" style="color:black">
+                                Điểm tích lũy cho đơn hàng:
+                            </div>
+                            @{ diem = (int)totalorder / 100000; }
+                            <div><span id="lb-point"> @diem.ToString("0,0") <sup>điểm</sup></span></div>
+                        </div>
+                        <hr />
+                        <div class="d-flex justify-content-between" style="font-size: 18px;">
+                            <div style="color:black">Tổng tiền thanh toán:</div>
+
+                            <div style="color: red"> <span id="lb-totalitemprice">  @totalorder.ToString("0,0")<sup>đ</sup></span></div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <a name="input-delivery-anchor" id="input-delivery-anchor"></a>
+                <div id="noidungphai" style="opacity: 1;">
+
+                    <div id="hoacnhapthongtinnhanhang">
+
+                        NHẬP THÔNG TIN NHẬN HÀNG
+                    </div>
+                    <div class="text-danger small font-italic" id="errorMessage"></div>
+                    <div class="form" id="frmOrderOnline">
+                        <input id="IDCustomer" style="display: none;" type="text" value="@cus.ID" disabled="disabled" />
+
+                        <div class="input-group  mb-3 mt-3">
+                            <div class="input-group-prepend info-group-persion">
+                                <span class="input-group-text">Họ tên (*):</span>
+                            </div>
+                            <input type="text" name="fullname" disabled value="@cus.LastName @cus.FirstName" class="form-control" placeholder="Người nhận hàng (bắt buộc)">
+                        </div>
+                        <div class="input-group mb-3 mt-3">
+                            <div class="input-group-prepend info-group-persion">
+                                <span class="input-group-text">Phone (*):</span>
+                            </div>
+                            <input id="PhoneCustomer" type="tel" name="phonenumber" value="@cus.Phone" class="form-control" placeholder="Số điện thoại người nhận (bắt buộc)">
+                            <div id="PhoneCustomerError" class="error-message" style="color: red; font-size: 11px;"></div>
+                        </div>
+
+                        <div class="input-group mb-3 mt-3">
+                            <div class="input-group-prepend info-group-persion">
+                                <span class="input-group-text">Email :</span>
+                            </div>
+                            <input type="text" id="EmailCus" name="email" class="form-control" placeholder="(Không bắt buộc)">
+                            <div id="EmailCusError" class="error-message" style="color: red; font-size: 11px;"></div>
+                            <i style="font-size: 13px;">Vui lòng cung cấp email để dễ dàng cập nhật tình trạng đơn hàng &amp; ưu đãi mới</i>
+                        </div>
+                        <br />
+                        <div class="isdelivery">
+                            <input id="coupon-hidden" name="coupon-hidden" disabled="disabled" hidden />
+                            <input type="hidden" name="bankcode" />
+                            <div class="input-group">
+                                <div class="diadiemgiaohang">
+                                    <div class="col-lg-12 row">
+                                        <div class="form-group inline-form col-lg-6 ">
+                                            <label for="city-state">Tỉnh/Thành phố <span class="required" style="color: red;">*</span></label>
+                                            <select class="form-control progres_value" id="city" aria-label=".form-select-sm">
+                                                <option value="" selected>Chọn Tỉnh/Thành phố</option>
+                                            </select>
+                                            <div id="cityError" class="error-message" style="color: red; font-size: 11px;"></div>
+                                        </div>
+                                        <div class="form-group inline-form col-lg-6">
+                                            <label for="city-state">Quận/Huyện <span class="required" style="color: red;">*</span></label>
+                                            <select class="form-control progres_value" id="district" aria-label=".form-select-sm">
+                                                <option value="" selected>Chọn Quận / Huyện</option>
+                                            </select>
+                                            <div id="districtError" class="error-message" style="color: red; font-size: 11px;"></div>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-lg-12 row">
+                                        <div class="form-group inline-form col-lg-12">
+                                            <label for="city-state">Phường/Xã <span class="required" style="color: red;">*</span></label>
+                                            <select class="form-control progres_value" id="ward" aria-label=".form-select-sm">
+                                                <option value="" selected>Chọn Phường/Xã</option>
+                                            </select>
+                                            <div id="wardError" class="error-message" style="color: red; font-size: 11px;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 row">
+                                        <div class="form-group inline-form col-lg-12">
+                                            <label for="address">Số nhà <span class="required" style="color: red;">*</span></label>
+                                            <textarea type="text" class="form-control" id="address" placeholder="Nhập số nhà"></textarea>
+                                            <div id="addressError" class="error-message" style="color: red; font-size: 11px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                        <div id="chonthoigiannhanhang" style="padding-top: 20px">
+                            <span class="text-info">HÌNH THỨC NHẬN HÀNG</span>
+                        </div>
+
+                        <div class="form-of-delivery-standard" style="margin-top: 15px;">
+                            <label class="deliveryradio">
+                                <span><strong>Giao hàng tiêu chuẩn: <b id="delivery-standard"><span style='color: red;'>Miễn phí</span></b></strong> - <span id="delivery-time-standard">Nhận hàng từ 1-2 ngày</span></span>
+                                <input id="delivery_type_standard" type="radio" name="delivery_type" value="10" checked="checked">
+
+                                <span class="deliverycheckmark"></span>
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <div>
+                        <textarea name="note" id="NoteOr" class="flex-fill" style="height: 75px; margin: 10px; width:100%;" placeholder="Ghi chú thêm (nếu có)"></textarea>
+                    </div>
+                    <div id="choncachtratien">
+                        <span class="text-success">CHỌN CÁCH THANH TOÁN</span>
+
+                    </div>
+
+
+
+                    <div id="payment-selection" style="margin-top: 10px;">
+                        <div class="paymethod-container" id="accordion">
+                            <div id="PaymentMethodError" class="error-message" style="color: red; font-size: 11px;"></div>
+                            <div class="paymethod--item">
+                                <label class="paymethodradio paymethod-content-input" style="padding-right: 0px; margin-bottom: 0 !important"
+                                       data-toggle="collapse" data-target="#COD">
+                                    <img class="paymethod-icon" src="/Image/COD.png" alt="COD" />
+                                    <span style="line-height:2">Thanh toán khi giao hàng (COD)</span>
+                                    <input type="radio" id="COD_radio" name="paymentmethod" value="Tiền mặt(COD)">
+                                    <span class="paymethodcheckmark"></span>
+                                </label>
+                            </div>
+
+                            <div class="paymethod--item">
+                                <label class="paymethodradio paymethod-content-input" style="padding-right: 0px; margin-bottom: 0 !important"
+                                       data-toggle="collapse" data-target="#VISA">
+                                    <img class="paymethod-icon" src="/Image/VISA.png" alt="VISA" />
+                                    <span style="line-height:2">
+                                        Thẻ Visa/Master
+                                    </span>
+                                    <input type="radio" id="VISA_radio" name="paymentmethod" value="Thẻ Visa/Master">
+                                    <span class="paymethodcheckmark"></span>
+                                </label>
+                            </div>
+
+                            <div class="paymethod--item">
+                                <label class="paymethodradio paymethod-content-input" style="padding-right: 0px; margin-bottom: 0 !important" data-toggle="collapse" data-target="#VNPAY">
+                                    <img class="paymethod-icon" src="~/Image/VNPAY.png" alt="VNPAY">
+                                    <span style="line-height:2">
+                                        Ví điện tử Vnpay
+                                    </span>
+                                    <input type="radio" id="VNPAY_radio" name="paymentmethod" value="Ví điện tử VNPay">
+                                    <span class="paymethodcheckmark"></span>
+                                </label>
+                            </div>
+                            <div class="paymethod--item">
+                                <label class="paymethodradio paymethod-content-input" style="padding-right: 0px; margin-bottom: 0 !important" data-toggle="collapse" data-target="#MOMO">
+                                    <img class="paymethod-icon" src="~/Image/MOMO.png" alt="Ví điện tử VNPay">
+                                    <span style="line-height:2">
+                                        Ví MoMo
+                                    </span>
+                                    <input type="radio" id="MOMO_radio" name="paymentmethod" value="Ví Momo">
+                                    <span class="paymethodcheckmark"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="submit-order" id="submit-order">HOÀN TẤT ĐƠN HÀNG</div>
+                    </div>
+                </div>
+            </div>
+            <div style="height:100px"></div>
+            <div id="sab-loading">
+                <img src="/Images/loading-sab.svg" />
+            </div>
+        </div>
+
+    }
+    else
+    {
+        <div id="fullscreen">
+            <div id="TrenCung" class="d-flex justify-content-between">
+                <div class="button-back-checkout">
+
+                    <a href="/" class="btn btn-link"><img src="/Image/left-arrowblue.png" /> Quay lại trang chủ </a>
+
+                </div>
+                <div class="logo-checkout">
+                    <a href="/">
+                        <img src="/Image/SAB_Logo-Mint.png" />
+                    </a>
+                </div>
+                <div class="login-checkout">
+
+                </div>
+            </div>
+            <h2 style="text-align: center;">Bạn vui lòng đăng nhập để tiếp tục mua hàng</h2>
+        </div>
+    }
+
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="~/Scripts/toastr.min.js"></script>
+<script src="~/Content/TeamCode.js"></script>
+
+<!-- Đặt Popper.js trước Bootstrap.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/Scripts/order-customer.js"></script>
+<script>
+    var citis = document.getElementById("city");
+    var districts = document.getElementById("district");
+    var wards = document.getElementById("ward");
+    var Parameter = {
+        url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+        method: "GET",
+        responseType: "json",
+    };
+    var promise = axios(Parameter);
+    promise.then(function (result) {
+        renderCity(result.data);
+    });
+
+
+    function renderCity(data) {
+        for (const x of data) {
+            citis.options[citis.options.length] = new Option(x.Name, x.Name);
+        }
+        citis.onchange = function () {
+            district.length = 1;
+            ward.length = 1;
+            if (this.value != "") {
+                const result = data.filter(n => n.Name === this.value);
+                for (const k of result[0].Districts) {
+                    district.options[district.options.length] = new Option(k.Name, k.Name);
+                }
+            }
+        };
+        district.onchange = function () {
+            ward.length = 1;
+            const dataCity = data.filter((n) => n.Name === citis.value);
+            if (this.value != "") {
+                const dataWards = dataCity[0].Districts.filter(n => n.Name === this.value)[0].Wards;
+                for (const w of dataWards) {
+                    wards.options[wards.options.length] = new Option(w.Name, w.Name);
+                }
+            }
+        };
+    }
+
+
+    function deleteProduct(cartId) {
+        // Hiển thị hộp thoại xác nhận hoặc thực hiện xóa trực tiếp
+
+        // Lấy phần tử tr (dòng) cần xóa
+            var rowToDelete = $("#listproduct_" + cartId);
+
+        // Kiểm tra xem có phải là phần tử tr không
+
+
+         $.ajax({
+    url: '@Url.Action("DeleteProduct", "Cart")',
+    type: 'POST',
+    data: {
+        Id: cartId
+    },
+    success: function (data) {
+        if (data.status === 1) {
+            if (rowToDelete.length > 0) {
+                // Xóa dòng khỏi DOM
+                rowToDelete.remove();
+
+                // Lấy giá trị CountCart từ Session
+                var countCartValue = @HttpContext.Current.Session["CountCart"];
+
+                console.log('Session CountCart:', countCartValue);
+
+                if (!isNaN(countCartValue)) {
+                    // Lưu giá trị CountCart vào LocalStorage
+                    localStorage.setItem('CountCart', countCartValue);
+
+                    // Cập nhật giá trị từ LocalStorage vào giao diện người dùng
+                    $('#numSumProduct').text(localStorage.getItem('CountCart'));
+
+                    notify("Xóa mặt hàng thành công.", "success");
+
+                    updateTotalPriceAndCount();
+                } else {
+                    console.error("Giá trị CountCart không hợp lệ:", countCartValue);
+                    notify("Xóa mặt hàng không thành công.", "error");
+                }
+            } else {
+                console.log("Không tìm thấy dòng cần xóa");
+            }
+        } else {
+            notify("Xóa mặt hàng không thành công.", "error");
+        }
+    },
+    error: function (xhr, status, error) {
+        console.log(error);
+        alert('Đã có lỗi xảy ra khi xóa sản phẩm.');
+    }
+});
+
+    }
+    function updateTotalPriceAndCount() {
+        var newTotal = 0;
+        var itemCount = 0;
+
+        $(".iteminCart").each(function () {
+            var itemId = $(this).attr("id").split("_")[1];
+            var quantity = parseInt($(this).find(".quantity-input").val(), 10);
+            var price = parseFloat($("#ProPrices_" + itemId).val().replace(/,/g, ''));
+
+            if (!isNaN(quantity) && !isNaN(price)) {
+                newTotal += quantity * price;
+                itemCount += quantity;
+            }
+        });
+
+        var ship = parseFloat($("#lb-ship-cost").text().replace(/,/g, '')); 
+        var diem = parseInt((newTotal + ship) / 100000);
+
+        $("#lb-totalprice").text(newTotal.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+        $('#numSumProduct').text(itemCount);
+        $('#lb-totalitemprice').text((newTotal + ship).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+        $('#lb-point').html(diem.toLocaleString() + " " + '<sup>điểm</sup>');
+
+        localStorage.setItem('CountCart', itemCount);
+    }
+    
+
+    $(document).ready(function () {
+
+
+        // Hàm cập nhật tổng tiền thanh toán (đơn hàng + phí ship + điểm tích lũy)
+        function updateTotalOrderWithShip() {
+            var total = 0;
+            var ship = parseFloat($("#lb-ship-cost").text().replace(" đ", "").replace(",", ""));
+            var totalorder = 0;
+
+            $(".iteminCart").each(function () {
+                var totalPro = $(this).find("#totalPro");
+                total += parseFloat(totalPro.val());
+            });
+
+            totalorder = total + ship;
+
+            // Cập nhật điểm tích lũy
+            var diem = parseInt(totalorder / 100000);
+            $("#lb-point").text(diem.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " điểm");
+
+            // Hiển thị tổng tiền thanh toán
+            $("#lb-totalitemprice").text(totalorder.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " đ");
+        }
+
+        // Thêm sự kiện click cho nút "+"
+        $(".plus-btn").on("click", function () {
+            updateQuantity(this, 1);
+        });
+
+        // Thêm sự kiện click cho nút "-"
+        $(".minus-btn").on("click", function () {
+            updateQuantity(this, -1);
+        });
+
+        function updateQuantity(button, change) {
+            // Lấy ID sản phẩm từ thuộc tính data
+            var ID = $(button).closest(".iteminCart").find("#IDCart").val();
+            // Lấy số lượng hiện tại từ ô input
+            var currentQuantity = parseInt($(button).closest(".iteminCart").find(".quantity-input").val());
+
+            // Tăng/giảm số lượng
+            var newQuantity = currentQuantity + change;
+            if (newQuantity <= 0 ) {
+                notify("Số lượng sản phẩm không thể bằng 0.", "error")
+                return;
+            }
+
+            // Gọi hàm Ajax để cập nhật số lượng trên server
+            $.ajax({
+                url: '@Url.Action("UpdateCart")',
+                type: 'POST',
+                data: {
+                    Id: ID,
+                    quantity: newQuantity
+                },
+                success: function (data) {
+                    // Nếu cập nhật thành công, cập nhật số lượng hiển thị và tổng giá
+                    if (data.status === 1) {
+                        $(button).closest(".iteminCart").find(".quantity-input").val(newQuantity);
+                        updateTotalPrice(ID, newQuantity, change);
+
+                    }
+                    else if (data.status === -1) {
+                        notify(data.text, "error")
+                    }
+                },
+                error: function () {
+                    notify("Lỗi khi cập nhật giỏ hàng.", "error")
+                }
+            });
+        }
+        function updateTotalPrice(CartId, quantity, change) {
+            var ProPrices = parseFloat($('#ProPrices_' + CartId).val());
+            var totalprice = parseFloat($('#lb-totalprice-Input').val());
+            var Ship = parseFloat(25000);
+            var totalPro = ProPrices * quantity;
+            var sumtotalprice = (change === 1 ? totalprice + ProPrices : totalprice - ProPrices);
+            var totalShip = parseFloat(sumtotalprice) + Ship;
+            var Diem = parseInt(totalShip / 100000);
+            $('#total_' + CartId).html(totalPro.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+            $('#lb-totalprice').html(sumtotalprice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+            $('#lb-totalitemprice').html(totalShip.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+            $('#lb-totalprice-Input').val(sumtotalprice);
+            $('#lb-point').html(Diem +" "+'<sup>điểm</sup>');
+
+
+        }
+
+
+
+    });
+    function generateRandomCode() {
+        const prefix = "ORDNO";
+        const characters = "0123456789";
+        const length = 5;
+
+        let result = prefix;
+        for (let i = 0; i < length; i++) {
+            result += characters[Math.floor(Math.random() * characters.length)];
+        }
+
+        return result;
+    }
+    $(document).ready(function () {
+        // Ẩn modal khi nhấn nút "OK"
+        $('#successModal').on('hidden.bs.modal', function () {
+            window.location.href = "@Url.Action("Home", "Home")";
+        });
+    });
+    $(document).ready(function () {
+        var PaymentMethod;
+        var QRVNPAY;
+        $("#COD_radio").on("click", function () {
+            // Get the value of the selected radio button
+            var selectedPaymentMethod = $("input[name='paymentmethod']:checked").val();
+            PaymentMethod = selectedPaymentMethod;
+        });
+        $("#VISA_radio").on("click", function () {
+            // Get the value of the selected radio button
+            var selectedPaymentMethod = $("input[name='paymentmethod']:checked").val();
+            PaymentMethod = selectedPaymentMethod;
+        });
+        $("#VNPAY_radio").on("click", function () {
+            var selectedPaymentMethod = $("input[name='paymentmethod']:checked").val();
+            PaymentMethod = selectedPaymentMethod;
+        });
+        $("#MOMO_radio").on("click", function () {
+            // Get the value of the selected radio button
+            var selectedPaymentMethod = $("input[name='paymentmethod']:checked").val();
+            PaymentMethod = selectedPaymentMethod;
+        });
+        function createOrderAction() {
+            if (checkOrder()) {
+                var Code = generateRandomCode();
+                var CustomerID = $('#IDCustomer').val();
+                var Phone = $('#PhoneCustomer').val();
+                var Email = $('#EmailCus').val();
+                var Note = $('#NoteOr').val();
+                var Total = $('#lb-totalitemprice').text().trim();
+                var totalText = "1.445.440 đ";
+
+                // Loại bỏ chữ "đ" và tất cả các ký tự không phải số hoặc dấu chấm
+                var formattedNumber = Total.replace(/[^\d.]/g, '');
+
+                // Chuyển đổi chuỗi đã được định dạng đúng thành số
+                var totalNumeric = parseFloat(formattedNumber);
+
+                console.log(totalNumeric);
+
+                var PayMethod = PaymentMethod;
+                var citis = document.getElementById("city").value;
+                var districts = document.getElementById("district").value;
+                var wards = document.getElementById("ward").value;
+                var address = document.getElementById("address").value;
+                var addressString = address + ", " + wards + ", " + districts + ", " + citis
+                console.log(addressString)
+                var proIds = $('[id^="IDPro"]').map(function () {
+                    return $(this).val();
+                }).get();
+                var Quatity = $('[id^="QuantityPro"]').map(function () {
+                    return $(this).val();
+                }).get();
+
+                var ProPrices = $('[id^="ProPrices"]').map(function () {
+                    return $(this).val();
+                }).get();
+                console.log(proIds);
+                console.log(Quatity);
+                console.log(ProPrices);
+                console.log(totalNumeric);
+                if (PayMethod === "Ví điện tử VNPay") {
+                    if (proIds.length > 0) {
+
+                        $.ajax({
+                            url: '@Url.Action("CreateOrder", "Cart")',
+                            type: 'POST',
+                            data: {
+                                OrderNo: Code,
+                                CustomerID: CustomerID,
+                                RecipientPhone: Phone,
+                                TotalPayment: totalNumeric,
+                                PaymentMethods: PayMethod,
+                                DeliveryAddress: addressString,
+                                productId: proIds,
+                                quantity: Quatity,
+                                email: Email,
+                                Prices: ProPrices,
+                                Note: Note,
+                            },
+                            success: function (data) {
+                                console.log(data);
+                                if (data.status == 2) {
+                                    notify("Đơn hàng của bạn đang chờ xác nhận thanh tóan VNPAY.", "success");
+                                    setTimeout(() => {
+                                       window.location.href = data.text;
+                                    }, 1500)
+                                } else {
+                                    notify(data.text, "error");
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                notify("Đã có lỗi xảy ra tạo đơn hàng.", "warning")
+                            }
+                        });
+                    }
+                    else {
+                        alert('Vui lòng thêm sản phẩm vào giỏ hàng.');
+                    }
+                }
+                else {
+                    if (proIds.length > 0) {
+
+                    $.ajax({
+                        url: '@Url.Action("CreateOrder", "Cart")',
+                        type: 'POST',
+                        data: {
+                            OrderNo: Code,
+                            CustomerID: CustomerID,
+                            RecipientPhone: Phone,
+                            TotalPayment: totalNumeric,
+                            PaymentMethods: PayMethod,
+                            DeliveryAddress: addressString,
+                            productId: proIds,
+                            quantity: Quatity,
+                            email: Email,
+                            Prices: ProPrices,
+                            Note: Note,
+                        },
+                        success: function (data) {
+                            console.log(data);
+                            if (data.status == 1) {
+                                notify("Bạn đã đặt hàng thành công, vui lòng theo dõi tình trạng đơn hàng để nhận hàng.", "success");
+                                setTimeout(() => {
+                                    window.location.href = "@Url.Action("Home", "Home")";
+                                }, 1500)
+                            } else {
+                                notify(data.text, "error");
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            notify("Đã có lỗi xảy ra tạo đơn hàng.", "warning")
+                        }
+                    });
+                }
+                else {
+                    alert('Vui lòng thêm sản phẩm vào giỏ hàng.');
+                }
+                }
+
+            }
+
+}
+        $('#submit-order').on('click', function (event) {
+            createOrderAction()
+        });
+
+    });
+</script>
+
+
+
